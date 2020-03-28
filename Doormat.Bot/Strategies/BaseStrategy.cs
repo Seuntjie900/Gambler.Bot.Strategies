@@ -13,8 +13,8 @@ namespace DoormatBot.Strategies
     public abstract class BaseStrategy
     {
 
+
         private BaseStrategy WorkingSet = null;
-        
         /// <summary>
         /// The strategies name
         /// </summary>
@@ -50,6 +50,7 @@ namespace DoormatBot.Strategies
         public virtual PlaceRouletteBet CalculateNextRouletteBet(RouletteBet PreviousBet, bool Win) { throw new NotImplementedException(); }
 
         public virtual PlacePlinkoBet CalculateNextPlinkoBet(PlinkoBet PreviousBet, bool Win) { throw new NotImplementedException(); }
+
 
         /// <summary>
         /// Indicates to the strategy that automated betting is starting.

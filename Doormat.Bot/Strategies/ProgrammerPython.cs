@@ -84,7 +84,6 @@ namespace DoormatBot.Strategies
             //CurrentRuntime = Python.CreateRuntime();
             Engine = Python.CreateEngine();
             Scope = Engine.CreateScope();
-            
             (Scope as ScriptScope).SetVariable("Withdraw", (Action<string,decimal>)Withdraw);
             (Scope as ScriptScope).SetVariable("Invest", (Action< decimal>)Invest);
             (Scope as ScriptScope).SetVariable("Tip", (Action<string, decimal>)Tip);

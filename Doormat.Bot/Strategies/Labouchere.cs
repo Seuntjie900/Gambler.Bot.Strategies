@@ -10,6 +10,7 @@ namespace DoormatBot.Strategies
 {
     public class Labouchere: BaseStrategy
     {
+
         //public string LabList { get; set; }
 
         public List<decimal> BetList { get; set; } = new List<decimal>();
@@ -61,7 +62,6 @@ namespace DoormatBot.Strategies
                             Lastbet = LabList[0] + LabList[LabList.Count - 1];
                     }
                 }
-                
             }
             else
             {
@@ -139,6 +139,8 @@ namespace DoormatBot.Strategies
                 Amount= LabList[0] + LabList[LabList.Count - 1];
             return new PlaceDiceBet(Amount, High, (decimal)Chance);
         }
+
+        public bool rdbLabEnable { get; set; }
 
         public bool chkReverseLab { get; set; }
 

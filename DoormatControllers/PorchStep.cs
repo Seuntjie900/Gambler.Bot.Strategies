@@ -119,8 +119,7 @@ namespace DoormatControllers
             {
                 List<BaseSite.LoginParamValue> Value = new List<BaseSite.LoginParamValue>();
                 foreach (var x in Instance.CurrentSite.LoginParams)
-
-                {
+                { 
                     Value.Add(new BaseSite.LoginParamValue { Param = x, Value = (string)input[x.Name.Replace(" ","_")] });
 
                 }

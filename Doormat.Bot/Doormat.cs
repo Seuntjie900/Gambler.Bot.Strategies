@@ -22,7 +22,6 @@ namespace DoormatBot
 {
     public class Doormat
     {
-        
         #region Internal Variables
         List<ErrorEventArgs> ActiveErrors = new List<ErrorEventArgs>();
         PwDatabase Passdb = new PwDatabase();
@@ -76,6 +75,7 @@ namespace DoormatBot
             Running = false;
             Stop = false;
         }
+
 
         public static List<SitesList> Sites = new List<SitesList>();
         public SitesList[] CompileSites()
@@ -167,7 +167,7 @@ namespace DoormatBot
                     Logger.DumpLog("Not Updating Sites Table", 6);
                 }
             }
-            return Sites.ToArray();            
+            return Sites.ToArray();  
         }
 
         public Dictionary<string, Type> Strategies { get; set; }
@@ -176,6 +176,7 @@ namespace DoormatBot
             Strategies = new Dictionary<string, Type>();
             Type[] tps = Assembly.GetAssembly(typeof(BaseStrategy)).GetTypes();
             List<string> sites = new List<string>();
+
             Type BaseTyope = Type.GetType("DoormatBot.Strategies.BaseStrategy");
             foreach (Type x in tps)
             { 
@@ -449,6 +450,7 @@ namespace DoormatBot
                     {
                         switch (x.Action)
                         {
+
                             case TriggerAction.Bank:throw new NotImplementedException();break;
                             case TriggerAction.Invest: CurrentSite.Invest(x.GetValue(Stats)); break;
                             case TriggerAction.Reset: NextBext = Strategy.RunReset(); Reset = true; break;
@@ -462,8 +464,10 @@ namespace DoormatBot
                     }
                 }
             }
+
             if (Running)
                 CalculateNextBet();
+
         }
 
         void CalculateNextBet()
@@ -573,6 +577,7 @@ namespace DoormatBot
                         (Strategy as ProgrammerMode).OnWithdraw += Doormat_OnWithdraw;                        
                     }
                 }
+
                 OnStrategyChanged?.Invoke(this, new EventArgs());
                 
             }
@@ -684,7 +689,6 @@ namespace DoormatBot
                 throw new Exception("Cannot start bot while it's running a simulation");
             if (!Running && !RunningSimulation)
             {
-                
                 if (Strategy is ProgrammerMode)
                 {
                     (Strategy as ProgrammerMode).LoadScript();
@@ -710,6 +714,7 @@ namespace DoormatBot
 
         public void StopDice(string Reason)
         {
+
             bool wasrunning = Running;
             Running = false;
             Stats.EndTime = DateTime.Now;
@@ -811,6 +816,7 @@ namespace DoormatBot
                 {                    
                     Martingale = Strat as Strategies.Martingale;
                     Strategy = "Martingale";
+
                 }
                 if (Strat is Strategies.ProgrammerCS)
                 {
@@ -821,10 +827,12 @@ namespace DoormatBot
                 {
                     ProgrammerJS = Strat as Strategies.ProgrammerJS;
                     Strategy = "ProgrammerJS";
+
                 }
                 if (Strat is Strategies.ProgrammerLUA)
                 {
                     ProgrammerLUA = Strat as Strategies.ProgrammerLUA;
+
                     Strategy = "ProgrammerLUA";
                 }
                if (Strat is Strategies.ProgrammerPython)
@@ -857,7 +865,7 @@ namespace DoormatBot
             using (StreamWriter sw = new StreamWriter(FileLocation, false)) 
             {
                 sw.Write(Settings);
-            }            
+            }
         }
 
         public void LoadPersonalSettings(string FileLocation)
@@ -900,7 +908,6 @@ namespace DoormatBot
                 Logger.DumpLog("Attempting DB Interface Creation", 6);
                 //get a list of loaded assemblies
                 //get a list of classes that inherit persistentbase
-                
                 var type = typeof(PersistentBase);
                 var types = AppDomain.CurrentDomain.GetAssemblies()
                     .SelectMany(s => s.GetTypes())
@@ -920,7 +927,6 @@ namespace DoormatBot
         public void LoadBetSettings(string FileLocation)
         {
             string Settings = "";
-
             using (StreamReader sr = new StreamReader(FileLocation))
             {
                 Settings = sr.ReadToEnd();

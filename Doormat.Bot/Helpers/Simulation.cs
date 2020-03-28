@@ -96,6 +96,7 @@ namespace DoormatBot.Helpers
                         bets.Add(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}"
                         , TotalBetsPlaced, NewBet.Roll, NewBet.Chance, (NewBet.High ? ">" : "<"), NewBet.GetWin(Site) ? "win" : "lose", NewBet.TotalAmount, NewBet.Profit, this.Balance, Profit));
                     }
+
                     if (TotalBetsPlaced % 10000 == 0)
                     {
                         OnSimulationWriting?.Invoke(this, new EventArgs());

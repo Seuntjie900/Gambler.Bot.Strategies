@@ -12,7 +12,6 @@ namespace DoormatBot.Helpers
     [PersistentTableName("SESSIONSTATS")]
     public class SessionStats:PersistentBase
     {
-        
         public bool Simulation { get; set; }
         public SessionStats()
         {
@@ -174,7 +173,6 @@ namespace DoormatBot.Helpers
             ProfitPerBet = Profit / Bets;
             ProfitPerHour = ProfitPerBet * (Bets / (RunningTime / 1000m / 60m / 60m));
             ProfitPer24Hour = ProfitPerHour * 24m;
-            //CalculateLuck(Win, (decimal)newBet.Chance);
         }
 
         private void CalculateLuck(bool Win, decimal Chance)

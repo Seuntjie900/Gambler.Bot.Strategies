@@ -17,7 +17,7 @@ namespace DoormatBot.Strategies
         
         public int WinDevideCounter { get; set; } = 1;
         public decimal WinDevider { get; set; } = 1;
-        public int WinDevidecounter { get; set; } = 1;        
+        public int WinDevidecounter { get; set; } = 1;   
         public int StretchWin { get; set; } = 1;
         public bool EnableFirstResetWin { get; set; } = true;
         public bool EnableMK { get; set; } = false;
@@ -48,8 +48,7 @@ namespace DoormatBot.Strategies
         public decimal Multiplier { get; set; } = 2;
         public int MultiplierMode { get; set; } = 0;
         public int Devidecounter { get; set; } = 10;
-        public decimal Devider { get; set; } = 1;
-        
+        public decimal Devider { get; set; } = 1;        
         public decimal TrazelMultiplier { get; set; } = 1;
         public int TrazelLose { get; set; } = 1;
         public decimal trazelloseto { get; set; } = 1;
@@ -80,6 +79,7 @@ namespace DoormatBot.Strategies
                     WinMultiplier *= WinDevider;
                 }
                 else if (WinMultiplierMode == 3 && Stats.WinStreak == WinDevidecounter && Stats.WinStreak > 0)
+
                 {
                     WinMultiplier *= WinDevider;
                 }
@@ -163,6 +163,7 @@ namespace DoormatBot.Strategies
             else
             {
                 //stop multiplying if at max or if it goes below 1
+
                 if (MultiplierMode==1 && Stats.LossStreak >= MaxMultiplies)
                 {
                     Multiplier = 1;
@@ -174,6 +175,7 @@ namespace DoormatBot.Strategies
                         Multiplier = 1;
                 }
                 //adjust multiplier according to devider
+
                 else if (MultiplierMode == 3 && Stats.LossStreak == Devidecounter && Stats.LossStreak > 0)
                 {
                     Multiplier *= Devider;
@@ -250,7 +252,6 @@ namespace DoormatBot.Strategies
         {
             Amount = MinBet;
             return new PlaceDiceBet((decimal)MinBet, High, (decimal)Chance);
-
         }
 
 

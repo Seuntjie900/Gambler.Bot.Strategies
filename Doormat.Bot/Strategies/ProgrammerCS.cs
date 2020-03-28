@@ -69,8 +69,9 @@ namespace DoormatBot.Strategies
                 ScriptOptions.Default.WithReferences(
                     Assembly.GetExecutingAssembly())
                     .WithImports(
-                        "DoormatBot", 
+                        "DoormatBot",
                         "DoormatCore.Games",
+                        "DoormatBot.Games",
                         "System"), 
                 typeof(Globals));
 
