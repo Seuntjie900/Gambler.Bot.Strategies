@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="SAMPLECS.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="SAMPLECS.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IronPython" Version="2.7.9" />
+    <PackageReference Include="IronPython.StdLib" Version="2.7.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Doormat\Doormat\Doormat\DoormatCore.csproj" />
+    <ProjectReference Include="..\KeePassLib\KeePassLibNetStd.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="SAMPLEJS.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SAMPLELUA.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
