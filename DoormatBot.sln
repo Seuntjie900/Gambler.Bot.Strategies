@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.87
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DoormatControllers", "DoormatControllers\DoormatControllers.csproj", "{87EBE972-246E-4B23-873F-F80AA828AB50}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doormat.Bot", "Doormat.Bot\Doormat.Bot.csproj", "{EAE2B21B-B732-4960-9DE3-C6DEA31F7C92}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{87EBE972-246E-4B23-873F-F80AA828AB50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87EBE972-246E-4B23-873F-F80AA828AB50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87EBE972-246E-4B23-873F-F80AA828AB50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87EBE972-246E-4B23-873F-F80AA828AB50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAE2B21B-B732-4960-9DE3-C6DEA31F7C92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAE2B21B-B732-4960-9DE3-C6DEA31F7C92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAE2B21B-B732-4960-9DE3-C6DEA31F7C92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAE2B21B-B732-4960-9DE3-C6DEA31F7C92}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A967686E-E1F5-462C-84A0-A186162FD711}
+	EndGlobalSection
+EndGlobal
