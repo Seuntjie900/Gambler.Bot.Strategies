@@ -11,6 +11,7 @@ namespace DoormatBot.Strategies
 {
     public class ProgrammerLUA : BaseStrategy, ProgrammerMode
     {
+        public override string StrategyName { get; protected set; } = "ProgrammerLUA";
         public string FileName { get; set; }
 
         Script CurrentRuntime = null;

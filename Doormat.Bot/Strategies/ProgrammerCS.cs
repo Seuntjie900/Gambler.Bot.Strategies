@@ -16,6 +16,7 @@ namespace DoormatBot.Strategies
 {
     public class ProgrammerCS : BaseStrategy, ProgrammerMode
     {
+        public override string StrategyName { get; protected set; } = "ProgrammerCS";
         public string FileName { get; set; }
         public event EventHandler<WithdrawEventArgs> OnWithdraw;
         public event EventHandler<InvestEventArgs> OnInvest;
@@ -71,7 +72,6 @@ namespace DoormatBot.Strategies
                     .WithImports(
                         "DoormatBot",
                         "DoormatCore.Games",
-                        "DoormatBot.Games",
                         "System"), 
                 typeof(Globals));
 

@@ -59,7 +59,11 @@ namespace DoormatBot
 
         public bool LoggedIn { get; set; }
         public SessionStats Stats { get; set; }
-        public InternalBetSettings BetSettings { get; set; } = new InternalBetSettings();
+
+        public ExportBetSettings StoredBetSettings { get; set; } = new ExportBetSettings { BetSettings = new InternalBetSettings() };
+
+        public InternalBetSettings BetSettings { get => StoredBetSettings.BetSettings; set => StoredBetSettings.BetSettings=value; }
+
         public PersonalSettings PersonalSettings { get; set; } = new PersonalSettings();
         Bet MostRecentBet = null;
         PlaceBet NextBext = null;
@@ -181,8 +185,8 @@ namespace DoormatBot
             foreach (Type x in tps)
             { 
                 if (x.IsSubclassOf(BaseTyope))
-                {
-                    Strategies.Add(x.Name,x);
+                {                    
+                    Strategies.Add((Activator.CreateInstance(x) as BaseStrategy).StrategyName, x);
                 }
             }
             return Strategies;
@@ -577,7 +581,7 @@ namespace DoormatBot
                         (Strategy as ProgrammerMode).OnWithdraw += Doormat_OnWithdraw;                        
                     }
                 }
-
+                StoredBetSettings.SetStrategy(value);
                 OnStrategyChanged?.Invoke(this, new EventArgs());
                 
             }
@@ -769,7 +773,7 @@ namespace DoormatBot
             {
                 switch (Strategy)
                 {
-                    case "dAlembert": return dAlembert; 
+                    case "DAlembert": return dAlembert; 
                     case "PresetList": return PresetList; 
                     case "Labouchere": return Labouchere; 
                     case "Fibonacci": return Fibonacci; 
@@ -856,16 +860,18 @@ namespace DoormatBot
         
         public void SaveBetSettings(string FileLocation)
         {
-            ExportBetSettings tmp = new ExportBetSettings()
+            /*ExportBetSettings tmp = new ExportBetSettings()
             {
                 BetSettings = this.BetSettings
             };
-            tmp.SetStrategy(Strategy);
-            string Settings = DoormatCore.Helpers.json.JsonSerializer(tmp);
+            tmp.SetStrategy(Strategy);*/
+            StoredBetSettings.SetStrategy(strategy);
+            string Settings = DoormatCore.Helpers.json.JsonSerializer(this.StoredBetSettings);
             using (StreamWriter sw = new StreamWriter(FileLocation, false)) 
             {
                 sw.Write(Settings);
             }
+            
         }
 
         public void LoadPersonalSettings(string FileLocation)
@@ -924,19 +930,20 @@ namespace DoormatBot
             }
         }
 
-        public void LoadBetSettings(string FileLocation)
+        public ExportBetSettings LoadBetSettings(string FileLocation, bool ApplySettings = true)
         {
             string Settings = "";
             using (StreamReader sr = new StreamReader(FileLocation))
             {
                 Settings = sr.ReadToEnd();
             }
-            ExportBetSettings tmp = json.JsonDeserialize<ExportBetSettings>(Settings);
-            if (tmp.BetSettings!=null)
-                this.BetSettings = tmp.BetSettings;
-            this.Strategy = tmp.GetStrat();
+            this.StoredBetSettings = json.JsonDeserialize<ExportBetSettings>(Settings);
+            if (StoredBetSettings.BetSettings!=null && ApplySettings)
+                this.BetSettings = StoredBetSettings.BetSettings;
+            this.Strategy = StoredBetSettings.GetStrat();
+            return StoredBetSettings;
         }
-
+        
         #region Accounts
         public KPHelper[] GetAccounts()
         {

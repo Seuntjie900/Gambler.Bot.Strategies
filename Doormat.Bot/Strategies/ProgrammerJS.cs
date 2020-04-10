@@ -12,7 +12,7 @@ namespace DoormatBot.Strategies
 {
     public class ProgrammerJS : BaseStrategy, ProgrammerMode
     {
-
+        public override string StrategyName { get; protected set; } = "ProgrammerJS";
         Engine Runtime;
         
         public string FileName { get; set; }

@@ -18,7 +18,7 @@ namespace DoormatBot.Strategies
         /// <summary>
         /// The strategies name
         /// </summary>
-        public string StrategyName { get; protected set; }
+        public abstract string StrategyName { get; protected set; }
 
         public PlaceBet CalculateNextBet(Bet PreviousBet, bool Win)
         {

@@ -10,7 +10,7 @@ namespace DoormatBot.Strategies
 {
     public class PresetList: BaseStrategy
     {
-
+        public override string StrategyName { get; protected set; } = "PresetList";
         int presetLevel = 0;
         List<string> lstPresetList = new List<string>();
         public override PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)

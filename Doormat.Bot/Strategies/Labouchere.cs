@@ -10,7 +10,7 @@ namespace DoormatBot.Strategies
 {
     public class Labouchere: BaseStrategy
     {
-
+        public override string StrategyName { get; protected set; } = "Labouchere";
         //public string LabList { get; set; }
 
         public List<decimal> BetList { get; set; } = new List<decimal>();

@@ -11,7 +11,7 @@ namespace DoormatBot.Strategies
 {
     public class DAlembert: BaseStrategy
     {
-
+        public override string StrategyName { get; protected set; } = "D'Alembert";
         public int AlembertStretchWin { get; set; } = 1;
 
         public int AlembertStretchLoss { get; set; } = 1;

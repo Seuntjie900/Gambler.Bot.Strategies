@@ -10,6 +10,7 @@ namespace DoormatBot.Strategies
 {
     public class Martingale: BaseStrategy
     {
+        public override string StrategyName { get; protected set; } = "Martingale";
         #region Settings
         public int WinMultiplierMode { get; set; }
         public decimal WinMaxMultiplies { get; set; } = 1;

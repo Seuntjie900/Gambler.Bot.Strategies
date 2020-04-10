@@ -10,6 +10,7 @@ namespace DoormatBot.Strategies
 {
     public class Fibonacci: BaseStrategy
     {
+        public override string StrategyName { get; protected set; } = "Fibonacci";
         public decimal minbet { get; set; }
         public override PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {

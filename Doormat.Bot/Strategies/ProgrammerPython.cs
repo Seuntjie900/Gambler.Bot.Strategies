@@ -15,6 +15,7 @@ namespace DoormatBot.Strategies
 {
     public class ProgrammerPython: BaseStrategy, ProgrammerMode
     {
+        public override string StrategyName { get; protected set; } = "ProgrammerPython";
         public string FileName { get; set; }
         ScriptRuntime CurrentRuntime;
         
