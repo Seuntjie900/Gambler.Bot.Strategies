@@ -164,10 +164,10 @@ namespace DoormatBot.Helpers
                     }
                     if (BetSettings.CheckHighLow(NewBet, NewBet.GetWin(Site), Stats, out NewHigh))
                     {
-                        DiceStrategy.High = NewHigh;
+                        (DiceStrategy as iDiceStrategy).High = NewHigh;
                     }
                     if (!Reset)
-                        NewBetObject = DiceStrategy.CalculateNextDiceBet(NewBet, win);
+                        NewBetObject = (DiceStrategy as iDiceStrategy).CalculateNextDiceBet(NewBet, win);
                     if (Running && !Stop && TotalBetsPlaced <= Bets)
                     {
                         if (this.Balance <(decimal)NewBetObject.Amount)

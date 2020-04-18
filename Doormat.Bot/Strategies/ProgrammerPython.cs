@@ -13,10 +13,15 @@ using Microsoft.Scripting;
 
 namespace DoormatBot.Strategies
 {
-    public class ProgrammerPython: BaseStrategy, ProgrammerMode
+    public class ProgrammerPython: BaseStrategy, ProgrammerMode, iDiceStrategy
     {
         public override string StrategyName { get; protected set; } = "ProgrammerPython";
         public string FileName { get; set; }
+        public bool High { get ; set ; }
+        public decimal Amount { get ; set ; }
+        public decimal Chance { get ; set ; }
+        public decimal StartChance { get ; set ; }
+
         ScriptRuntime CurrentRuntime;
         
         ScriptEngine Engine;
@@ -43,7 +48,7 @@ namespace DoormatBot.Strategies
             
         }
 
-        public override PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             PlaceDiceBet NextBet = new PlaceDiceBet(PreviousBet.TotalAmount, PreviousBet.High, PreviousBet.Chance);
 

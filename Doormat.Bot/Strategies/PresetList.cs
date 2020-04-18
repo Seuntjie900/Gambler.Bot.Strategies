@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace DoormatBot.Strategies
 {
-    public class PresetList: BaseStrategy
+    public class PresetList: BaseStrategy, iDiceStrategy
     {
         public override string StrategyName { get; protected set; } = "PresetList";
         int presetLevel = 0;
         List<string> lstPresetList = new List<string>();
-        public override PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             decimal Lastbet = PreviousBet.TotalAmount;
             if (Win)
@@ -172,6 +172,10 @@ namespace DoormatBot.Strategies
         public bool rdbPresetEndStep { get; set; }
 
         public int nudPresetEndStep { get; set; }
+        public bool High { get ; set ; }
+        public decimal Amount { get ; set ; }
+        public decimal Chance { get ; set ; }
+        public decimal StartChance { get ; set ; }
     }
 
 

@@ -6,6 +6,12 @@
 
   <ItemGroup>
     <Compile Remove="SAMPLECS.cs" />
+    <Compile Remove="Samples\CSTemplate.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Samples\JSTemplate.js" />
+    <None Remove="Samples\LUATemplate.lua" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +28,18 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Doormat\Doormat\Doormat\DoormatCore.csproj" />
     <ProjectReference Include="..\KeePassLib\KeePassLibNetStd.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Samples\CSTemplate.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Samples\LUATemplate.lua">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Samples\JSTemplate.js">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

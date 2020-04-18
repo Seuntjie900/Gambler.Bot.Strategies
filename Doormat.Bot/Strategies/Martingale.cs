@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DoormatBot.Strategies
 {
-    public class Martingale: BaseStrategy
+    public class Martingale: BaseStrategy, iDiceStrategy
     {
         public override string StrategyName { get; protected set; } = "Martingale";
         #region Settings
@@ -26,6 +26,7 @@ namespace DoormatBot.Strategies
         
         public bool EnableTrazel { get; set; } = false;
         public bool starthigh { get; set; } = true;
+        public bool startlow { get { return !starthigh; } set { starthigh = !value; } }
         public decimal MKDecrement { get; set; } = 1;
         public decimal trazelwin { get; set; } = 1;
         public decimal TrazelWin { get; set; } = 1;
@@ -62,10 +63,14 @@ namespace DoormatBot.Strategies
         public bool EnablePercentage { get; set; }= false;
         public decimal Percentage { get; set; } = 0.1m;
         public decimal BaseChance { get; set; } = 49.5m;
+        public bool High { get ; set ; }
+        public decimal Amount { get ; set ; }
+        public decimal Chance { get ; set ; }
+        public decimal StartChance { get ; set ; }
         #endregion
 
 
-        public override PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             decimal Lastbet = PreviousBet.TotalAmount;
             var Stats = this.Stats;
@@ -252,7 +257,9 @@ namespace DoormatBot.Strategies
         public override PlaceDiceBet RunReset()
         {
             Amount = MinBet;
-            return new PlaceDiceBet((decimal)MinBet, High, (decimal)Chance);
+            High = starthigh;
+            Chance = BaseChance;
+            return new PlaceDiceBet((decimal)MinBet, starthigh, (decimal)Chance);
         }
 
 

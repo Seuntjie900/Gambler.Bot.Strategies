@@ -14,10 +14,15 @@ using DoormatBot.Helpers;
 
 namespace DoormatBot.Strategies
 {
-    public class ProgrammerCS : BaseStrategy, ProgrammerMode
+    public class ProgrammerCS : BaseStrategy, ProgrammerMode, iDiceStrategy
     {
         public override string StrategyName { get; protected set; } = "ProgrammerCS";
         public string FileName { get; set; }
+        public bool High { get ; set ; }
+        public decimal Amount { get ; set ; }
+        public decimal Chance { get ; set ; }
+        public decimal StartChance { get ; set ; }
+
         public event EventHandler<WithdrawEventArgs> OnWithdraw;
         public event EventHandler<InvestEventArgs> OnInvest;
         public event EventHandler<TipEventArgs> OnTip;
@@ -37,7 +42,7 @@ namespace DoormatBot.Strategies
         Globals globals;
         Script DoDiceBet = null;
         Script ResetDice = null;
-        public override PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             PlaceDiceBet NextBet = new PlaceDiceBet(PreviousBet.TotalAmount, PreviousBet.High, PreviousBet.Chance);
             

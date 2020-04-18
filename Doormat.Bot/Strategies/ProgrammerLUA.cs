@@ -9,10 +9,14 @@ using MoonSharp.Interpreter;
 
 namespace DoormatBot.Strategies
 {
-    public class ProgrammerLUA : BaseStrategy, ProgrammerMode
+    public class ProgrammerLUA : BaseStrategy, ProgrammerMode, iDiceStrategy
     {
         public override string StrategyName { get; protected set; } = "ProgrammerLUA";
         public string FileName { get; set; }
+        public bool High { get ; set ; }
+        public decimal Amount { get ; set ; }
+        public decimal Chance { get ; set ; }
+        public decimal StartChance { get ; set ; }
 
         Script CurrentRuntime = null;
 
@@ -31,7 +35,7 @@ namespace DoormatBot.Strategies
         public event EventHandler<EventArgs> OnResetBuiltIn;
         public event EventHandler<ExportSimEventArgs> OnExportSim;
 
-        public override PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             PlaceDiceBet NextBet = new PlaceDiceBet(PreviousBet.TotalAmount, PreviousBet.High, PreviousBet.Chance);
             DynValue DoDiceBet = CurrentRuntime.Globals.Get("DoDiceBet");

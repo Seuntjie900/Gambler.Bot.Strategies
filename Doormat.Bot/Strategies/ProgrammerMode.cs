@@ -34,7 +34,7 @@ namespace DoormatBot.Strategies
         //event EventHandler<ResetBuiltInEventArgs> OnResetBuiltIn;
         event EventHandler<ExportSimEventArgs> OnExportSim;
 
-        
+        public string FileName { get; set; }
     }
 
     public class WithdrawEventArgs : EventArgs

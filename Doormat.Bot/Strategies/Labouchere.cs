@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DoormatBot.Strategies
 {
-    public class Labouchere: BaseStrategy
+    public class Labouchere: BaseStrategy, iDiceStrategy
     {
         public override string StrategyName { get; protected set; } = "Labouchere";
         //public string LabList { get; set; }
@@ -16,7 +16,7 @@ namespace DoormatBot.Strategies
         public List<decimal> BetList { get; set; } = new List<decimal>();
         public decimal[] SerializableBetList { get { return BetList.ToArray(); } set { BetList = new List<decimal>(value); } }
         List<decimal> LabList = new List<decimal>();
-        public override PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             decimal Lastbet = PreviousBet.TotalAmount;
             if (Win)
@@ -145,5 +145,9 @@ namespace DoormatBot.Strategies
         public bool chkReverseLab { get; set; }
 
         public bool rdbLabStop { get; set; }
+        public bool High { get ; set ; }
+        public decimal Amount { get ; set ; }
+        public decimal Chance { get ; set ; }
+        public decimal StartChance { get ; set ; }
     }
 }

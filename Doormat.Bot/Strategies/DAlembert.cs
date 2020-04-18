@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DoormatBot.Strategies
 {
-    public class DAlembert: BaseStrategy
+    public class DAlembert: BaseStrategy, iDiceStrategy
     {
         public override string StrategyName { get; protected set; } = "D'Alembert";
         public int AlembertStretchWin { get; set; } = 1;
@@ -21,8 +21,12 @@ namespace DoormatBot.Strategies
         public decimal MinBet { get; set; } = 0.00000100m;
 
         public decimal AlembertIncrementWin { get; set; } = 0.00000100m;
+        public bool High { get; set ; }
+        public decimal Amount { get ; set ; }
+        public decimal Chance { get ; set; }
+        public decimal StartChance { get; set; }
 
-        public override PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             decimal Lastbet = PreviousBet.TotalAmount;
             SessionStats Stats = this.Stats;

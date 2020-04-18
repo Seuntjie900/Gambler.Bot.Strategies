@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace DoormatBot.Strategies
 {
-    public class Fibonacci: BaseStrategy
+    public class Fibonacci: BaseStrategy, iDiceStrategy
     {
         public override string StrategyName { get; protected set; } = "Fibonacci";
         public decimal minbet { get; set; }
-        public override PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             decimal LastBet = PreviousBet.TotalAmount;
             if (Win)
@@ -99,5 +99,9 @@ namespace DoormatBot.Strategies
         public bool EnableFiboLevel { get; set; } = true;
 
         public bool EnableFiboLevelReset { get; set; } = false;
+        public bool High { get ; set ; }
+        public decimal Amount { get ; set ; }
+        public decimal Chance { get ; set ; }
+        public decimal StartChance { get ; set ; }
     }
 }

@@ -26,8 +26,8 @@ namespace DoormatBot.Strategies
                 return WorkingSet.CalculateNextBet(PreviousBet, Win);
             else
             {
-                if (PreviousBet is DiceBet)
-                    return CalculateNextDiceBet(PreviousBet as DiceBet, Win);
+                if (PreviousBet is DiceBet && this is iDiceStrategy dc)
+                    return dc.CalculateNextDiceBet(PreviousBet as DiceBet, Win);
                 else if (PreviousBet is CrashBet)
                     return CalculateNextCrashBet(PreviousBet as CrashBet, Win);
                 else if (PreviousBet is RouletteBet)
@@ -38,12 +38,6 @@ namespace DoormatBot.Strategies
             return null;
         }
 
-        /// <summary>
-        /// The main logic for the strategy. This is called in between every bet.
-        /// </summary>
-        /// <param name="PreviousBet">The bet details for the last bet that was placed</param>
-        /// <returns>Bet details for the bet to be placed next.</returns>
-        public virtual PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win) { throw new NotImplementedException(); }
 
         public virtual PlaceCrashBet CalculateNextCrashBet(CrashBet PreviousBet, bool Win) { throw new NotImplementedException(); }
 
@@ -56,14 +50,20 @@ namespace DoormatBot.Strategies
         /// Indicates to the strategy that automated betting is starting.
         /// </summary>
         /// <returns></returns>
-        public PlaceDiceBet Start()
+        public PlaceBet Start()
         {
-            WorkingSet = CopyHelper.CreateCopy( this.GetType(),this) as BaseStrategy;
-            WorkingSet.NeedBalance += WorkingSet_NeedBalance;
-            WorkingSet.OnNeedStats += WorkingSet_OnNeedStats;
-            WorkingSet.Stop += WorkingSet_Stop;
-            
-            return WorkingSet.RunReset();
+            if (!(this is ProgrammerMode))
+            {
+                WorkingSet = CopyHelper.CreateCopy(this.GetType(), this) as BaseStrategy;
+                WorkingSet.NeedBalance += WorkingSet_NeedBalance;
+                WorkingSet.OnNeedStats += WorkingSet_OnNeedStats;
+                WorkingSet.Stop += WorkingSet_Stop;
+                return WorkingSet.RunReset();
+            }
+            else
+            {
+                return RunReset();
+            }
         }
 
         private void WorkingSet_Stop(object sender, StopEventArgs e)
@@ -91,15 +91,7 @@ namespace DoormatBot.Strategies
         /// Gets the users balance from the site
         /// </summary>
         protected decimal Balance {get{return GetBalance();}}
-
-        public bool High { get; set; } = true;
-        public decimal Amount { get; set; } = 0.00000100m;
-        public decimal Chance { get; set; } = 49.5m;
-
-        public virtual void LoadString(string Folder)
-        {
-
-        }
+               
 
         protected decimal GetBalance()
         {
@@ -149,4 +141,18 @@ namespace DoormatBot.Strategies
         }
     }
     
+    public interface iDiceStrategy
+    {
+        public bool High { get; set; }
+        public decimal Amount { get; set; }
+        public decimal Chance { get; set; } 
+        public decimal StartChance { get; set; }
+
+        /// <summary>
+        /// The main logic for the strategy. This is called in between every bet.
+        /// </summary>
+        /// <param name="PreviousBet">The bet details for the last bet that was placed</param>
+        /// <returns>Bet details for the bet to be placed next.</returns>
+        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win);
+    }
 }

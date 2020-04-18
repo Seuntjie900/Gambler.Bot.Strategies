@@ -41,7 +41,8 @@ namespace DoormatCore.Storage
         protected override void CreateTable(Type type)
         {
 
-
+            if (type.GetCustomAttribute<PersistentTableName>() == null)
+                return;
             string TableName = type.GetCustomAttribute<PersistentTableName>().TableName;
 
             SQLiteCommand CheckTableExists = new SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table' AND name='" + TableName + "'", Connection);

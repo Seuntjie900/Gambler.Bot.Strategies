@@ -10,13 +10,16 @@ using Jint;
 
 namespace DoormatBot.Strategies
 {
-    public class ProgrammerJS : BaseStrategy, ProgrammerMode
+    public class ProgrammerJS : BaseStrategy, ProgrammerMode, iDiceStrategy
     {
         public override string StrategyName { get; protected set; } = "ProgrammerJS";
         Engine Runtime;
         
         public string FileName { get; set; }
-
+        public bool High { get ; set ; }
+        public decimal Amount { get ; set ; }
+        public decimal Chance { get ; set ; }
+        public decimal StartChance { get ; set ; }
 
         public event EventHandler<WithdrawEventArgs> OnWithdraw;
         public event EventHandler<InvestEventArgs> OnInvest;
@@ -33,7 +36,7 @@ namespace DoormatBot.Strategies
         public event EventHandler<EventArgs> OnResetBuiltIn;
         public event EventHandler<ExportSimEventArgs> OnExportSim;
 
-        public override PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             PlaceDiceBet NextBet =  new PlaceDiceBet(PreviousBet.TotalAmount, PreviousBet.High, PreviousBet.Chance);
             //TypeReference.CreateTypeReference

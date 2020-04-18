@@ -917,7 +917,7 @@ namespace DoormatBot
                 var type = typeof(PersistentBase);
                 var types = AppDomain.CurrentDomain.GetAssemblies()
                     .SelectMany(s => s.GetTypes())
-                    .Where(p => type.IsAssignableFrom(p)).ToList();
+                    .Where(p => type.IsAssignableFrom(p) && p!=typeof(PersistentBase) ).ToList();
 
 
                 DBInterface = SQLBase.OpenConnection(PersonalSettings.GetConnectionString(pw), PersonalSettings.Provider, types);
