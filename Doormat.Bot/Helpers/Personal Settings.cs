@@ -137,6 +137,7 @@ namespace DoormatBot.Helpers
             tmp[7] = new PersonalSettings.ErrorSetting { Type = ErrorType.Unknown, Action = PersonalSettings.ErrorActions.Stop };
             tmp[8] = new PersonalSettings.ErrorSetting { Type = ErrorType.Withdrawal, Action = PersonalSettings.ErrorActions.Resume };
             settings.ErrorSettings = tmp;
+            
             return settings;
         }
     }

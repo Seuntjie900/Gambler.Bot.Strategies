@@ -16,6 +16,7 @@ namespace DoormatBot.Helpers
     {
         public event EventHandler OnSimulationWriting;
         public event EventHandler OnSimulationComplete;
+        public event EventHandler<BetFinisedEventArgs> OnBetSimulated;
 
         public string serverseedhash { get; set; }
         public string serverseed { get; set; }
@@ -242,7 +243,7 @@ namespace DoormatBot.Helpers
                 ServerSeed = serverseed
             };
             betresult.Profit = betresult.GetWin(Site) ?  ((((100.0m - Site.Edge) / NewBet.Chance) * NewBet.Amount)-NewBet.Amount): -NewBet.Amount;
-                
+            OnBetSimulated?.Invoke(this, new BetFinisedEventArgs(betresult));
             return betresult;
         }
 

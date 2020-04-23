@@ -62,7 +62,9 @@ namespace DoormatBot
 
         public ExportBetSettings StoredBetSettings { get; set; } = new ExportBetSettings { BetSettings = new InternalBetSettings() };
 
-        public InternalBetSettings BetSettings { get => StoredBetSettings.BetSettings; set => StoredBetSettings.BetSettings=value; }
+        public InternalBetSettings BetSettings { 
+            get => StoredBetSettings.BetSettings; 
+            set => StoredBetSettings.BetSettings=value; }
 
         public PersonalSettings PersonalSettings { get; set; } = new PersonalSettings();
         Bet MostRecentBet = null;
@@ -639,7 +641,7 @@ namespace DoormatBot
         private void Doormat_OnPrint(object sender, PrintEventArgs e)
         {
             //send print to UI
-            throw new NotImplementedException();
+            
         }
 
         private void Doormat_OnInvest(object sender, InvestEventArgs e)
