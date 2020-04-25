@@ -67,11 +67,18 @@ namespace DoormatBot.Helpers
         public decimal ProfitPer24Hour { get; set; }
         public decimal ProfitPerBet { get; set; }
         public long CurrentStreak { get { return WinStreak > LossStreak ? WinStreak : -LossStreak; } }
+        public decimal MaxProfit { get; set; } = 0;
+        public decimal MinProfit { get; set; } = 0;
+
         public void UpdateStats(Bet newBet, bool Win)
         {
             RunningTime = (long)(DateTime.Now - StartTime).TotalMilliseconds;
             Bets++;
             Profit += (decimal)newBet.Profit;
+            if (Profit > MaxProfit)
+                MaxProfit = Profit;
+            if (Profit < MinProfit)
+                MinProfit = Profit;
             Wagered += (decimal)newBet.TotalAmount;
             PorfitSinceLimitAction += (decimal)newBet.Profit;
             if (Win)

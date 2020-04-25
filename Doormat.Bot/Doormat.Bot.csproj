@@ -12,6 +12,7 @@
   <ItemGroup>
     <None Remove="Samples\JSTemplate.js" />
     <None Remove="Samples\LUATemplate.lua" />
+    <None Remove="Samples\PYTemplate.py" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +41,7 @@
     <EmbeddedResource Include="Samples\JSTemplate.js">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Samples\PYTemplate.py" />
   </ItemGroup>
 
   <ItemGroup>

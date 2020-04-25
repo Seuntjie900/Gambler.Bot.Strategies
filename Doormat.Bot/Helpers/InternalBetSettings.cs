@@ -58,26 +58,23 @@ namespace DoormatBot.Helpers
         public bool EnableResetAfterWins { get; set; } = false;
         public int ResetAfterWins { get; set; }
 
-        public bool EnableUpperBalanceLimit { get; set; } = false;
-        public decimal UpperBalanceLimit { get; set; }
-        public bool EnableLowerBalanceLimit { get; set; } = false;
-        public decimal LowerBalanceLimit { get; set; }
         public enum LimitAction { Stop, Withdraw, Tip, Reset, Invest, Bank }
-        public LimitAction UpperBalanceLimitAction { get; set; }
-        public LimitAction LowerBalanceLimitAction { get; set; }
-        public decimal UpperBalanceLimitActionAmount { get; set; }
-        public decimal LowerBalanceLimitActionAmount { get; set; }
 
-        public bool EnableUpperProfitLimitt { get; set; } = false;
+        public bool EnableUpperLimit { get; set; } = false;
+        public decimal UpperLimit { get; set; }        
+        public LimitAction UpperLimitAction { get; set; }
+        public string UpperLimitCompare { get; set; }
+        public decimal UpperLimitActionAmount { get; set; }
+        public string UpperLimitAddress { get; set; }
 
-        public decimal UpperProfitLimit { get; set; }
-        public bool EnableLowerProfitLimit { get; set; } = false;
+        public bool EnableLowerLimit { get; set; } = false;
+        public decimal LowerLimit { get; set; }
+        public LimitAction LowerLimitAction { get; set; }
+        public string LowerLimitCompare { get; set; }
+        public decimal LowerLimitActionAmount { get; set; }
+        public string LowerLimitAddress { get; set; }
 
-        public decimal LowerProfitLimit { get; set; }
-        public LimitAction UpperProfitLimitAction { get; set; }
-        public LimitAction LowerProfitLimitAction { get; set; }
-        public decimal UpperProfitLimitActionAmount { get; set; }
-        public decimal LowerProfitLimitActionAmount { get; set; }
+
 
         public bool EnableMaxBet { get; set; } = false;
         public bool EnableMinBet { get; set; } = false;
@@ -97,7 +94,10 @@ namespace DoormatBot.Helpers
         public int ResetSeedWinStreak { get; set; }
         public bool EnableResetSeedLossStreak { get; set; } = false;
         public int ResetSeedLossStreak { get; set; }
-
+        public bool EnableResetSeedProfit { get; set; } = false;
+        public int ResetSeedProfit { get; set; }
+        public bool EnableResetSeedLoss { get; set; } = false;
+        public int ResetSeedLoss { get; set; }
 
         public bool EnableSwitchWins { get; set; } = false;
         public int SwitchWins { get; set; }
@@ -127,25 +127,25 @@ namespace DoormatBot.Helpers
             {
                 reset = true;
             }
-            if (EnableUpperBalanceLimit && UpperBalanceLimitAction == LimitAction.Reset)
+            if (EnableUpperLimit && UpperLimitAction == LimitAction.Reset)
             {
                 //if balance is larger than the limit, reset
             }
-            if (EnableLowerBalanceLimit && LowerBalanceLimitAction == LimitAction.Reset)
+            if (EnableLowerLimit && LowerLimitAction == LimitAction.Reset)
             {
                 //if balance is Smaller than the limit, reset
             }
-            if (EnableUpperProfitLimitt && UpperProfitLimitAction == LimitAction.Reset)
+            if (EnableUpperLimit && UpperLimitAction == LimitAction.Reset)
             {
-                if (Statsn.PorfitSinceLimitAction>= UpperProfitLimit)
+                if (Statsn.PorfitSinceLimitAction>= UpperLimit)
                 {
                     reset = true;
                     Statsn.PorfitSinceLimitAction = 0;
                 }
             }
-            if (EnableLowerProfitLimit && LowerProfitLimitAction == LimitAction.Reset)
+            if (EnableLowerLimit && LowerLimitAction == LimitAction.Reset)
             {
-                if (Statsn.PorfitSinceLimitAction >= LowerProfitLimit)
+                if (Statsn.PorfitSinceLimitAction >= LowerLimit)
                 {
                     reset = true;
                     Statsn.PorfitSinceLimitAction = 0;
@@ -205,27 +205,27 @@ namespace DoormatBot.Helpers
         public bool CheckStopPOstStats(DiceBet NewBet, bool win, SessionStats Stats, out string reason)
         {
             
-            if (EnableUpperBalanceLimit && UpperBalanceLimitAction == LimitAction.Stop)
+            if (EnableUpperLimit && UpperLimitAction == LimitAction.Stop)
             {
                 //check balance
                 //stop if balance is larger
             }
-            if (EnableLowerBalanceLimit && LowerBalanceLimitAction == LimitAction.Stop)
+            if (EnableLowerLimit && LowerLimitAction == LimitAction.Stop)
             {
                 //check balance
                 //stop if balance is lower
             }
-            if (EnableUpperProfitLimitt && UpperProfitLimitAction == LimitAction.Stop)
+            if (EnableUpperLimit && UpperLimitAction == LimitAction.Stop)
             {
-                if (Stats.Profit>=UpperProfitLimit)
+                if (Stats.Profit>=UpperLimit)
                 {
                     reason = "Upper profit limit reached. Stopping.";
                     return true;
                 }
             }
-            if (EnableLowerProfitLimit && LowerProfitLimitAction == LimitAction.Stop)
+            if (EnableLowerLimit && LowerLimitAction == LimitAction.Stop)
             {
-                if (Stats.Profit <= LowerProfitLimit)
+                if (Stats.Profit <= LowerLimit)
                 {
                     reason = "Lower profit limit reached. Stopping.";
                     return true;
@@ -295,31 +295,31 @@ namespace DoormatBot.Helpers
         public bool CheckWithdraw(DiceBet NewBet, bool win, SessionStats Stats,  out decimal Amount)
         {
             Amount = 0;
-            if (EnableUpperBalanceLimit && UpperBalanceLimitAction == LimitAction.Withdraw)
+            if (EnableUpperLimit && UpperLimitAction == LimitAction.Withdraw)
             {
                 //check balance
                 //stop if balance is larger
-                Amount = UpperBalanceLimitActionAmount;
+                Amount = UpperLimitActionAmount;
             }
-            if (EnableLowerBalanceLimit && LowerBalanceLimitAction == LimitAction.Withdraw)
+            if (EnableLowerLimit && LowerLimitAction == LimitAction.Withdraw)
             {
                 //check balance
                 //stop if balance is lower
-                Amount = LowerBalanceLimitActionAmount;
+                Amount = LowerLimitActionAmount;
             }
-            if (EnableUpperProfitLimitt && UpperProfitLimitAction == LimitAction.Withdraw)
+            if (EnableUpperLimit && UpperLimitAction == LimitAction.Withdraw)
             {
-                if (Stats.Profit >= UpperProfitLimit)
+                if (Stats.Profit >= UpperLimit)
                 {
-                    Amount = UpperProfitLimitActionAmount;
+                    Amount = UpperLimitActionAmount;
                     return true;
                 }
             }
-            if (EnableLowerProfitLimit && LowerProfitLimitAction == LimitAction.Withdraw)
+            if (EnableLowerLimit && LowerLimitAction == LimitAction.Withdraw)
             {
-                if (Stats.Profit <= LowerProfitLimit)
+                if (Stats.Profit <= LowerLimit)
                 {
-                    Amount = LowerProfitLimitActionAmount;
+                    Amount = LowerLimitActionAmount;
                     return true;
                 }
             }
@@ -330,31 +330,31 @@ namespace DoormatBot.Helpers
         {
            Amount = 0;
             Amount = 0;
-            if (EnableUpperBalanceLimit && UpperBalanceLimitAction == LimitAction.Tip)
+            if (EnableUpperLimit && UpperLimitAction == LimitAction.Tip)
             {
                 //check balance
                 //stop if balance is larger
-                Amount = UpperBalanceLimitActionAmount;
+                Amount = UpperLimitActionAmount;
             }
-            if (EnableLowerBalanceLimit && LowerBalanceLimitAction == LimitAction.Tip)
+            if (EnableLowerLimit && LowerLimitAction == LimitAction.Tip)
             {
                 //check balance
                 //stop if balance is lower
-                Amount = LowerBalanceLimitActionAmount;
+                Amount = LowerLimitActionAmount;
             }
-            if (EnableUpperProfitLimitt && UpperProfitLimitAction == LimitAction.Tip)
+            if (EnableUpperLimit && UpperLimitAction == LimitAction.Tip)
             {
-                if (Stats.Profit >= UpperProfitLimit)
+                if (Stats.Profit >= UpperLimit)
                 {
-                    Amount = UpperProfitLimitActionAmount;
+                    Amount = UpperLimitActionAmount;
                     return true;
                 }
             }
-            if (EnableLowerProfitLimit && LowerProfitLimitAction == LimitAction.Tip)
+            if (EnableLowerLimit && LowerLimitAction == LimitAction.Tip)
             {
-                if (Stats.Profit <= LowerProfitLimit)
+                if (Stats.Profit <= LowerLimit)
                 {
-                    Amount = LowerProfitLimitActionAmount;
+                    Amount = LowerLimitActionAmount;
                     return true;
                 }
             }
@@ -397,31 +397,31 @@ namespace DoormatBot.Helpers
         public bool CheckBank(DiceBet NewBet, bool win, SessionStats Stats, out decimal Amount)
         {
             Amount = 0;
-            if (EnableUpperBalanceLimit && UpperBalanceLimitAction == LimitAction.Bank)
+            if (EnableUpperLimit && UpperLimitAction == LimitAction.Bank)
             {
                 //check balance
                 //stop if balance is larger
-                Amount = UpperBalanceLimitActionAmount;
+                Amount = UpperLimitActionAmount;
             }
-            if (EnableLowerBalanceLimit && LowerBalanceLimitAction == LimitAction.Bank)
+            if (EnableLowerLimit && LowerLimitAction == LimitAction.Bank)
             {
                 //check balance
                 //stop if balance is lower
-                Amount = LowerBalanceLimitActionAmount;
+                Amount = LowerLimitActionAmount;
             }
-            if (EnableUpperProfitLimitt && UpperProfitLimitAction == LimitAction.Bank)
+            if (EnableUpperLimit && UpperLimitAction == LimitAction.Bank)
             {
-                if (Stats.Profit >= UpperProfitLimit)
+                if (Stats.Profit >= UpperLimit)
                 {
-                    Amount = UpperProfitLimitActionAmount;
+                    Amount = UpperLimitActionAmount;
                     return true;
                 }
             }
-            if (EnableLowerProfitLimit && LowerProfitLimitAction == LimitAction.Bank)
+            if (EnableLowerLimit && LowerLimitAction == LimitAction.Bank)
             {
-                if (Stats.Profit <= LowerProfitLimit)
+                if (Stats.Profit <= LowerLimit)
                 {
-                    Amount = LowerProfitLimitActionAmount;
+                    Amount = LowerLimitActionAmount;
                     return true;
                 }
             }

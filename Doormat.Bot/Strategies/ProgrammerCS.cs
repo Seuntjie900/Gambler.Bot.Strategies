@@ -49,12 +49,14 @@ namespace DoormatBot.Strategies
             globals.NextDiceBet = NextBet;
             globals.PreviousDiceBet = PreviousBet;
             globals.DiceWin =Win;
-            if (DoDiceBet == null)
+            //if (DoDiceBet == null)
             {
+
                 runtime = runtime.ContinueWithAsync("DoDiceBet(PreviousDiceBet, DiceWin, NextDiceBet)").Result;
                 DoDiceBet = runtime.Script;
             }
-            /*runtime = runtime.ContinueWithAsync("DoDiceBet(PreviousDiceBet, DiceWin, NextDiceBet)", ScriptOptions.Default.WithReferences(
+            /*else
+            runtime = runtime.ContinueWithAsync("DoDiceBet(PreviousDiceBet, DiceWin, NextDiceBet)", ScriptOptions.Default.WithReferences(
                     Assembly.GetExecutingAssembly())
                     .WithImports(
                         "DoormatBot",
@@ -63,8 +65,8 @@ namespace DoormatBot.Strategies
 
 
             //;
-            else
-                runtime = DoDiceBet.RunFromAsync(runtime).Result;
+            /*else                
+                runtime = DoDiceBet.RunFromAsync(runtime).Result;*/
             return NextBet;
         }
         delegate void dDoDiceBet(DiceBet PreviousBet, bool Win, PlaceDiceBet NextBet);
@@ -113,14 +115,14 @@ namespace DoormatBot.Strategies
         {
             PlaceDiceBet NextBet = new PlaceDiceBet(0, false, 0);
             globals.NextDiceBet = NextBet;            
-            if (ResetDice == null)
+            //if (ResetDice == null)
             {
                 runtime = runtime.ContinueWithAsync("ResetDice(NextDiceBet)").Result;
                 ResetDice = runtime.Script;
             }
             
-            else
-                runtime = ResetDice.RunFromAsync(runtime).Result;
+            //else
+            //    runtime = ResetDice.RunFromAsync(runtime).Result;
             return NextBet;
         }
 

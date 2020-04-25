@@ -80,6 +80,8 @@ namespace DoormatControllers
                         case "strategy": Strategy(); break;
                         case "stats": Stats(); break;
                         case "start":
+                            Console.Clear();
+                            bets = new List<DiceBet>();
                             DiceBot.SavePersonalSettings("personalsettings.json");
                             DiceBot.SaveBetSettings("betsettings.json");
                             DiceBot.StartDice();
@@ -95,7 +97,20 @@ namespace DoormatControllers
                     Console.WriteLine(e.Message);
                 }
                 PrintCurrentActions();
-                Input = Console.ReadLine();
+                if (DiceBot.Running)
+                {
+                    this.Input = "";
+                    char CharRead= Console.ReadKey().KeyChar;
+                    while (CharRead != '\n' && CharRead != '\r')
+                    {
+                        this.Input += CharRead;
+                        if ((CharRead != '\n' && CharRead != '\r'))                           
+                            CharRead = Console.ReadKey().KeyChar;
+                    } 
+                    Input = this.Input;
+                }
+                else
+                    Input = Console.ReadLine();
             }
             try
             {
@@ -806,14 +821,169 @@ namespace DoormatControllers
 
         private void DiceBot_OnSiteDiceBetFinished(object sender, DoormatCore.Sites.BetFinisedEventArgs e)
         {
+            if (DiceBot.Running)
+            {
+                bets.Add(e.NewBet as DiceBet);
+                while (bets.Count > Console.WindowHeight-10 && bets.Count>0)
+                {
+                    bets.RemoveAt(0);
+                }
+                //Console.Clear();
+                PrintBasicStats();
+                PrintDiceHeaders();
+                PrintDiceBets();
+                PrintPrmpt();
+                PrintInput();
+
+            }
             
-            Console.WriteLine(DoormatCore.Helpers.json.JsonSerializer<DiceBet>(e.NewBet as DiceBet));
+            /*Console.WriteLine(DoormatCore.Helpers.json.JsonSerializer<DiceBet>(e.NewBet as DiceBet));
             if (DiceBot.Stats.Bets % 100 == 0)
             {
                 Console.WriteLine("\r\n\r\n");
                 Console.WriteLine(DoormatCore.Helpers.json.JsonSerializer<SessionStats>(DiceBot.Stats));
                 Console.WriteLine("\r\n\r\n");
+            }*/
+        }
+        List<DiceBet> bets = new List<DiceBet>();
+        void PrintBasicStats()
+        {
+            Console.SetCursorPosition(0, 0);
+
+            string sBalance = $"Balance: {DiceBot.CurrentSite.Stats.Balance:0.00000000}".PadRight(30);
+            string sWagered = $"Wagered: {DiceBot.Stats.Wagered:0.00000000}".PadRight(30);
+            string sProfit = $"Profit: { DiceBot.Stats.Profit:0.00000000}".PadRight(30);
+            string sWins = $"Wins: {DiceBot.Stats.Wins:0}".PadRight(30);
+            string sBets = $"Bets: {DiceBot.Stats.Bets:0}".PadRight(30);
+            string sLosses = $"Losses: {DiceBot.Stats.Losses:0}".PadRight(30);
+
+
+            Console.Write(sBalance);
+            Console.Write(sWagered);
+            Console.ForegroundColor = (DiceBot.Stats.Profit >= 0 ? ConsoleColor.Green : ConsoleColor.Red);
+            Console.Write(sProfit);
+            if (Console.BufferWidth - (sBalance + sWagered + sProfit).Length > 0)
+                Console.WriteLine(new string(' ', Console.BufferWidth - (sBalance + sWagered + sProfit).Length));
+            
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(sBets);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write(sWins);
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write(sLosses);
+            Console.ForegroundColor = ConsoleColor.White;
+            if (Console.BufferWidth - (sBalance + sWagered + sProfit).Length > 0)
+                Console.WriteLine(new string(' ', Console.BufferWidth - (sBets + sWins + sLosses).Length));
+
+        }
+
+        void PrintDiceHeaders()
+        {
+            Console.WriteLine(new string(' ', Console.BufferWidth));
+            
+            Console.Write("Bet Id".PadRight(37));
+            if (Console.CursorLeft + 10 < Console.BufferWidth)
+            {
+                Console.Write("Time".PadRight(10));
+                if (Console.CursorLeft + 20 < Console.BufferWidth)
+                {
+                    Console.Write("Amount".PadRight(20));
+                    if (Console.CursorLeft + 6 < Console.BufferWidth)
+                    {
+                        Console.Write("High  ");
+                        if (Console.CursorLeft + 10 < Console.BufferWidth)
+                        {
+                            Console.Write("Chance".PadRight(10));
+                            if (Console.CursorLeft + 10 < Console.BufferWidth)
+                            {
+                                Console.Write("Roll".PadRight(10));
+                                if (Console.CursorLeft + 20 < Console.BufferWidth)
+                                {
+                                    Console.Write("Profit".PadRight(20));
+                                    if (Console.CursorLeft + 10 < Console.BufferWidth)
+                                    {
+                                        Console.Write("Nonce".PadRight(10));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
+            Console.WriteLine(new string(' ', Console.BufferWidth - Console.CursorLeft));
+        }
+
+        void PrintDiceBets()
+        {
+            int left = Console.CursorLeft;
+            Console.SetCursorPosition(0, 4);
+            foreach(DiceBet x in bets)
+            {
+                if (x.Profit > 0)
+                    Console.ForegroundColor = ConsoleColor.Green;
+                else
+                    Console.ForegroundColor = ConsoleColor.Red;
+                
+                Console.Write(x.BetID.PadRight(37));
+                if (Console.BufferWidth >= Console.CursorLeft + 10)
+                {
+                    Console.Write(x.DateValue.ToString("HH:mm:ss").PadRight(10));
+                    if (Console.BufferWidth >= Console.CursorLeft + 20)
+                    {
+                        Console.Write(x.TotalAmount.ToString("0.00000000").PadRight(20));
+                        if (Console.BufferWidth >= Console.CursorLeft + 6)
+                        {
+                            Console.Write((x.High ? "High" : "Low").PadRight(6));
+                            if (Console.BufferWidth >= Console.CursorLeft + 10)
+                            {
+                                Console.Write(x.Chance.ToString("0.0000").PadRight(10));
+                                if (Console.BufferWidth >= Console.CursorLeft + 10)
+                                {
+                                    var y = Console.ForegroundColor;
+                                    if (x.WinnableType == 1)
+                                        Console.ForegroundColor = ConsoleColor.Yellow;
+                                    else if (x.WinnableType == 2)
+                                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                                    Console.ForegroundColor = y;
+                                    Console.Write(x.Roll.ToString("0.0000").PadRight(10));
+
+                                    if (Console.BufferWidth >= Console.CursorLeft + 20)    
+                                    {
+                                        Console.Write(x.Profit.ToString("0.00000000").PadRight(20));
+                                       
+                                        if (Console.BufferWidth >= Console.CursorLeft + 10)
+                                        {
+                                            Console.Write(x.Nonce.ToString().PadRight(10));
+                                            
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (Console.BufferWidth - Console.CursorLeft>0)
+                Console.WriteLine(new string(' ', Console.BufferWidth - Console.CursorLeft));
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        void PrintPrmpt()
+        {
+            Console.SetCursorPosition(0, Console.WindowHeight - 6);
+            Console.WriteLine(new string(' ', Console.BufferWidth));
+            
+            PrintCurrentActions();
+            for (int i = 0; i-2< Console.WindowHeight-Console.CursorTop;i++)
+                Console.WriteLine(new string(' ', Console.BufferWidth));
+            
+        }
+        string Input = "";
+        void PrintInput()
+        {
+            int left = Console.CursorLeft;
+            Console.SetCursorPosition(0, Console.WindowHeight - 1);
+            Console.Write(Input + new string(' ', Console.BufferWidth - Input.Length));
         }
 
         void SelectSite()

@@ -121,7 +121,7 @@ namespace DoormatBot.Strategies
 
             dynamic result = Scope.ResetDice(NextBet);
 
-            return result;
+            return NextBet;
         }
 
         public void UpdateSessionStats(SessionStats Stats)
