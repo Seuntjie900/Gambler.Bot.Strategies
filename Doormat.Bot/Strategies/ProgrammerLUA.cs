@@ -37,13 +37,36 @@ namespace DoormatBot.Strategies
 
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
-            PlaceDiceBet NextBet = new PlaceDiceBet(PreviousBet.TotalAmount, PreviousBet.High, PreviousBet.Chance);
-            DynValue DoDiceBet = CurrentRuntime.Globals.Get("DoDiceBet");
-            if (DoDiceBet != null)
+            try
             {
-                DynValue Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
+                PlaceDiceBet NextBet = new PlaceDiceBet(PreviousBet.TotalAmount, PreviousBet.High, PreviousBet.Chance);
+                DynValue DoDiceBet = CurrentRuntime.Globals.Get("DoDiceBet");
+                if (DoDiceBet != null)
+                {
+                    DynValue Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
+                }
+                return NextBet;
             }
-            return NextBet;
+            catch (InternalErrorException e)
+            {
+                this.Print(e.DecoratedMessage);
+                throw e;
+            }
+            catch (SyntaxErrorException e)
+            {
+                this.Print(e.DecoratedMessage);
+                throw e;
+            }
+            catch (ScriptRuntimeException e)
+            {
+                this.Print(e.DecoratedMessage);
+                throw e;
+            }
+            catch (Exception e)
+            {
+                this.Print(e.Message);
+                throw e;
+            }
         }
 
         public override PlaceCrashBet CalculateNextCrashBet(CrashBet PreviousBet, bool Win)
