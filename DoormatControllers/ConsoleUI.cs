@@ -84,7 +84,7 @@ namespace DoormatControllers
                             bets = new List<DiceBet>();
                             DiceBot.SavePersonalSettings("personalsettings.json");
                             DiceBot.SaveBetSettings("betsettings.json");
-                            DiceBot.StartDice();
+                            DiceBot.Start();
                             break;
                         case "stop": DiceBot.StopDice("Stop received from console."); break;
                         case "sim": Simulate(); break;

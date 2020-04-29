@@ -323,7 +323,7 @@ namespace DoormatBot
                 if (tmpSetting!=null)
                 {
                     if (tmpSetting.Action == ErrorActions.Stop)
-                        StopDice(tmpSetting.Type.ToString() + " error occurred - Set to stop.");
+                        StopStrategy(tmpSetting.Type.ToString() + " error occurred - Set to stop.");
                     
                     
                     if (BettingErrorTypes.Contains(tmpSetting.Type))
@@ -413,7 +413,7 @@ namespace DoormatBot
             }
             if (BetSettings.CheckStopPreStats(e.NewBet, win, Stats, out Response))
             {
-                this.Stop = (true);
+                StopStrategy(Response);
             }
             Stats.UpdateStats(e.NewBet, win);
             if (Strategy is ProgrammerMode)
@@ -427,7 +427,7 @@ namespace DoormatBot
 
             if (e.NewBet.Guid!=LastBetGuid || LastBetsGuids.Contains(e.NewBet.Guid))
             {
-                StopDice("Last bet did not match the latest bet placed.");
+                StopStrategy("Last bet did not match the latest bet placed.");
                 //stop
                 return;
             }
@@ -473,7 +473,7 @@ namespace DoormatBot
                             case TriggerAction.Invest: CurrentSite.Invest(x.GetValue(Stats)); break;
                             case TriggerAction.Reset: NextBext = Strategy.RunReset(); Reset = true; break;
                             case TriggerAction.ResetSeed: if (CurrentSite.CanChangeSeed) CurrentSite.ResetSeed(CurrentSite.GenerateNewClientSeed()); break;
-                            case TriggerAction.Stop: StopDice("Stop trigger fired. Will show more detail about the trigger here later."); break;
+                            case TriggerAction.Stop: StopStrategy("Stop trigger fired. Will show more detail about the trigger here later."); break;
                             //case TriggerAction.Switch: Strategy.High = !Strategy.High; if (NewBetObject != null)NewBetObject.High = !e.NewBet.High;  break;
                             case TriggerAction.Tip: CurrentSite.SendTip(x.Destination, x.GetValue(Stats)); break;
                             case TriggerAction.Withdraw: CurrentSite.Withdraw(x.Destination, x.GetValue(Stats)); break;
@@ -489,7 +489,7 @@ namespace DoormatBot
             }
             if (BetSettings.CheckStopPOstStats(e.NewBet, win, Stats, out Response))
             {
-                Stop = true;
+                StopStrategy(Response);
             }
             decimal withdrawamount = 0;
             if (BetSettings.CheckWithdraw(e.NewBet,win, Stats, out withdrawamount))
@@ -533,7 +533,7 @@ namespace DoormatBot
             bool win = MostRecentBet.GetWin(CurrentSite);
             if (StopOnWin && win)
             {
-                StopDice("Stop On Win enabled - Bet won");
+                StopStrategy("Stop On Win enabled - Bet won");
                 return;
             }
             if (NextBext ==null)
@@ -652,7 +652,7 @@ namespace DoormatBot
 
         private void Doormat_OnStop(object sender, EventArgs e)
         {
-            StopDice("Programmer mode stop signal received.");
+            StopStrategy("Programmer mode stop signal received.");
         }
 
         private void Doormat_OnRunSim(object sender, RunSimEventArgs e)
@@ -721,7 +721,7 @@ namespace DoormatBot
 
         private void Strategy_Stop(object sender, Strategies.StopEventArgs e)
         {
-            StopDice(e.Reason);
+            StopStrategy(e.Reason);
         }
 
         private decimal Strategy_NeedBalance()
@@ -734,15 +734,17 @@ namespace DoormatBot
                 return CurrentSite.Stats.Balance;
         }
        
-        public void StartDice()
+        public void Start()
         {
             StopOnWin = false;
-            CurrentSite.ActiveActions.Clear();
-            ActiveErrors.Clear();
             if (Running)
                 throw new Exception("Cannot start bot while it's running");
             if (RunningSimulation)
                 throw new Exception("Cannot start bot while it's running a simulation");
+
+            CurrentSite.ActiveActions.Clear();
+            ActiveErrors.Clear();
+            
             if (!Running && !RunningSimulation)
             {
                 if (Strategy is ProgrammerMode)
@@ -769,7 +771,35 @@ namespace DoormatBot
              */
         }
 
-        public void StopDice(string Reason)
+        public void Resume()
+        {
+            StopOnWin = false;
+            if (Running)
+                throw new Exception("Cannot start bot while it's running");
+            if (RunningSimulation)
+                throw new Exception("Cannot start bot while it's running a simulation");
+
+            CurrentSite.ActiveActions.Clear();
+            ActiveErrors.Clear();
+
+            if (!Running && !RunningSimulation)
+            {
+                if (Strategy is ProgrammerMode)
+                {
+                    (Strategy as ProgrammerMode).LoadScript();
+                    (Strategy as ProgrammerMode).UpdateSessionStats(CopyHelper.CreateCopy<SessionStats>(Stats));
+                    (Strategy as ProgrammerMode).UpdateSiteStats(CopyHelper.CreateCopy<SiteStats>(CurrentSite.Stats));
+                    (Strategy as ProgrammerMode).UpdateSite(CopyHelper.CreateCopy<SiteDetails>(CurrentSite.SiteDetails));
+                }
+                Running = true;
+                Stats.StartTime = DateTime.Now;
+                //Indicate to the selected strategy to create a working set and start betting.
+                OnStarted?.Invoke(this, new EventArgs());
+                CalculateNextBet();
+            }
+        }
+
+        public void StopStrategy(string Reason)
         {
             
             bool wasrunning = Running;

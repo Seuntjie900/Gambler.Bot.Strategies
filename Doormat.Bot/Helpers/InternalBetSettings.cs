@@ -207,6 +207,7 @@ namespace DoormatBot.Helpers
             
             if (EnableUpperLimit && UpperLimitAction == LimitAction.Stop)
             {
+                
                 //check balance
                 //stop if balance is larger
             }
