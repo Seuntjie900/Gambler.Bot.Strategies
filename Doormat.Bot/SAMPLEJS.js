@@ -6,15 +6,12 @@ function DoDiceBet(PreviousBet, Win, NextBet) {
     }
     else {
         NextBet.Amount = PreviousBet.TotalAmount * 2;
-    }
-    if (Stats.Profit > SiteDetails.Wagered * 0.0001) {
-        Withdraw('your address here', Stats.Balance * 0.01);
-    }
+    }    
     
 }
 
 function ResetDice(NextBet) {
     NextBet.Amount = base;
     NextBet.Chance = 49.5;
-    NextBet.High = True;
+    NextBet.High = true;
 }

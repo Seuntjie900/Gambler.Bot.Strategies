@@ -70,6 +70,7 @@ namespace DoormatBot
         Bet MostRecentBet = null;
         PlaceBet NextBext = null;
         int Retries = 0;
+        public bool StopOnWin { get; set; } = false;
         //internal variables
         #endregion
 
@@ -285,6 +286,8 @@ namespace DoormatBot
         public event EventHandler<NotificationEventArgs> OnNotification;
         public event EventHandler<GetConstringPWEventArgs> NeedConstringPassword;
         public event EventHandler<GetConstringPWEventArgs> NeedKeepassPassword;
+        public event EventHandler OnStarted;
+        public event EventHandler<GenericEventArgs> OnStopped;
 
         private void BaseSite_StatsUpdated(object sender, StatsUpdatedEventArgs e)
         {
@@ -403,6 +406,15 @@ namespace DoormatBot
             bool win = e.NewBet.GetWin(CurrentSite); 
             string Response = "";
             bool Reset = false;
+            if (BetSettings.CheckResetPreStats(e.NewBet, win, Stats))
+            {
+                Reset = true;
+                NextBext = Strategy.RunReset();
+            }
+            if (BetSettings.CheckStopPreStats(e.NewBet, win, Stats, out Response))
+            {
+                this.Stop = (true);
+            }
             Stats.UpdateStats(e.NewBet, win);
             if (Strategy is ProgrammerMode)
             {
@@ -470,7 +482,39 @@ namespace DoormatBot
                     }
                 }
             }
-
+            if (BetSettings.CheckResetPostStats(e.NewBet, win, Stats))
+            {
+                Reset = true;
+                NextBext = Strategy.RunReset();
+            }
+            if (BetSettings.CheckStopPOstStats(e.NewBet, win, Stats, out Response))
+            {
+                Stop = true;
+            }
+            decimal withdrawamount = 0;
+            if (BetSettings.CheckWithdraw(e.NewBet,win, Stats, out withdrawamount))
+            {
+                throw new NotImplementedException();
+                //if (CurrentSite.AutoWithdraw)
+                //CurrentSite.Withdraw(BetSettings.)
+               // this.Balance -= withdrawamount;
+            }
+            if (BetSettings.CheckBank(e.NewBet, win, Stats, out withdrawamount))
+            {
+                throw new NotImplementedException();
+                //this.Balance -= withdrawamount;
+            }
+            if (BetSettings.CheckTips(e.NewBet, win, Stats, out withdrawamount))
+            {
+                throw new NotImplementedException();
+                //this.Balance -= withdrawamount;
+            }
+            bool NewHigh = false;
+            if (BetSettings.CheckResetSeed(e.NewBet, win, Stats))
+            {
+                if (CurrentSite.CanChangeSeed)
+                    CurrentSite.ResetSeed("");
+            }
             if (Running)
                 CalculateNextBet();
 
@@ -487,6 +531,11 @@ namespace DoormatBot
                 (Strategy as ProgrammerMode).UpdateSite(CopyHelper.CreateCopy<SiteDetails>(CurrentSite.SiteDetails));
             }
             bool win = MostRecentBet.GetWin(CurrentSite);
+            if (StopOnWin && win)
+            {
+                StopDice("Stop On Win enabled - Bet won");
+                return;
+            }
             if (NextBext ==null)
                 NextBext = Strategy.CalculateNextBet(MostRecentBet, win);
             if (Running && !Stop)
@@ -687,6 +736,7 @@ namespace DoormatBot
        
         public void StartDice()
         {
+            StopOnWin = false;
             CurrentSite.ActiveActions.Clear();
             ActiveErrors.Clear();
             if (Running)
@@ -705,6 +755,7 @@ namespace DoormatBot
                 Running = true;
                 Stats.StartTime = DateTime.Now;
                 //Indicate to the selected strategy to create a working set and start betting.
+                OnStarted?.Invoke(this, new EventArgs());
                 PlaceBet(Strategy.Start());
             }
             /*
@@ -720,7 +771,7 @@ namespace DoormatBot
 
         public void StopDice(string Reason)
         {
-
+            
             bool wasrunning = Running;
             Running = false;
             Stats.EndTime = DateTime.Now;
@@ -729,6 +780,7 @@ namespace DoormatBot
             Stats= DBInterface?.Save<SessionStats>(Stats);
             //TotalRuntime +=Stats.EndTime - Stats.StartTime;
             Logger.DumpLog(Reason, 3);
+            OnStopped?.Invoke(this, new GenericEventArgs { Message = Reason });
         }
 
         public void ResetStats()

@@ -115,11 +115,11 @@ namespace DoormatBot.Helpers
         #region Process Bet
 
 
-        public bool CheckResetPreStats(DiceBet NewBet, bool win, SessionStats Stats)
+        public bool CheckResetPreStats(Bet NewBet, bool win, SessionStats Stats)
         {
             return false;
         }
-        public bool CheckResetPostStats(DiceBet NewBet, bool win, SessionStats Statsn)
+        public bool CheckResetPostStats(Bet NewBet, bool win, SessionStats Statsn)
         {
             bool reset = false;
 
@@ -196,13 +196,13 @@ namespace DoormatBot.Helpers
             return reset;
         }
 
-        public bool CheckStopPreStats(DiceBet NewBet, bool win, SessionStats Stats, out string reason)
+        public bool CheckStopPreStats(Bet NewBet, bool win, SessionStats Stats, out string reason)
         {
             reason = "";
             return false;
         }
 
-        public bool CheckStopPOstStats(DiceBet NewBet, bool win, SessionStats Stats, out string reason)
+        public bool CheckStopPOstStats(Bet NewBet, bool win, SessionStats Stats, out string reason)
         {
             
             if (EnableUpperLimit && UpperLimitAction == LimitAction.Stop)
@@ -292,7 +292,7 @@ namespace DoormatBot.Helpers
             return false;
         }
 
-        public bool CheckWithdraw(DiceBet NewBet, bool win, SessionStats Stats,  out decimal Amount)
+        public bool CheckWithdraw(Bet NewBet, bool win, SessionStats Stats,  out decimal Amount)
         {
             Amount = 0;
             if (EnableUpperLimit && UpperLimitAction == LimitAction.Withdraw)
@@ -326,7 +326,7 @@ namespace DoormatBot.Helpers
             return false;
         }
 
-        public bool CheckTips(DiceBet NewBet, bool win, SessionStats Stats, out decimal Amount)
+        public bool CheckTips(Bet NewBet, bool win, SessionStats Stats, out decimal Amount)
         {
            Amount = 0;
             Amount = 0;
@@ -394,7 +394,7 @@ namespace DoormatBot.Helpers
             return false;
         }
 
-        public bool CheckBank(DiceBet NewBet, bool win, SessionStats Stats, out decimal Amount)
+        public bool CheckBank(Bet NewBet, bool win, SessionStats Stats, out decimal Amount)
         {
             Amount = 0;
             if (EnableUpperLimit && UpperLimitAction == LimitAction.Bank)
@@ -428,7 +428,7 @@ namespace DoormatBot.Helpers
             return false;
         }
 
-        public bool CheckResetSeed(DiceBet NewBet, bool win, SessionStats Stats)
+        public bool CheckResetSeed(Bet NewBet, bool win, SessionStats Stats)
         {
             if (EnableResetSeedBets && Stats.Bets%ResetSeedBets==0)
             {

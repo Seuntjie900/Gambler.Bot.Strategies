@@ -10,10 +10,7 @@ void DoDiceBet(dynamic PreviousBet, dynamic Win, dynamic NextBet)
     {
         NextBet.Amount = PreviousBet.TotalAmount * 2;
     }
-    if (Stats.Profit > SiteDetails.Wagered * 0.0001)
-    {
-        Withdraw("your address here", Stats.Balance * 0.01);
-    }
+    
 
 }
 
