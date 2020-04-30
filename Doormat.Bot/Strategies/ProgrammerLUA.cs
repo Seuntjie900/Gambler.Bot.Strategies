@@ -34,6 +34,7 @@ namespace DoormatBot.Strategies
         public event EventHandler<EventArgs> OnChing;
         public event EventHandler<EventArgs> OnResetBuiltIn;
         public event EventHandler<ExportSimEventArgs> OnExportSim;
+        public event EventHandler<PrintEventArgs> OnScriptError;
 
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
@@ -49,24 +50,25 @@ namespace DoormatBot.Strategies
             }
             catch (InternalErrorException e)
             {
-                this.Print(e.DecoratedMessage);
-                throw e;
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message=e.DecoratedMessage });
+                //throw e;
             }
             catch (SyntaxErrorException e)
             {
-                this.Print(e.DecoratedMessage);
-                throw e;
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+                //throw e;
             }
             catch (ScriptRuntimeException e)
             {
-                this.Print(e.DecoratedMessage);
-                throw e;
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+               // throw e;
             }
             catch (Exception e)
             {
-                this.Print(e.Message);
-                throw e;
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
+               // throw e;
             }
+            return null;
         }
 
         public override PlaceCrashBet CalculateNextCrashBet(CrashBet PreviousBet, bool Win)
@@ -136,21 +138,66 @@ namespace DoormatBot.Strategies
 
         public void LoadScript()
         {
-            
 
-            CurrentRuntime.Globals["Stats"] = Stats;
-            CurrentRuntime.Globals["Balance"] = this.Balance;             
-            CurrentRuntime.DoFile(FileName);
+            try
+            {
+                CurrentRuntime.Globals["Stats"] = Stats;
+                CurrentRuntime.Globals["Balance"] = this.Balance;
+                CurrentRuntime.DoFile(FileName);
+            }
+            catch (InternalErrorException e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+                //throw e;
+            }
+            catch (SyntaxErrorException e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+                //throw e;
+            }
+            catch (ScriptRuntimeException e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+                //throw e;
+            }
+            catch (Exception e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
+                //throw e;
+            }
         }
 
         public override PlaceDiceBet RunReset()
         {
-            DynValue DoDiceBet = CurrentRuntime.Globals.Get("ResetDice");
-            if (DoDiceBet!=null)
+            try
             {
-                PlaceDiceBet NextBet = new PlaceDiceBet(0,false,0);
-                DynValue Result = CurrentRuntime.Call(DoDiceBet, NextBet);
-                return NextBet;
+                DynValue DoDiceBet = CurrentRuntime.Globals.Get("ResetDice");
+                if (DoDiceBet != null)
+                {
+                    PlaceDiceBet NextBet = new PlaceDiceBet(0, false, 0);
+                    DynValue Result = CurrentRuntime.Call(DoDiceBet, NextBet);
+                    return NextBet;
+                }
+            }
+            catch (InternalErrorException e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+                //throw e;
+            }
+            catch (SyntaxErrorException e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+                //throw e;
+            }
+            catch (ScriptRuntimeException e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+                //throw e;
+            }
+            catch (Exception e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
+                //throw e;
             }
             return null;
         }
@@ -231,6 +278,34 @@ namespace DoormatBot.Strategies
         void ExportSim(string FileName)
         {
             OnExportSim?.Invoke(this, new ExportSimEventArgs { FileName = FileName});
+        }
+
+        public void ExecuteCommand(string Command)
+        {
+            try
+            {
+                CurrentRuntime.DoString(Command);
+            }
+            catch (InternalErrorException e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+                //throw e;
+            }
+            catch (SyntaxErrorException e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+                //throw e;
+            }
+            catch (ScriptRuntimeException e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+                //throw e;
+            }
+            catch (Exception e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
+                //throw e;
+            }
         }
     }
 }

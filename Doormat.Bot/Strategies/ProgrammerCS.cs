@@ -37,6 +37,7 @@ namespace DoormatBot.Strategies
         public event EventHandler<EventArgs> OnChing;
         public event EventHandler<EventArgs> OnResetBuiltIn;
         public event EventHandler<ExportSimEventArgs> OnExportSim;
+        public event EventHandler<PrintEventArgs> OnScriptError;
 
         ScriptState runtime;
         Globals globals;
@@ -44,30 +45,38 @@ namespace DoormatBot.Strategies
         Script ResetDice = null;
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
-            PlaceDiceBet NextBet = new PlaceDiceBet(PreviousBet.TotalAmount, PreviousBet.High, PreviousBet.Chance);
-            
-            globals.NextDiceBet = NextBet;
-            globals.PreviousDiceBet = PreviousBet;
-            globals.DiceWin =Win;
-            //if (DoDiceBet == null)
+            try
             {
+                PlaceDiceBet NextBet = new PlaceDiceBet(PreviousBet.TotalAmount, PreviousBet.High, PreviousBet.Chance);
 
-                runtime = runtime.ContinueWithAsync("DoDiceBet(PreviousDiceBet, DiceWin, NextDiceBet)").Result;
-                DoDiceBet = runtime.Script;
+                globals.NextDiceBet = NextBet;
+                globals.PreviousDiceBet = PreviousBet;
+                globals.DiceWin = Win;
+                //if (DoDiceBet == null)
+                {
+
+                    runtime = runtime.ContinueWithAsync("DoDiceBet(PreviousDiceBet, DiceWin, NextDiceBet)").Result;
+                    DoDiceBet = runtime.Script;
+                }
+                /*else
+                runtime = runtime.ContinueWithAsync("DoDiceBet(PreviousDiceBet, DiceWin, NextDiceBet)", ScriptOptions.Default.WithReferences(
+                        Assembly.GetExecutingAssembly())
+                        .WithImports(
+                            "DoormatBot",
+                            "DoormatBot.Games",
+                            "System")).Result;*/
+
+
+                //;
+                /*else                
+                    runtime = DoDiceBet.RunFromAsync(runtime).Result;*/
+                return NextBet;
             }
-            /*else
-            runtime = runtime.ContinueWithAsync("DoDiceBet(PreviousDiceBet, DiceWin, NextDiceBet)", ScriptOptions.Default.WithReferences(
-                    Assembly.GetExecutingAssembly())
-                    .WithImports(
-                        "DoormatBot",
-                        "DoormatBot.Games",
-                        "System")).Result;*/
-
-
-            //;
-            /*else                
-                runtime = DoDiceBet.RunFromAsync(runtime).Result;*/
-            return NextBet;
+            catch (Exception e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
+            }
+            return null;
         }
         delegate void dDoDiceBet(DiceBet PreviousBet, bool Win, PlaceDiceBet NextBet);
 
@@ -196,6 +205,11 @@ namespace DoormatBot.Strategies
         void ExportSim(string FileName)
         {
             OnExportSim?.Invoke(this, new ExportSimEventArgs { FileName = FileName });
+        }
+
+        public void ExecuteCommand(string Command)
+        {
+            runtime = runtime.ContinueWithAsync(Command).Result;
         }
     }
    

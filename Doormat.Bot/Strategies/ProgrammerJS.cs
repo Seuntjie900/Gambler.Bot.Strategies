@@ -35,13 +35,22 @@ namespace DoormatBot.Strategies
         public event EventHandler<EventArgs> OnChing;
         public event EventHandler<EventArgs> OnResetBuiltIn;
         public event EventHandler<ExportSimEventArgs> OnExportSim;
+        public event EventHandler<PrintEventArgs> OnScriptError;
 
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
-            PlaceDiceBet NextBet =  new PlaceDiceBet(PreviousBet.TotalAmount, PreviousBet.High, PreviousBet.Chance);
-            //TypeReference.CreateTypeReference
-            Runtime.Invoke("DoDiceBet", PreviousBet, Win, NextBet);
-            return NextBet;
+            try
+            {
+                PlaceDiceBet NextBet = new PlaceDiceBet(PreviousBet.TotalAmount, PreviousBet.High, PreviousBet.Chance);
+                //TypeReference.CreateTypeReference
+                Runtime.Invoke("DoDiceBet", PreviousBet, Win, NextBet);
+                return NextBet;
+            }
+            catch (Exception e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
+            }
+            return null;
         }
 
         public void CreateRuntime()
@@ -157,6 +166,18 @@ namespace DoormatBot.Strategies
         void ExportSim(string FileName)
         {
             OnExportSim?.Invoke(this, new ExportSimEventArgs { FileName = FileName });
+        }
+
+        public void ExecuteCommand(string Command)
+        {
+            try
+            {
+                Runtime.Execute(Command);
+            }
+            catch (Exception e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
+            }
         }
     }
 }

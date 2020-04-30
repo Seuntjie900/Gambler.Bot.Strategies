@@ -25,7 +25,7 @@ namespace DoormatBot
         #region Internal Variables
         List<ErrorEventArgs> ActiveErrors = new List<ErrorEventArgs>();
         PwDatabase Passdb = new PwDatabase();
-        
+        System.Timers.Timer BetTimer = new System.Timers.Timer { Interval=1000, Enabled=false, AutoReset=true };
 
         public bool KeepassOpen
         {
@@ -68,6 +68,7 @@ namespace DoormatBot
 
         public PersonalSettings PersonalSettings { get; set; } = new PersonalSettings();
         Bet MostRecentBet = null;
+        DateTime MostRecentBetTime = new DateTime();
         PlaceBet NextBext = null;
         int Retries = 0;
         public bool StopOnWin { get; set; } = false;
@@ -81,8 +82,10 @@ namespace DoormatBot
             Stats = new SessionStats();
             Running = false;
             Stop = false;
+            BetTimer.Elapsed += BetTimer_Elapsed;
         }
 
+        
 
         public static List<SitesList> Sites = new List<SitesList>();
         public SitesList[] CompileSites()
@@ -396,8 +399,11 @@ namespace DoormatBot
 
         private void BaseSite_DiceBetFinished(object sender, BetFinisedEventArgs e)
         {
+            if (e.NewBet == null)
+                return;
             DBInterface.Save<Bet>(e.NewBet);
             MostRecentBet = e.NewBet;
+            MostRecentBetTime = DateTime.Now;
             Retries = 0;
             /*
              * save bet to DB - invoke async?
@@ -540,7 +546,10 @@ namespace DoormatBot
                 NextBext = Strategy.CalculateNextBet(MostRecentBet, win);
             if (Running && !Stop)
             {
-                while (CurrentSite.TimeToBet(NextBext) > 0)
+                while (CurrentSite.TimeToBet(NextBext) > 0 
+                    && (decimal)(DateTime.Now - MostRecentBetTime).TotalMilliseconds>= NextBext.BetDelay
+                    && (!BetSettings.EnableBotSpeed || (decimal)(DateTime.Now - MostRecentBetTime).TotalMilliseconds >= (1m/BetSettings.BotSpeed))
+                    )
                 {
                     int TimeToBet = CurrentSite.TimeToBet(NextBext);
                     if (TimeToBet < 0)
@@ -604,6 +613,7 @@ namespace DoormatBot
                         (Strategy as ProgrammerMode).OnStop -= Doormat_OnStop;
                         (Strategy as ProgrammerMode).OnTip -= Doormat_OnTip;
                         (Strategy as ProgrammerMode).OnWithdraw -= Doormat_OnWithdraw;
+                        (Strategy as ProgrammerMode).OnScriptError -= Doormat_OnScriptError;
 
                     }
                 }
@@ -629,13 +639,20 @@ namespace DoormatBot
                         (Strategy as ProgrammerMode).OnRunSim += Doormat_OnRunSim;
                         (Strategy as ProgrammerMode).OnStop += Doormat_OnStop;
                         (Strategy as ProgrammerMode).OnTip += Doormat_OnTip;
-                        (Strategy as ProgrammerMode).OnWithdraw += Doormat_OnWithdraw;                        
+                        (Strategy as ProgrammerMode).OnWithdraw += Doormat_OnWithdraw;
+                        (Strategy as ProgrammerMode).OnScriptError += Doormat_OnScriptError;
+
                     }
                 }
                 StoredBetSettings.SetStrategy(value);
                 OnStrategyChanged?.Invoke(this, new EventArgs());
                 
             }
+        }
+
+        private void Doormat_OnScriptError(object sender, PrintEventArgs e)
+        {
+            StopStrategy("Error received from programmer mode.");
         }
 
         private void Doormat_OnWithdraw(object sender, WithdrawEventArgs e)
@@ -758,6 +775,8 @@ namespace DoormatBot
                 Stats.StartTime = DateTime.Now;
                 //Indicate to the selected strategy to create a working set and start betting.
                 OnStarted?.Invoke(this, new EventArgs());
+                MostRecentBetTime = DateTime.Now;
+                BetTimer.Enabled = true;
                 PlaceBet(Strategy.Start());
             }
             /*
@@ -794,8 +813,23 @@ namespace DoormatBot
                 Running = true;
                 Stats.StartTime = DateTime.Now;
                 //Indicate to the selected strategy to create a working set and start betting.
+                MostRecentBetTime = DateTime.Now;
+                BetTimer.Enabled = true;
                 OnStarted?.Invoke(this, new EventArgs());
                 CalculateNextBet();
+            }
+        }
+        
+        private void BetTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            if ((DateTime.Now-MostRecentBetTime).TotalSeconds> PersonalSettings.RetryDelay && (Retries< PersonalSettings.RetryAttempts || PersonalSettings.RetryAttempts<0))
+            {
+                if (NextBext != null && ((DateTime.Now - MostRecentBetTime).Milliseconds > NextBext.BetDelay))
+                {
+                    Retries++;
+                    MostRecentBetTime = DateTime.Now;                    
+                    PlaceBet(NextBext);
+                }
             }
         }
 

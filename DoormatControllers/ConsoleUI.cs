@@ -86,7 +86,7 @@ namespace DoormatControllers
                             DiceBot.SaveBetSettings("betsettings.json");
                             DiceBot.Start();
                             break;
-                        case "stop": DiceBot.StopDice("Stop received from console."); break;
+                        case "stop": DiceBot.StopStrategy("Stop received from console."); break;
                         case "sim": Simulate(); break;
                         case "betsettings": BetSettings(); break;
                         case "personalsettings": PersonalSetting(); break;

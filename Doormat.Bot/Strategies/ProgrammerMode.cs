@@ -15,7 +15,7 @@ namespace DoormatBot.Strategies
         void UpdateSiteStats(SiteStats Stats);
         void UpdateSite(SiteDetails Stats);
         void LoadScript();
-
+        void ExecuteCommand(string Command);
 
         event EventHandler<WithdrawEventArgs> OnWithdraw;
         event EventHandler<InvestEventArgs> OnInvest;
@@ -33,6 +33,9 @@ namespace DoormatBot.Strategies
         event EventHandler<EventArgs> OnChing;
         //event EventHandler<ResetBuiltInEventArgs> OnResetBuiltIn;
         event EventHandler<ExportSimEventArgs> OnExportSim;
+        event EventHandler<PrintEventArgs> OnScriptError;
+
+
 
         public string FileName { get; set; }
     }
