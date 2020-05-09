@@ -652,7 +652,7 @@ namespace DoormatBot
 
         private void Doormat_OnScriptError(object sender, PrintEventArgs e)
         {
-            StopStrategy("Error received from programmer mode.");
+            StopStrategy("Error received from programmer mode, check console for more details.");
         }
 
         private void Doormat_OnWithdraw(object sender, WithdrawEventArgs e)
@@ -862,9 +862,12 @@ namespace DoormatBot
 
         public void PlaceBet(PlaceBet Bet)
         {
-            Bet.GUID = Guid.NewGuid().ToString();
-            LastBetGuid = Bet.GUID;
-            CurrentSite.PlaceBet(Bet);
+            if (Bet != null)
+            {
+                Bet.GUID = Guid.NewGuid().ToString();
+                LastBetGuid = Bet.GUID;
+                CurrentSite.PlaceBet(Bet);
+            }
         }
 
         void DiceBetThread(object Bet)
