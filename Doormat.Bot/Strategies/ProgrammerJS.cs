@@ -72,6 +72,7 @@ namespace DoormatBot.Strategies
             Runtime.SetValue("Ching", (Action)Ching);
             Runtime.SetValue("ResetBuiltIn", (Action)ResetBuiltIn);
             Runtime.SetValue("ExportSim", (Action<string>)ExportSim);
+            Runtime.SetValue("Stop", (Action)_Stop);
         }
 
         void withdraw(object sender, EventArgs e)
@@ -178,6 +179,10 @@ namespace DoormatBot.Strategies
             {
                 OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
             }
+        }
+        public void _Stop()
+        {
+            CallStop("Stop() function called in programmer mode.");
         }
     }
 }

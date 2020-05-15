@@ -130,8 +130,8 @@ namespace DoormatBot
                             try
                             {
                                 Logger.DumpLog("Fetching currencies for - " + x.Name, 6);
-
-                                currenices = (Activator.CreateInstance(x) as BaseSite).Currencies;
+                                BaseSite SiteInst = Activator.CreateInstance(x) as BaseSite;
+                                currenices = (SiteInst).Currencies;
                             }
                             catch (Exception e)
                             {
@@ -610,7 +610,7 @@ namespace DoormatBot
                         (Strategy as ProgrammerMode).OnResetSeed -= Doormat_OnResetSeed;
                         (Strategy as ProgrammerMode).OnResetStats -= Doormat_OnResetStats;
                         (Strategy as ProgrammerMode).OnRunSim -= Doormat_OnRunSim;
-                        (Strategy as ProgrammerMode).OnStop -= Doormat_OnStop;
+                        //(Strategy as ProgrammerMode).OnStop -= Doormat_OnStop;
                         (Strategy as ProgrammerMode).OnTip -= Doormat_OnTip;
                         (Strategy as ProgrammerMode).OnWithdraw -= Doormat_OnWithdraw;
                         (Strategy as ProgrammerMode).OnScriptError -= Doormat_OnScriptError;
@@ -637,7 +637,7 @@ namespace DoormatBot
                         (Strategy as ProgrammerMode).OnResetSeed += Doormat_OnResetSeed;
                         (Strategy as ProgrammerMode).OnResetStats += Doormat_OnResetStats;
                         (Strategy as ProgrammerMode).OnRunSim += Doormat_OnRunSim;
-                        (Strategy as ProgrammerMode).OnStop += Doormat_OnStop;
+                        //(Strategy as ProgrammerMode).OnStop += Doormat_OnStop;
                         (Strategy as ProgrammerMode).OnTip += Doormat_OnTip;
                         (Strategy as ProgrammerMode).OnWithdraw += Doormat_OnWithdraw;
                         (Strategy as ProgrammerMode).OnScriptError += Doormat_OnScriptError;

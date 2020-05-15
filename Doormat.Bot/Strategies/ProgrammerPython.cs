@@ -112,6 +112,7 @@ namespace DoormatBot.Strategies
             (Scope as ScriptScope).SetVariable("Ching", (Action)Ching);
             (Scope as ScriptScope).SetVariable("ResetBuiltIn", (Action)ResetBuiltIn);
             (Scope as ScriptScope).SetVariable("ExportSim", (Action<string>)ExportSim);
+            (Scope as ScriptScope).SetVariable("Stop", (Action)_Stop);
         }                                      
 
         public void LoadScript()
@@ -207,6 +208,11 @@ namespace DoormatBot.Strategies
         public void ExecuteCommand(string Command)
         {
             Engine.Execute(Command);
+        }
+        
+        public void _Stop()
+        {
+            CallStop("Stop() function called from programmer mode.");
         }
     }
 }

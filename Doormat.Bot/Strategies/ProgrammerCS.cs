@@ -26,7 +26,6 @@ namespace DoormatBot.Strategies
         public event EventHandler<WithdrawEventArgs> OnWithdraw;
         public event EventHandler<InvestEventArgs> OnInvest;
         public event EventHandler<TipEventArgs> OnTip;
-        public event EventHandler<EventArgs> OnStop;
         public event EventHandler<EventArgs> OnResetSeed;
         public event EventHandler<PrintEventArgs> OnPrint;
         public event EventHandler<RunSimEventArgs> OnRunSim;
@@ -106,9 +105,11 @@ namespace DoormatBot.Strategies
                  Alarm=Alarm,
                  Ching=Ching,
                  ResetBuiltIn=ResetBuiltIn,
-                 ExportSim =ExportSim
+                 ExportSim =ExportSim,
+                 Stop=_Stop
             };
             runtime = script.RunAsync(globals: globals).Result;
+            
         }
 
         public void LoadScript()
@@ -210,6 +211,10 @@ namespace DoormatBot.Strategies
         public void ExecuteCommand(string Command)
         {
             runtime = runtime.ContinueWithAsync(Command).Result;
+        }
+        public void _Stop()
+        {
+            CallStop("Stop() function called from Programmer Mode");
         }
     }
    

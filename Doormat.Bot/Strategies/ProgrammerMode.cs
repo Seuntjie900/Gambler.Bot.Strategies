@@ -20,7 +20,6 @@ namespace DoormatBot.Strategies
         event EventHandler<WithdrawEventArgs> OnWithdraw;
         event EventHandler<InvestEventArgs> OnInvest;
         event EventHandler<TipEventArgs> OnTip;
-        event EventHandler<EventArgs> OnStop;
         event EventHandler<EventArgs> OnResetSeed;
         event EventHandler<PrintEventArgs> OnPrint;
         /*event EventHandler<EventArgs> OnMartingale;
@@ -34,7 +33,7 @@ namespace DoormatBot.Strategies
         //event EventHandler<ResetBuiltInEventArgs> OnResetBuiltIn;
         event EventHandler<ExportSimEventArgs> OnExportSim;
         event EventHandler<PrintEventArgs> OnScriptError;
-
+        
 
 
         public string FileName { get; set; }

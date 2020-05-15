@@ -23,7 +23,6 @@ namespace DoormatBot.Strategies
         public event EventHandler<WithdrawEventArgs> OnWithdraw;
         public event EventHandler<InvestEventArgs> OnInvest;
         public event EventHandler<TipEventArgs> OnTip;
-        public event EventHandler<EventArgs> OnStop;
         public event EventHandler<EventArgs> OnResetSeed;
         public event EventHandler<PrintEventArgs> OnPrint;
         public event EventHandler<RunSimEventArgs> OnRunSim;
@@ -133,7 +132,7 @@ namespace DoormatBot.Strategies
             CurrentRuntime.Globals["Ching"] = (Action)Ching;
             CurrentRuntime.Globals["ResetBuiltIn"] = (Action)ResetBuiltIn;
             CurrentRuntime.Globals["ExportSim"] = (Action<string>)ExportSim;
-            CurrentRuntime.Globals["Stop"] = (Action)Stop;
+            CurrentRuntime.Globals["Stop"] = (Action)_Stop;
         }
 
         public void LoadScript()
@@ -247,9 +246,9 @@ namespace DoormatBot.Strategies
         {
             OnResetStats?.Invoke(this, new EventArgs());
         }
-        void Stop()
+        void _Stop()
         {
-            OnStop?.Invoke(this, new EventArgs());
+            CallStop("Stop function used in programmer mode");
         }
         object Read(string prompt, int DataType)
         {
