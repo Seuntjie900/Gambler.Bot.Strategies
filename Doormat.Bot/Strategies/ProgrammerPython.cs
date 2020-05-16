@@ -43,6 +43,7 @@ namespace DoormatBot.Strategies
         public event EventHandler<EventArgs> OnResetBuiltIn;
         public event EventHandler<ExportSimEventArgs> OnExportSim;
         public event EventHandler<PrintEventArgs> OnScriptError;
+        public event EventHandler<PrintEventArgs> OnSetCurrency;
 
         public ProgrammerPython()
         {
@@ -113,6 +114,7 @@ namespace DoormatBot.Strategies
             (Scope as ScriptScope).SetVariable("ResetBuiltIn", (Action)ResetBuiltIn);
             (Scope as ScriptScope).SetVariable("ExportSim", (Action<string>)ExportSim);
             (Scope as ScriptScope).SetVariable("Stop", (Action)_Stop);
+            (Scope as ScriptScope).SetVariable("SetCurrency", (Action<string>)SetCurrency);
         }                                      
 
         public void LoadScript()
@@ -213,6 +215,10 @@ namespace DoormatBot.Strategies
         public void _Stop()
         {
             CallStop("Stop() function called from programmer mode.");
+        }
+        private void SetCurrency(string newCurrency)
+        {
+            OnSetCurrency?.Invoke(this, new PrintEventArgs { Message = newCurrency });
         }
     }
 }

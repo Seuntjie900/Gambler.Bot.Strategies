@@ -36,6 +36,7 @@ namespace DoormatBot.Strategies
         public event EventHandler<EventArgs> OnResetBuiltIn;
         public event EventHandler<ExportSimEventArgs> OnExportSim;
         public event EventHandler<PrintEventArgs> OnScriptError;
+        public event EventHandler<PrintEventArgs> OnSetCurrency;
 
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
@@ -73,6 +74,7 @@ namespace DoormatBot.Strategies
             Runtime.SetValue("ResetBuiltIn", (Action)ResetBuiltIn);
             Runtime.SetValue("ExportSim", (Action<string>)ExportSim);
             Runtime.SetValue("Stop", (Action)_Stop);
+            Runtime.SetValue("SetCurrency", (Action<string>)SetCurrency);
         }
 
         void withdraw(object sender, EventArgs e)
@@ -183,6 +185,10 @@ namespace DoormatBot.Strategies
         public void _Stop()
         {
             CallStop("Stop() function called in programmer mode.");
+        }
+        private void SetCurrency(string newCurrency)
+        {
+            OnSetCurrency?.Invoke(this, new PrintEventArgs { Message = newCurrency });
         }
     }
 }

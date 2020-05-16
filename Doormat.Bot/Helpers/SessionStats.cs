@@ -27,9 +27,18 @@ namespace DoormatBot.Helpers
             RunningTime = 0;
             this.Simulation = Simulation;
         }
+
         public long RunningTime { get; set; }
+
         [NonPersistent]
-        public TimeSpan RunningTimeSpan {  get { return EndTime > StartTime.AddSeconds(1) ? EndTime - StartTime : DateTime.Now - StartTime; } }
+        public TimeSpan RunningTimeSpan 
+        {  
+            get 
+            {
+                var tmp = new TimeSpan(0, 0, 0, 0, (int)RunningTime);
+                return EndTime > StartTime.AddSeconds(1) ? tmp : tmp.Add(DateTime.Now - StartTime); 
+            } 
+        }
         public long Losses { get; set; }
         public long Wins { get; set; }
         public long Bets { get; set; }
@@ -72,7 +81,7 @@ namespace DoormatBot.Helpers
 
         public void UpdateStats(Bet newBet, bool Win)
         {
-            RunningTime = (long)(DateTime.Now - StartTime).TotalMilliseconds;
+            //RunningTime = (long)(DateTime.Now - StartTime).TotalMilliseconds;
             Bets++;
             Profit += (decimal)newBet.Profit;
             if (Profit > MaxProfit)
@@ -178,7 +187,7 @@ namespace DoormatBot.Helpers
                 WinStreak = 0;                
             }
             ProfitPerBet = Profit / Bets;
-            ProfitPerHour = ProfitPerBet * (Bets / (RunningTime / 1000m / 60m / 60m));
+            ProfitPerHour = ProfitPerBet * (Bets / ((RunningTime+(long)(DateTime.Now-StartTime).TotalMilliseconds) / 1000m / 60m / 60m));
             ProfitPer24Hour = ProfitPerHour * 24m;
         }
 

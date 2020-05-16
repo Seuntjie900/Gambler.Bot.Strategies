@@ -34,6 +34,7 @@ namespace DoormatBot.Strategies
         public event EventHandler<EventArgs> OnResetBuiltIn;
         public event EventHandler<ExportSimEventArgs> OnExportSim;
         public event EventHandler<PrintEventArgs> OnScriptError;
+        public event EventHandler<PrintEventArgs> OnSetCurrency;
 
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
@@ -133,6 +134,7 @@ namespace DoormatBot.Strategies
             CurrentRuntime.Globals["ResetBuiltIn"] = (Action)ResetBuiltIn;
             CurrentRuntime.Globals["ExportSim"] = (Action<string>)ExportSim;
             CurrentRuntime.Globals["Stop"] = (Action)_Stop;
+            CurrentRuntime.Globals["SetCurrency"] = (Action<string>)SetCurrency;
         }
 
         public void LoadScript()
@@ -305,6 +307,10 @@ namespace DoormatBot.Strategies
                 OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
                 //throw e;
             }
+        }
+        public void SetCurrency(string newCurrency)
+        {               
+            OnSetCurrency?.Invoke(this, new PrintEventArgs { Message = newCurrency });
         }
     }
 }

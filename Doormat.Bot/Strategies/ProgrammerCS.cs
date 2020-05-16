@@ -37,6 +37,7 @@ namespace DoormatBot.Strategies
         public event EventHandler<EventArgs> OnResetBuiltIn;
         public event EventHandler<ExportSimEventArgs> OnExportSim;
         public event EventHandler<PrintEventArgs> OnScriptError;
+        public event EventHandler<PrintEventArgs> OnSetCurrency;
 
         ScriptState runtime;
         Globals globals;
@@ -91,25 +92,32 @@ namespace DoormatBot.Strategies
                 typeof(Globals));
 
             globals = new Globals() {
-                Stats =Stats,
+                Stats = Stats,
                 Balance = Balance,
-                Withdraw=Withdraw,
-                 Invest=Invest,
-                 Tip=Tip,
-                 ResetSeed=ResetSeed,
-                 Print=Print,
-                 RunSim=RunSim,
-                 ResetStats=ResetStats,
-                 Read=Read,
-                 Readadv=Readadv,
-                 Alarm=Alarm,
-                 Ching=Ching,
-                 ResetBuiltIn=ResetBuiltIn,
-                 ExportSim =ExportSim,
-                 Stop=_Stop
+                Withdraw = Withdraw,
+                Invest = Invest,
+                Tip = Tip,
+                ResetSeed = ResetSeed,
+                Print = Print,
+                RunSim = RunSim,
+                ResetStats = ResetStats,
+                Read = Read,
+                Readadv = Readadv,
+                Alarm = Alarm,
+                Ching = Ching,
+                ResetBuiltIn = ResetBuiltIn,
+                ExportSim = ExportSim,
+                Stop = _Stop,
+                SetCurrency = SetCurrency
+                 
             };
             runtime = script.RunAsync(globals: globals).Result;
             
+        }
+
+        private void SetCurrency(string newCurrency)
+        {
+            OnSetCurrency?.Invoke(this, new PrintEventArgs { Message = newCurrency });
         }
 
         public void LoadScript()

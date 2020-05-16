@@ -22,19 +22,15 @@ namespace DoormatBot.Strategies
         event EventHandler<TipEventArgs> OnTip;
         event EventHandler<EventArgs> OnResetSeed;
         event EventHandler<PrintEventArgs> OnPrint;
-        /*event EventHandler<EventArgs> OnMartingale;
-        event EventHandler<EventArgs> OnLabouchere;*/
         event EventHandler<RunSimEventArgs> OnRunSim;
         event EventHandler<EventArgs> OnResetStats;
         event EventHandler<ReadEventArgs> OnRead;
         event EventHandler<ReadEventArgs> OnReadAdv;
         event EventHandler<EventArgs> OnAlarm;
-        event EventHandler<EventArgs> OnChing;
-        //event EventHandler<ResetBuiltInEventArgs> OnResetBuiltIn;
+        event EventHandler<EventArgs> OnChing;        
         event EventHandler<ExportSimEventArgs> OnExportSim;
         event EventHandler<PrintEventArgs> OnScriptError;
-        
-
+        event EventHandler<PrintEventArgs> OnSetCurrency;
 
         public string FileName { get; set; }
     }

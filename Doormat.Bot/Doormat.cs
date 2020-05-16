@@ -17,6 +17,7 @@ using ErrorEventArgs = DoormatCore.Sites.ErrorEventArgs;
 using DoormatBot.Helpers;
 using System.Linq;
 using System.ComponentModel;
+using SuperSocket.ClientEngine;
 
 namespace DoormatBot
 {
@@ -614,6 +615,7 @@ namespace DoormatBot
                         (Strategy as ProgrammerMode).OnTip -= Doormat_OnTip;
                         (Strategy as ProgrammerMode).OnWithdraw -= Doormat_OnWithdraw;
                         (Strategy as ProgrammerMode).OnScriptError -= Doormat_OnScriptError;
+                        (Strategy as ProgrammerMode).OnSetCurrency -= Doormat_OnSetCurrency;
 
                     }
                 }
@@ -641,12 +643,23 @@ namespace DoormatBot
                         (Strategy as ProgrammerMode).OnTip += Doormat_OnTip;
                         (Strategy as ProgrammerMode).OnWithdraw += Doormat_OnWithdraw;
                         (Strategy as ProgrammerMode).OnScriptError += Doormat_OnScriptError;
-
+                        (Strategy as ProgrammerMode).OnSetCurrency += Doormat_OnSetCurrency;
                     }
                 }
                 StoredBetSettings.SetStrategy(value);
                 OnStrategyChanged?.Invoke(this, new EventArgs());
                 
+            }
+        }
+
+        private void Doormat_OnSetCurrency(object sender, PrintEventArgs e)
+        {
+            if (CurrentSite != null)
+            {
+                if (Array.IndexOf(this.CurrentSite.Currencies, e.Message) > 0)
+                {
+                    this.CurrentSite.Currency = Array.IndexOf(this.CurrentSite.Currencies, e.Message);
+                }
             }
         }
 
@@ -839,7 +852,7 @@ namespace DoormatBot
             bool wasrunning = Running;
             Running = false;
             Stats.EndTime = DateTime.Now;
-            Stats.RunningTime += (long)(Stats.EndTime - Stats.EndTime).TotalMilliseconds;
+            Stats.RunningTime += (long)(Stats.EndTime-Stats.StartTime).TotalMilliseconds;
             if (wasrunning)
             Stats= DBInterface?.Save<SessionStats>(Stats);
             //TotalRuntime +=Stats.EndTime - Stats.StartTime;
