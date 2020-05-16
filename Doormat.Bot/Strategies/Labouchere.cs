@@ -12,7 +12,8 @@ namespace DoormatBot.Strategies
     {
         public override string StrategyName { get; protected set; } = "Labouchere";
         //public string LabList { get; set; }
-
+        public bool starthigh { get; set; } = true;
+        public bool startlow { get { return !starthigh; } set { starthigh = !value; } }
         public List<decimal> BetList { get; set; } = new List<decimal>();
         public decimal[] SerializableBetList { get { return BetList.ToArray(); } set { BetList = new List<decimal>(value); } }
         List<decimal> LabList = new List<decimal>();
@@ -137,6 +138,7 @@ namespace DoormatBot.Strategies
                 Amount= LabList[0];
             else if (LabList.Count > 1)
                 Amount= LabList[0] + LabList[LabList.Count - 1];
+            High = starthigh;
             return new PlaceDiceBet(Amount, High, (decimal)Chance);
         }
 

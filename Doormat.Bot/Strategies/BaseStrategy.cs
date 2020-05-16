@@ -54,11 +54,11 @@ namespace DoormatBot.Strategies
         {
             if (!(this is ProgrammerMode))
             {
-                WorkingSet = CopyHelper.CreateCopy(this.GetType(), this) as BaseStrategy;
+                /*WorkingSet = CopyHelper.CreateCopy(this.GetType(), this) as BaseStrategy;
                 WorkingSet.NeedBalance += WorkingSet_NeedBalance;
                 WorkingSet.OnNeedStats += WorkingSet_OnNeedStats;
-                WorkingSet.Stop += WorkingSet_Stop;
-                return WorkingSet.RunReset();
+                WorkingSet.Stop += WorkingSet_Stop;*/
+                return RunReset();
             }
             else
             {
