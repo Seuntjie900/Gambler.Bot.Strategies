@@ -2,6 +2,7 @@
 using DoormatCore.Helpers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,69 +11,59 @@ namespace DoormatBot.Strategies
 {
     public class PresetList: BaseStrategy, iDiceStrategy
     {
+        public class PresetBet
+        {
+            public decimal Amount { get; set; }
+        }
+        public class PresetDiceBet:PresetBet 
+        {
+            
+            public bool? High { get; set; }
+            public bool Switch { get; set; }
+            public decimal? Chance { get; set; }
+        }
+
         public override string StrategyName { get; protected set; } = "PresetList";
         int presetLevel = 0;
-        List<string> lstPresetList = new List<string>();
+        public BindingList<PresetDiceBet> PresetBets { get; set; } = new BindingList<PresetDiceBet>();
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             decimal Lastbet = PreviousBet.TotalAmount;
             if (Win)
             {
-                if (rdbPresetWinStep)
+                switch (WinAction)
                 {
-                    presetLevel += nudPresetWinStep;
-                }
-                else if (rdbPresetWinReset)
-                {
-                    presetLevel = 0;
-                }
-                else
-                {
-                    presetLevel = 0;
-                    CallStop("Preset List bet won.");
+                    case "Step": presetLevel += WinStep; break;
+                    case "Stop": CallStop("Stop on win set in preset list."); break;
+                    case "Reset": presetLevel = 0;break;
 
-                }
+                }                
             }
             else
             {
-                if (rdbPresetLossStep)
+                switch (LossAction)
                 {
-                    presetLevel += nudPresetLossStep;
-                }
-                else if (rdbPresetLossReset)
-                {
-                    presetLevel = 0;
-                }
-                else
-                {
-                    presetLevel = 0;
-                    CallStop("Preset List bet lost.");
+                    case "Step": presetLevel += LossStep; break;
+                    case "Stop": CallStop("Stop on Loss set in preset list."); break;
+                    case "Reset": presetLevel = 0; break;
 
-                }
+                }                
             }
             if (presetLevel < 0)
                 presetLevel = 0;
-            if (presetLevel > lstPresetList.Count - 1)
+            if (presetLevel > PresetBets.Count - 1)
             {
-                if (rdbPresetEndStop)
+                switch (EndAction)
                 {
-                    CallStop("End of preset list reached.");
+                    case "Step": while (presetLevel > PresetBets.Count - 1) 
+                            presetLevel -= EndStep; break;
+                    case "Stop": CallStop("End of preset list reached"); break;
+                    case "Reset": presetLevel = 0; break;
 
-                }
-                else if (rdbPresetEndStep)
-                {
-                    while (presetLevel > lstPresetList.Count - 1)
-                    {
-                        presetLevel -= nudPresetEndStep;
-                    }
-                }
-                else
-                {
-                    presetLevel = 0;
-                }
+                }                
             }
 
-            if (presetLevel < lstPresetList.Count)
+            if (presetLevel < PresetBets.Count)
             {
                 Lastbet =SetPresetValues(presetLevel);
             }
@@ -80,17 +71,28 @@ namespace DoormatBot.Strategies
             {
                 CallStop("It Seems a problem has occurred with the preset list values");
             }
-            return new PlaceDiceBet(Lastbet, High, PreviousBet.Chance);
+            return new PlaceDiceBet(Lastbet, High, Chance);
         }
 
         public override PlaceDiceBet RunReset()
         {
-            throw new NotImplementedException();
+            presetLevel = 0;
+            decimal Lastbet = SetPresetValues(presetLevel);
+            return new PlaceDiceBet(Lastbet, High, Chance);
         }
 
         decimal SetPresetValues(int Level)
         {
-            decimal Lastbet = 0;
+            if (PresetBets[Level] is PresetDiceBet dicebet)
+            {
+                Chance = dicebet.Chance ?? Chance;
+                High = dicebet.High ?? High;
+                High = dicebet.Switch ? !High : High;
+            }
+            return PresetBets[Level].Amount;
+
+
+            /*decimal Lastbet = 0;
             decimal Betval = -1;
             string[] Vars = null;
             if (lstPresetList[Level].Contains("-"))
@@ -151,27 +153,21 @@ namespace DoormatBot.Strategies
             {
                 CallStop("Invalid bet inpreset list");
             }
-            return Lastbet;
+            return Lastbet;*/
         }
 
 
-        public bool rdbPresetWinStep { get; set; }
+        public string WinAction { get; set; } = "Step";
 
-        public int nudPresetWinStep { get; set; }
+        public int WinStep { get; set; } = -1;
 
-        public bool rdbPresetWinReset { get; set; }
+        public string LossAction { get; set; } = "Step";
+        public string EndAction { get; set; } = "Stop";
 
-        public bool rdbPresetLossStep { get; set; }
+        public int LossStep { get; set; } = 1;
 
-        public int nudPresetLossStep { get; set; }
+        public int EndStep { get; set; } = -1;
 
-        public bool rdbPresetLossReset { get; set; }
-
-        public bool rdbPresetEndStop { get; set; }
-
-        public bool rdbPresetEndStep { get; set; }
-
-        public int nudPresetEndStep { get; set; }
         public bool High { get ; set ; }
         public decimal Amount { get ; set ; }
         public decimal Chance { get ; set ; }
