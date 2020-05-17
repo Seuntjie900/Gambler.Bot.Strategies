@@ -120,12 +120,12 @@ namespace DoormatBot.Helpers
                     PlaceDiceBet NewBetObject = null;
                     bool win = NewBet.GetWin(Site);
                     string Response = "";
-                    if (BetSettings.CheckResetPreStats(NewBet, NewBet.GetWin(Site), Stats)) 
+                    if (BetSettings.CheckResetPreStats(NewBet, NewBet.GetWin(Site), Stats, SiteStats)) 
                     {
                         Reset = true;
                         NewBetObject = DiceStrategy.RunReset();
                     }
-                    if (BetSettings.CheckStopPreStats(NewBet, NewBet.GetWin(Site), Stats, out Response))
+                    if (BetSettings.CheckStopPreStats(NewBet, NewBet.GetWin(Site), Stats, out Response, SiteStats))
                     {
                         this.Stop = (true);
                     }
@@ -136,34 +136,34 @@ namespace DoormatBot.Helpers
                         (DiceStrategy as ProgrammerMode).UpdateSiteStats(CopyHelper.CreateCopy<SiteStats>(SiteStats));
                         (DiceStrategy as ProgrammerMode).UpdateSite(CopyHelper.CreateCopy<SiteDetails>(Site.SiteDetails));
                     }
-                    if (BetSettings.CheckResetPostStats(NewBet, NewBet.GetWin(Site), Stats))
+                    if (BetSettings.CheckResetPostStats(NewBet, NewBet.GetWin(Site), Stats, SiteStats))
                     {
                         Reset = true;
                         NewBetObject = DiceStrategy.RunReset();
                     }
-                    if (BetSettings.CheckStopPOstStats(NewBet, NewBet.GetWin(Site), Stats, out Response))
+                    if (BetSettings.CheckStopPOstStats(NewBet, NewBet.GetWin(Site), Stats, out Response, SiteStats))
                     {
                         Stop = true;
                     }
                     decimal withdrawamount = 0;
-                    if (BetSettings.CheckWithdraw(NewBet, NewBet.GetWin(Site), Stats, out withdrawamount))
+                    if (BetSettings.CheckWithdraw(NewBet, NewBet.GetWin(Site), Stats, out withdrawamount, SiteStats))
                     {
                         this.Balance -= withdrawamount;
                     }
-                    if (BetSettings.CheckBank(NewBet, NewBet.GetWin(Site), Stats, out withdrawamount))
+                    if (BetSettings.CheckBank(NewBet, NewBet.GetWin(Site), Stats, out withdrawamount, SiteStats))
                     {
                         this.Balance -= withdrawamount;
                     }
-                    if (BetSettings.CheckTips(NewBet, NewBet.GetWin(Site), Stats, out withdrawamount))
+                    if (BetSettings.CheckTips(NewBet, NewBet.GetWin(Site), Stats, out withdrawamount, SiteStats))
                     {
                         this.Balance -= withdrawamount;
                     }
                     bool NewHigh = false;
-                    if (BetSettings.CheckResetSeed(NewBet, NewBet.GetWin(Site), Stats))
+                    if (BetSettings.CheckResetSeed(NewBet, NewBet.GetWin(Site), Stats, SiteStats))
                     {
                         GenerateSeeds();
                     }
-                    if (BetSettings.CheckHighLow(NewBet, NewBet.GetWin(Site), Stats, out NewHigh))
+                    if (BetSettings.CheckHighLow(NewBet, NewBet.GetWin(Site), Stats, out NewHigh, SiteStats))
                     {
                         (DiceStrategy as iDiceStrategy).High = NewHigh;
                     }

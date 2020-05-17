@@ -78,6 +78,8 @@ namespace DoormatBot.Helpers
         public long CurrentStreak { get { return WinStreak > LossStreak ? WinStreak : -LossStreak; } }
         public decimal MaxProfit { get; set; } = 0;
         public decimal MinProfit { get; set; } = 0;
+        public decimal MaxProfitSinceReset { get; set; } = 0;
+        public decimal MinProfitSinceReset { get; set; } = 0;
 
         public void UpdateStats(Bet newBet, bool Win)
         {
@@ -88,6 +90,11 @@ namespace DoormatBot.Helpers
                 MaxProfit = Profit;
             if (Profit < MinProfit)
                 MinProfit = Profit;
+            if (Profit > MaxProfitSinceReset)
+                MaxProfitSinceReset = Profit;
+            if (Profit < MinProfitSinceReset)
+                MinProfitSinceReset = Profit;
+
             Wagered += (decimal)newBet.TotalAmount;
             PorfitSinceLimitAction += (decimal)newBet.Profit;
             if (Win)
@@ -111,9 +118,9 @@ namespace DoormatBot.Helpers
                     StreakProfitSinceLastReset = 0;
                     StreakLossSinceLastReset = 0;
                 }
-                CurrentProfit += Profit;
-                ProfitSinceLastReset += Profit;
-                StreakProfitSinceLastReset += Profit;
+                CurrentProfit += newBet.Profit;
+                ProfitSinceLastReset += newBet.Profit;
+                StreakProfitSinceLastReset += newBet.Profit;
                 Wins++;
                 WinStreak++;
                 if (LossStreak != 0)
@@ -151,8 +158,9 @@ namespace DoormatBot.Helpers
                     StreakProfitSinceLastReset = 0;
                     StreakLossSinceLastReset = 0;
                 }
-                CurrentProfit -= (decimal)newBet.TotalAmount;
-                ProfitSinceLastReset -= (decimal)newBet.TotalAmount;
+                
+                CurrentProfit += (decimal)newBet.Profit;
+                ProfitSinceLastReset += (decimal)newBet.Profit;
 
                 StreakLossSinceLastReset -= (decimal)newBet.TotalAmount;
                 Losses++;

@@ -1,5 +1,6 @@
 ﻿using DoormatCore.Games;
 using DoormatCore.Helpers;
+using DoormatCore.Sites;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -110,32 +111,45 @@ namespace DoormatBot.Helpers
         public bool EnableSwitchBets { get; set; } = false;
         public int SwitchBets { get; set; }
 
+        public bool EnableResetLossFromMaxProfit { get; set; }
+        public bool EnableResetWinFromMinProfit { get; set; }
+        public decimal ResetLossFromMaxProfit { get; set; }
+        public decimal ResetWinFromMinProfit { get; set; }
+
+        public bool EnableStopLossFromMaxProfit { get; set; }
+        public bool EnableStopWinFromMinProfit { get; set; }
+        public decimal StopLossFromMaxProfit { get; set; }
+        public decimal StopWinFromMinProfit { get; set; }
+
+
         public Trigger[] Triggers { get; private set; } = new Trigger[0];
 
         #region Process Bet
 
 
-        public bool CheckResetPreStats(Bet NewBet, bool win, SessionStats Stats)
+        public bool CheckResetPreStats(Bet NewBet, bool win, SessionStats Stats, SiteStats siteStats)
         {
             return false;
         }
-        public bool CheckResetPostStats(Bet NewBet, bool win, SessionStats Statsn)
+        public bool CheckResetPostStats(Bet NewBet, bool win, SessionStats Statsn, SiteStats siteStats)
         {
             bool reset = false;
 
-            if (EnableResetAfterBets && Statsn.Bets % ResetAfterBets==0)
+            if (EnableResetAfterBets  && Statsn.Bets % ResetAfterBets==0)
             {
                 reset = true;
             }
-            if (EnableUpperLimit && UpperLimitAction == LimitAction.Reset)
+            if (EnableUpperLimit && UpperLimitCompare == "Balance" && UpperLimitAction == LimitAction.Reset)
             {
-                //if balance is larger than the limit, reset
+                
+                reset = reset || (siteStats.Balance >= UpperLimit);
+                
             }
-            if (EnableLowerLimit && LowerLimitAction == LimitAction.Reset)
+            if (EnableLowerLimit && UpperLimitCompare == "Balance" && LowerLimitAction == LimitAction.Reset)
             {
-                //if balance is Smaller than the limit, reset
+                reset = reset || (siteStats.Balance <= LowerLimit);
             }
-            if (EnableUpperLimit && UpperLimitAction == LimitAction.Reset)
+            if (EnableUpperLimit && UpperLimitCompare == "Profit" && UpperLimitAction == LimitAction.Reset)
             {
                 if (Statsn.PorfitSinceLimitAction>= UpperLimit)
                 {
@@ -143,7 +157,7 @@ namespace DoormatBot.Helpers
                     Statsn.PorfitSinceLimitAction = 0;
                 }
             }
-            if (EnableLowerLimit && LowerLimitAction == LimitAction.Reset)
+            if (EnableLowerLimit && UpperLimitCompare == "Profit" && LowerLimitAction == LimitAction.Reset)
             {
                 if (Statsn.PorfitSinceLimitAction >= LowerLimit)
                 {
@@ -157,18 +171,23 @@ namespace DoormatBot.Helpers
                 {
                     reset = true;
                 }
-                if (EnableResetAfterBtcStreakWin && Statsn.StreakProfitSinceLastReset <= ResetAfterBtcStreakWin)
+                if (EnableResetAfterBtcStreakWin && Statsn.StreakProfitSinceLastReset >= ResetAfterBtcStreakWin)
                 {
                     reset = true;
                     Statsn.StreakProfitSinceLastReset = 0;
                 }
-                if (EnableResetAfterBtcWin && Statsn.ProfitSinceLastReset <= ResetAfterBtcWin)
+                if (EnableResetAfterBtcWin && Statsn.ProfitSinceLastReset >= ResetAfterBtcWin)
                 {
                     reset = true;
                     Statsn.ProfitSinceLastReset = 0;
                 }
                 if (EnableResetAfterWins && Statsn.Wins % ResetAfterWins == 0)
                 {
+                    reset = true;
+                }
+                if (EnableResetWinFromMinProfit && Statsn.Profit-Statsn.MinProfitSinceReset >= ResetWinFromMinProfit )
+                {
+                    Statsn.MinProfitSinceReset = Statsn.Profit;
                     reset = true;
                 }
             }
@@ -178,12 +197,12 @@ namespace DoormatBot.Helpers
                 {
                     reset = true;
                 }
-                if (EnableResetAfterBtcStreakLoss && Statsn.StreakProfitSinceLastReset <= ResetAfterBtcStreakLoss)
+                if (EnableResetAfterBtcStreakLoss && Statsn.StreakLossSinceLastReset <= -ResetAfterBtcStreakLoss)
                 {
                     reset = true;
-                    Statsn.StreakProfitSinceLastReset=0;
+                    Statsn.StreakLossSinceLastReset = 0;
                 }
-                if (EnableResetAfterBtcLoss && Statsn.ProfitSinceLastReset<= ResetAfterBtcLoss)
+                if (EnableResetAfterBtcLoss && Statsn.ProfitSinceLastReset<= -ResetAfterBtcLoss)
                 {
                     reset = true;
                     Statsn.ProfitSinceLastReset = 0;
@@ -192,31 +211,41 @@ namespace DoormatBot.Helpers
                 {
                     reset = true;
                 }
+                if (EnableResetLossFromMaxProfit && Statsn.MaxProfitSinceReset- Statsn.Profit >= ResetLossFromMaxProfit)
+                {
+                    Statsn.MaxProfitSinceReset = Statsn.Profit;
+                    reset = true;
+                }
             }
             return reset;
         }
 
-        public bool CheckStopPreStats(Bet NewBet, bool win, SessionStats Stats, out string reason)
+        public bool CheckStopPreStats(Bet NewBet, bool win, SessionStats Stats, out string reason, SiteStats siteStats)
         {
             reason = "";
             return false;
         }
 
-        public bool CheckStopPOstStats(Bet NewBet, bool win, SessionStats Stats, out string reason)
+        public bool CheckStopPOstStats(Bet NewBet, bool win, SessionStats Stats, out string reason, SiteStats siteStats)
         {
             
-            if (EnableUpperLimit && UpperLimitAction == LimitAction.Stop)
+            if (EnableUpperLimit && UpperLimitCompare == "Balance" && UpperLimitAction == LimitAction.Stop)
             {
-                
-                //check balance
-                //stop if balance is larger
+                if (siteStats.Balance>=UpperLimit)
+                {
+                    reason = "Upper balance limit reached.";
+                    return true;
+                }
             }
-            if (EnableLowerLimit && LowerLimitAction == LimitAction.Stop)
+            if (EnableLowerLimit && UpperLimitCompare == "Balance" && LowerLimitAction == LimitAction.Stop)
             {
-                //check balance
-                //stop if balance is lower
+                if (siteStats.Balance <= LowerLimit)
+                {
+                    reason = "lower balance limit reached.";
+                    return true;
+                }                
             }
-            if (EnableUpperLimit && UpperLimitAction == LimitAction.Stop)
+            if (EnableUpperLimit && UpperLimitCompare == "Profit" && UpperLimitAction == LimitAction.Stop)
             {
                 if (Stats.Profit>=UpperLimit)
                 {
@@ -224,7 +253,7 @@ namespace DoormatBot.Helpers
                     return true;
                 }
             }
-            if (EnableLowerLimit && LowerLimitAction == LimitAction.Stop)
+            if (EnableLowerLimit && UpperLimitCompare == "Profit" && LowerLimitAction == LimitAction.Stop)
             {
                 if (Stats.Profit <= LowerLimit)
                 {
@@ -249,7 +278,7 @@ namespace DoormatBot.Helpers
                     reason = string.Format("Stop after {0} {1} conditino triggered with {2} {1}, Stopping", StopAfterWinStreak, "Wines in a row", Stats.WinStreak);
                     return true;
                 }
-                if (EnableStopAfterBtcWin && -Stats.Profit >= StopAfterBtcWin)
+                if (EnableStopAfterBtcWin && Stats.Profit >= StopAfterBtcWin)
                 {
                     reason = string.Format("Stop after {0} {1} conditino triggered with {2} {1}, Stopping", StopAfterBtcWin, "Currency Win", Stats.Profit);
                     return true;
@@ -261,7 +290,12 @@ namespace DoormatBot.Helpers
                 }
                 if (EnableStopAfterWins && Stats.Wins % StopAfterWins == 0)
                 {
-                    reason = string.Format("Stop after {0} {1} conditino triggered with {2} {1}, Stopping", StopAfterWins, "Wines", Stats.Wins);
+                    reason = string.Format("Stop after {0} {1} conditino triggered with {2} {1}, Stopping", StopAfterWins, "Wins", Stats.Wins);
+                    return true;
+                }
+                if (EnableStopWinFromMinProfit && Stats.Profit-Stats.MinProfit >= StopWinFromMinProfit)
+                {
+                    reason = string.Format("Stop after {0} {1} conditino triggered with {2} {1}, Stopping", StopWinFromMinProfit, "profit since min profit", Stats.Profit - Stats.MinProfit);
                     return true;
                 }
             }
@@ -277,7 +311,7 @@ namespace DoormatBot.Helpers
                     reason = string.Format("Stop after {0} {1} conditino triggered with {2} {1}, Stopping", StopAfterBtcLoss, "Currency Loss", Stats.Profit);
                     return true;
                 }
-                if (EnableStopAfterBtcLoseStreak && Stats.CurrentProfit >= StopAfterBtcLoseStreak)
+                if (EnableStopAfterBtcLoseStreak && Stats.CurrentProfit<= -StopAfterBtcLoseStreak)
                 {
                     reason = string.Format("Stop after {0} {1} conditino triggered with {2} {1}, Stopping", StopAfterBtcLoseStreak, "Currency Streak Loss", Stats.CurrentProfit);
                     return true;
@@ -287,28 +321,37 @@ namespace DoormatBot.Helpers
                     reason = string.Format("Stop after {0} {1} conditino triggered with {2} {1}, Stopping", StopAfterLosses, "Losses", Stats.Losses);
                     return true;
                 }
-
+                if (EnableStopLossFromMaxProfit && Stats.MaxProfit- Stats.Profit  >= StopLossFromMaxProfit)
+                {
+                    reason = string.Format("Stop after {0} {1} conditino triggered with {2} {1}, Stopping", StopLossFromMaxProfit, "loss since max profit", Stats.MaxProfit - Stats.Profit);
+                    return true;
+                }
             }
             reason = "";
             return false;
         }
 
-        public bool CheckWithdraw(Bet NewBet, bool win, SessionStats Stats,  out decimal Amount)
+        public bool CheckWithdraw(Bet NewBet, bool win, SessionStats Stats,  out decimal Amount, SiteStats siteStats)
         {
             Amount = 0;
-            if (EnableUpperLimit && UpperLimitAction == LimitAction.Withdraw)
+            if (EnableUpperLimit && UpperLimitCompare == "Balance" && UpperLimitAction == LimitAction.Withdraw)
             {
-                //check balance
-                //stop if balance is larger
-                Amount = UpperLimitActionAmount;
+                if (siteStats.Balance >= UpperLimit)
+                {
+                    Amount = UpperLimitActionAmount;
+                    return true;
+                }
             }
-            if (EnableLowerLimit && LowerLimitAction == LimitAction.Withdraw)
+            if (EnableLowerLimit && UpperLimitCompare == "Balance" && LowerLimitAction == LimitAction.Withdraw)
             {
-                //check balance
-                //stop if balance is lower
-                Amount = LowerLimitActionAmount;
+                if (siteStats.Balance <= LowerLimit)
+                {
+                    Amount = LowerLimitActionAmount;
+                    return true;
+                }
+                
             }
-            if (EnableUpperLimit && UpperLimitAction == LimitAction.Withdraw)
+            if (EnableUpperLimit && UpperLimitCompare == "Profit" && UpperLimitAction == LimitAction.Withdraw)
             {
                 if (Stats.Profit >= UpperLimit)
                 {
@@ -316,7 +359,7 @@ namespace DoormatBot.Helpers
                     return true;
                 }
             }
-            if (EnableLowerLimit && LowerLimitAction == LimitAction.Withdraw)
+            if (EnableLowerLimit && UpperLimitCompare == "Profit" && LowerLimitAction == LimitAction.Withdraw)
             {
                 if (Stats.Profit <= LowerLimit)
                 {
@@ -327,23 +370,28 @@ namespace DoormatBot.Helpers
             return false;
         }
 
-        public bool CheckTips(Bet NewBet, bool win, SessionStats Stats, out decimal Amount)
+        public bool CheckTips(Bet NewBet, bool win, SessionStats Stats, out decimal Amount, SiteStats siteStats)
         {
            Amount = 0;
             Amount = 0;
-            if (EnableUpperLimit && UpperLimitAction == LimitAction.Tip)
+            if (EnableUpperLimit && UpperLimitCompare == "Balance" && UpperLimitAction == LimitAction.Tip)
             {
-                //check balance
-                //stop if balance is larger
-                Amount = UpperLimitActionAmount;
+                if (siteStats.Balance >= UpperLimit)
+                {
+                    Amount = UpperLimitActionAmount;
+                    return true;
+                }
             }
-            if (EnableLowerLimit && LowerLimitAction == LimitAction.Tip)
+            if (EnableLowerLimit && UpperLimitCompare == "Balance" && LowerLimitAction == LimitAction.Tip)
             {
-                //check balance
-                //stop if balance is lower
-                Amount = LowerLimitActionAmount;
+                if (siteStats.Balance <= LowerLimit)
+                {
+                    Amount = LowerLimitActionAmount;
+                    return true;
+                }
+                
             }
-            if (EnableUpperLimit && UpperLimitAction == LimitAction.Tip)
+            if (EnableUpperLimit && UpperLimitCompare == "Profit" && UpperLimitAction == LimitAction.Tip)
             {
                 if (Stats.Profit >= UpperLimit)
                 {
@@ -351,7 +399,7 @@ namespace DoormatBot.Helpers
                     return true;
                 }
             }
-            if (EnableLowerLimit && LowerLimitAction == LimitAction.Tip)
+            if (EnableLowerLimit && UpperLimitCompare == "Profit" && LowerLimitAction == LimitAction.Tip)
             {
                 if (Stats.Profit <= LowerLimit)
                 {
@@ -363,7 +411,7 @@ namespace DoormatBot.Helpers
             return false;
         }
 
-        public bool CheckHighLow(DiceBet NewBet, bool win, SessionStats Stats, out bool NewHigh)
+        public bool CheckHighLow(DiceBet NewBet, bool win, SessionStats Stats, out bool NewHigh, SiteStats siteStats)
         {
             NewHigh = false;
             
@@ -395,22 +443,26 @@ namespace DoormatBot.Helpers
             return false;
         }
 
-        public bool CheckBank(Bet NewBet, bool win, SessionStats Stats, out decimal Amount)
+        public bool CheckBank(Bet NewBet, bool win, SessionStats Stats, out decimal Amount, SiteStats siteStats)
         {
             Amount = 0;
-            if (EnableUpperLimit && UpperLimitAction == LimitAction.Bank)
+            if (EnableUpperLimit && UpperLimitCompare == "Balance" && UpperLimitAction == LimitAction.Bank)
             {
-                //check balance
-                //stop if balance is larger
-                Amount = UpperLimitActionAmount;
+                if (siteStats.Balance >= UpperLimit)
+                {
+                    Amount = UpperLimitActionAmount;
+                    return true;
+                }
             }
-            if (EnableLowerLimit && LowerLimitAction == LimitAction.Bank)
+            if (EnableLowerLimit && UpperLimitCompare == "Balance" && LowerLimitAction == LimitAction.Bank)
             {
-                //check balance
-                //stop if balance is lower
-                Amount = LowerLimitActionAmount;
+                if (siteStats.Balance <= LowerLimit)
+                {
+                    Amount = LowerLimitActionAmount;
+                    return true;
+                }
             }
-            if (EnableUpperLimit && UpperLimitAction == LimitAction.Bank)
+            if (EnableUpperLimit && UpperLimitCompare == "Profit" && UpperLimitAction == LimitAction.Bank)
             {
                 if (Stats.Profit >= UpperLimit)
                 {
@@ -418,7 +470,7 @@ namespace DoormatBot.Helpers
                     return true;
                 }
             }
-            if (EnableLowerLimit && LowerLimitAction == LimitAction.Bank)
+            if (EnableLowerLimit && UpperLimitCompare == "Profit" && LowerLimitAction == LimitAction.Bank)
             {
                 if (Stats.Profit <= LowerLimit)
                 {
@@ -429,7 +481,7 @@ namespace DoormatBot.Helpers
             return false;
         }
 
-        public bool CheckResetSeed(Bet NewBet, bool win, SessionStats Stats)
+        public bool CheckResetSeed(Bet NewBet, bool win, SessionStats Stats, SiteStats siteStats)
         {
             if (EnableResetSeedBets && Stats.Bets%ResetSeedBets==0)
             {

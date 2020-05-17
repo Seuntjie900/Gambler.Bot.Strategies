@@ -413,12 +413,12 @@ namespace DoormatBot
             bool win = e.NewBet.GetWin(CurrentSite); 
             string Response = "";
             bool Reset = false;
-            if (BetSettings.CheckResetPreStats(e.NewBet, win, Stats))
+            if (BetSettings.CheckResetPreStats(e.NewBet, win, Stats, CurrentSite.Stats))
             {
                 Reset = true;
                 NextBext = Strategy.RunReset();
             }
-            if (BetSettings.CheckStopPreStats(e.NewBet, win, Stats, out Response))
+            if (BetSettings.CheckStopPreStats(e.NewBet, win, Stats, out Response, CurrentSite.Stats))
             {
                 StopStrategy(Response);
             }
@@ -489,35 +489,35 @@ namespace DoormatBot
                     }
                 }
             }
-            if (BetSettings.CheckResetPostStats(e.NewBet, win, Stats))
+            if (BetSettings.CheckResetPostStats(e.NewBet, win, Stats, CurrentSite.Stats))
             {
                 Reset = true;
                 NextBext = Strategy.RunReset();
             }
-            if (BetSettings.CheckStopPOstStats(e.NewBet, win, Stats, out Response))
+            if (BetSettings.CheckStopPOstStats(e.NewBet, win, Stats, out Response, CurrentSite.Stats))
             {
                 StopStrategy(Response);
             }
             decimal withdrawamount = 0;
-            if (BetSettings.CheckWithdraw(e.NewBet,win, Stats, out withdrawamount))
+            if (BetSettings.CheckWithdraw(e.NewBet,win, Stats, out withdrawamount, CurrentSite.Stats))
             {
                 throw new NotImplementedException();
                 //if (CurrentSite.AutoWithdraw)
                 //CurrentSite.Withdraw(BetSettings.)
                // this.Balance -= withdrawamount;
             }
-            if (BetSettings.CheckBank(e.NewBet, win, Stats, out withdrawamount))
+            if (BetSettings.CheckBank(e.NewBet, win, Stats, out withdrawamount, CurrentSite.Stats))
             {
                 throw new NotImplementedException();
                 //this.Balance -= withdrawamount;
             }
-            if (BetSettings.CheckTips(e.NewBet, win, Stats, out withdrawamount))
+            if (BetSettings.CheckTips(e.NewBet, win, Stats, out withdrawamount, CurrentSite.Stats))
             {
                 throw new NotImplementedException();
                 //this.Balance -= withdrawamount;
             }
             bool NewHigh = false;
-            if (BetSettings.CheckResetSeed(e.NewBet, win, Stats))
+            if (BetSettings.CheckResetSeed(e.NewBet, win, Stats, CurrentSite.Stats))
             {
                 if (CurrentSite.CanChangeSeed)
                     CurrentSite.ResetSeed("");
