@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "DoormatControllers": {
-      "commandName": "Project",
-      "commandLineArgs": "console"
-    }
-  }
-}

@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Text;
+﻿using DoormatBot.Helpers;
+using DoormatCore;
 using DoormatCore.Games;
 using DoormatCore.Helpers;
 using DoormatCore.Sites;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using GlobalsObject;
-using DoormatBot.Helpers;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Text;
 
 namespace DoormatBot.Strategies
 {
