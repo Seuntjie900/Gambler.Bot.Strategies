@@ -14,8 +14,8 @@ namespace DoormatBot.Strategies
         #region Settings
         public int WinMultiplierMode { get; set; }
         public decimal WinMaxMultiplies { get; set; } = 1;
-        public decimal WinMultiplier { get; set; } = 1;
-        
+        public decimal WinMultiplier { get; private set; } = 1;
+        public decimal WinBaseMultiplier { get; set; } = 1;
         public int WinDevideCounter { get; set; } = 1;
         public decimal WinDevider { get; set; } = 1;
         public int WinDevidecounter { get; set; } = 1;   
@@ -47,7 +47,8 @@ namespace DoormatBot.Strategies
         public decimal ChangeChanceLoseTo { get; set; } = 90;
         public bool rdbMaxMultiplier { get; set; } = false;
         public int MaxMultiplies { get; set; } = 20;
-        public decimal Multiplier { get; set; } = 2;
+        public decimal Multiplier { get; private set; } = 2;
+        public decimal BaseMultiplier { get; set; } = 2;
         public int MultiplierMode { get; set; } = 0;
         public int Devidecounter { get; set; } = 10;
         public decimal Devider { get; set; } = 1;        
@@ -259,6 +260,8 @@ namespace DoormatBot.Strategies
             Amount = MinBet;
             High = starthigh;
             Chance = BaseChance;
+            Multiplier = BaseMultiplier;
+            WinMultiplier = WinBaseMultiplier;
             return new PlaceDiceBet((decimal)MinBet, starthigh, (decimal)Chance);
         }
 

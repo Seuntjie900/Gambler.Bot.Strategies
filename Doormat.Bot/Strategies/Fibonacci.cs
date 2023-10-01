@@ -87,18 +87,21 @@ namespace DoormatBot.Strategies
         public int FiboWinIncrement { get; set; } = 0;
 
         public bool EnableFiboWinReset { get; set; } = true;
+        public bool EnableFiboWinStop { get; set; } = false;
 
         public bool EnableFiboLossIncrement { get; set; } = true;
 
         public int FiboLossIncrement { get; set; } = 1;
 
         public bool EnableFiboLossReset { get; set; } = false;
+        public bool EnableFiboLossStop { get; set; } = false;
 
         public int FiboLeve { get; set; } = 1;
 
         public bool EnableFiboLevel { get; set; } = true;
 
         public bool EnableFiboLevelReset { get; set; } = false;
+        public bool EnableFiboLevelStop { get; set; } = false;
         public bool High { get ; set ; }
         public decimal Amount { get ; set ; }
         public decimal Chance { get ; set ; }
