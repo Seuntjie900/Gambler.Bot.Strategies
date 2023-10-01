@@ -402,7 +402,7 @@ namespace DoormatBot
         {
             if (e.NewBet == null)
                 return;
-            DBInterface.Save<Bet>(e.NewBet);
+            DBInterface?.Save<Bet>(e.NewBet);
             MostRecentBet = e.NewBet;
             MostRecentBetTime = DateTime.Now;
             Retries = 0;
