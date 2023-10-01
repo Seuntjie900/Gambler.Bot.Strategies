@@ -24,11 +24,11 @@
   <ItemGroup>
     <PackageReference Include="IronPython" Version="3.4.1" />
     <PackageReference Include="IronPython.StdLib" Version="3.4.1" />
+    <PackageReference Include="MoonSharp" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Doormat\Doormat\Doormat\DoormatCore.csproj" />
-    <ProjectReference Include="..\KeePassLib\KeePassLibNetStd.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -3,9 +3,9 @@ using DoormatCore.Helpers;
 using DoormatCore.Sites;
 using DoormatCore.Storage;
 using DoormatBot.Strategies;
-using KeePassLib;
-using KeePassLib.Keys;
-using KeePassLib.Serialization;
+//using KeePassLib;
+//using KeePassLib.Keys;
+//using KeePassLib.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,12 +25,13 @@ namespace DoormatBot
     {
         #region Internal Variables
         List<ErrorEventArgs> ActiveErrors = new List<ErrorEventArgs>();
-        PwDatabase Passdb = new PwDatabase();
+        //PwDatabase Passdb = new PwDatabase();
         System.Timers.Timer BetTimer = new System.Timers.Timer { Interval=1000, Enabled=false, AutoReset=true };
 
         public bool KeepassOpen
         {
-            get { return Passdb.IsOpen; }            
+            get { return false;// Passdb.IsOpen;
+                               }            
         }
 
 
@@ -1033,10 +1034,10 @@ namespace DoormatBot
                 {
                     GetConstringPWEventArgs tmpArgs = new GetConstringPWEventArgs();
                     NeedKeepassPassword?.Invoke(this, tmpArgs);
-                    var ioConnInfo = new IOConnectionInfo { Path = tmp.KeepassDatabase };
+                   /* var ioConnInfo = new IOConnectionInfo { Path = tmp.KeepassDatabase };
                     var compKey = new CompositeKey();
                     compKey.AddUserKey(new KcpPassword(tmpArgs.Password));
-                    Passdb.Open(ioConnInfo, compKey, null);
+                    Passdb.Open(ioConnInfo, compKey, null);*/
                 }
                 catch (Exception exc)
                 {
@@ -1081,9 +1082,9 @@ namespace DoormatBot
         #region Accounts
         public KPHelper[] GetAccounts()
         {
-            var Entries = Passdb.RootGroup.GetEntries(true);
+            //var Entries = Passdb.RootGroup.GetEntries(true);
             List<KPHelper> tmpHelpers = new List<KPHelper>();
-            int i = 0;
+            /*int i = 0;
             foreach (var x in Entries)
             {
                 tmpHelpers.Add(new KPHelper {
@@ -1093,16 +1094,17 @@ namespace DoormatBot
                     URL = x.Strings.ReadSafe("URL"),
                     Id = x.Uuid.UuidBytes
                 });
-            }
+            }*/
             //Passdb.RootGroup.FindEntry(new PwUuid(tmpHelpers[0].Id),true);
             return tmpHelpers.ToArray();
         }
 
         public string GetPw(KPHelper Helper, out string Note)
         {
-            PwEntry pwEntry = Passdb.RootGroup.FindEntry(new PwUuid(Helper.Id), true);
+            /*PwEntry pwEntry = Passdb.RootGroup.FindEntry(new PwUuid(Helper.Id), true);
             Note = pwEntry.Strings.ReadSafe("Note");
-            return pwEntry.Strings.ReadSafe("Password");
+            return pwEntry.Strings.ReadSafe("Password");*/
+            throw new NotImplementedException();
         }
         #endregion
 
