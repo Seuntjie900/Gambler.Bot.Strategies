@@ -147,6 +147,7 @@ namespace DoormatBot.Strategies
         public bool chkReverseLab { get; set; }
 
         public bool rdbLabStop { get; set; }
+        public bool rdbLabReset { get=>!rdbLabStop; set=>rdbLabStop=!value; }
         public bool High { get ; set ; }
         public decimal Amount { get ; set ; }
         public decimal Chance { get ; set ; }
