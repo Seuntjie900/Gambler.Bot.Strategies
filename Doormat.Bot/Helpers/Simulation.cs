@@ -45,9 +45,12 @@ namespace DoormatBot.Helpers
             this.BetSettings = OtherSettings;
             ///copy strategy
             this.DiceStrategy = DiceStrategy;
-            this.DiceStrategy.NeedBalance += DiceStrategy_NeedBalance;
-            this.DiceStrategy.OnNeedStats += DiceStrategy_OnNeedStats;
-            this.DiceStrategy.Stop += DiceStrategy_Stop;
+            if (DiceStrategy != null)
+            {
+                this.DiceStrategy.NeedBalance += DiceStrategy_NeedBalance;
+                this.DiceStrategy.OnNeedStats += DiceStrategy_OnNeedStats;
+                this.DiceStrategy.Stop += DiceStrategy_Stop;
+            }
             this.log = Log;
             if (log)
             {
@@ -59,7 +62,7 @@ namespace DoormatBot.Helpers
                 this.bets.Add("");
                 this.bets.Add(columns);
             }
-            TmpFileName = TempStorage + Site.R.Next()+".csv."+ Process.GetCurrentProcess().Id;
+            TmpFileName = TempStorage + (Site?.R.Next()??0)+".csv."+ Process.GetCurrentProcess().Id;
         }
 
         public void Save(string NewFile)

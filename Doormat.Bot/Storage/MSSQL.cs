@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Reflection;
 using System.Text;
 using DoormatCore.Games;
 using DoormatCore.Helpers;
 using DoormatCore.Sites;
+using Microsoft.Data.SqlClient;
 using static DoormatCore.Sites.BaseSite;
 
 namespace DoormatCore.Storage
@@ -14,7 +14,7 @@ namespace DoormatCore.Storage
     internal class MSSQL : SQLBase
     {
         
-        System.Data.SqlClient.SqlConnection Connection = new SqlConnection();
+        SqlConnection Connection = new SqlConnection();
 
         public MSSQL(string ConnectionString) : base(ConnectionString)
         {

@@ -22,11 +22,11 @@ namespace DoormatCore.Storage
             switch (Provider.ToLower())
             {
                 case "mysql": newbase = new MYSql(ConnectionString);break ;
-                case "sqlite": newbase = new SQLite(ConnectionString); break;
+                case "sqlite": newbase = new Sqlite(ConnectionString); break;
                 case "mssql": newbase = new MSSQL(ConnectionString); break;
                 case "mongo": newbase = new Mongo(ConnectionString); break;
                 case "postgre": newbase = new PostGre(ConnectionString); break;
-                default: newbase = new SQLite(ConnectionString); break;
+                default: newbase = new Sqlite(ConnectionString); break;
 
             }
             Logger.DumpLog("Created SQLBase instance", 6);

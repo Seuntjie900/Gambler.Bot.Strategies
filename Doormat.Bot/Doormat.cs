@@ -1002,6 +1002,8 @@ namespace DoormatBot
             tmp.SetStrategy(Strategy);*/
             StoredBetSettings.SetStrategy(strategy);
             string Settings = DoormatCore.Helpers.json.JsonSerializer(this.StoredBetSettings);
+            if (!Directory.Exists(Path.GetDirectoryName(FileLocation)))
+                Directory.CreateDirectory(Path.GetDirectoryName(FileLocation));
             using (StreamWriter sw = new StreamWriter(FileLocation, false)) 
             {
                 sw.Write(Settings);

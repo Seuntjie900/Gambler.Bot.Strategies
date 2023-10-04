@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Reflection;
 using System.Text;
 using DoormatCore.Games;
 using DoormatCore.Helpers;
 using DoormatCore.Sites;
 using static DoormatCore.Sites.BaseSite;
+using Microsoft.Data.Sqlite;
 
 namespace DoormatCore.Storage
 {
-    class SQLite : SQLBase
+    class Sqlite : SQLBase
     {
-        SQLiteConnection Connection = new SQLiteConnection();
+        SqliteConnection Connection = new SqliteConnection();
 
-        public SQLite(string ConnectionString) : base(ConnectionString)
+        public Sqlite(string ConnectionString) : base(ConnectionString)
         {
-            Logger.DumpLog("Create SQLite Connection", 6);
-            Connection = new SQLiteConnection(ConnectionString);
+            Logger.DumpLog("Create Sqlite Connection", 6);
+            Connection = new SqliteConnection(ConnectionString);
             Connection.Open();
         }
         
@@ -45,8 +45,8 @@ namespace DoormatCore.Storage
                 return;
             string TableName = type.GetCustomAttribute<PersistentTableName>().TableName;
 
-            SQLiteCommand CheckTableExists = new SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table' AND name='" + TableName + "'", Connection);
-            SQLiteDataReader Reader = CheckTableExists.ExecuteReader();
+            SqliteCommand CheckTableExists = new SqliteCommand("SELECT name FROM Sqlite_master WHERE type='table' AND name='" + TableName + "'", Connection);
+            SqliteDataReader Reader = CheckTableExists.ExecuteReader();
             if (Reader.HasRows)
             {
                 /*List<string> Columns = new List<string>();
@@ -71,7 +71,7 @@ namespace DoormatCore.Storage
                         if (!found)
                         {
                             string Query = "alter table " + TableName + " add " + PI.Name + " " + GetDBType(PI.PropertyType.Name);
-                            SQLiteCommand AddColumn = new SQLiteCommand(Query, Connection);
+                            SqliteCommand AddColumn = new SqliteCommand(Query, Connection);
                             AddColumn.ExecuteNonQuery();
                         }
                     }
@@ -88,13 +88,13 @@ namespace DoormatCore.Storage
                         if (PI.Name.ToLower() != "id")
                         {
                             query += ", " + PI.Name + " " + GetDBType(PI.PropertyType.Name);
-                            /*SQLiteCommand AddColumn = new SQLiteCommand(Query, Connection);
+                            /*SqliteCommand AddColumn = new SqliteCommand(Query, Connection);
                             AddColumn.ExecuteNonQuery();*/
                         }
                     }
                 }
                 query += ")";
-                SQLiteCommand CreateTable = new SQLiteCommand(query, Connection);
+                SqliteCommand CreateTable = new SqliteCommand(query, Connection);
                 CreateTable.ExecuteNonQuery();
             }
         }
@@ -131,7 +131,7 @@ namespace DoormatCore.Storage
             bool first = true;
 
             int i = 1;
-            SQLiteCommand tmpCommand = new SQLiteCommand();
+            SqliteCommand tmpCommand = new SqliteCommand();
 
             foreach (PropertyInfo PI in type.GetProperties())
             {
@@ -171,7 +171,7 @@ namespace DoormatCore.Storage
             bool first = true;
 
             int i = 1;
-            SQLiteCommand tmpCommand = new SQLiteCommand();
+            SqliteCommand tmpCommand = new SqliteCommand();
 
             foreach (PropertyInfo PI in type.GetProperties())
             {
@@ -204,13 +204,13 @@ namespace DoormatCore.Storage
             if (!string.IsNullOrWhiteSpace(Sorting))
                 Select += "ORDER BY " + Sorting;
             List<T> results = new List<T>();
-            SQLiteCommand SelectCommand = new SQLiteCommand(Select, Connection);
+            SqliteCommand SelectCommand = new SqliteCommand(Select, Connection);
             for (int i = 0; i < SqlParams.Length; i++)
             {
                 SelectCommand.Parameters.AddWithValue("@" + (i + 1), SqlParams[i]);
             }
 
-            SQLiteDataReader tmpReader = SelectCommand.ExecuteReader();
+            SqliteDataReader tmpReader = SelectCommand.ExecuteReader();
             while (tmpReader.Read())
             {
                 results.Add(ParseResult<T>(tmpReader));
@@ -223,9 +223,9 @@ namespace DoormatCore.Storage
             T Result = null;
             string Select = ConstructSelect(typeof(T));
             Select += " WHERE [ID]=@1";
-            SQLiteCommand SelectCommand = new SQLiteCommand(Select, Connection);
+            SqliteCommand SelectCommand = new SqliteCommand(Select, Connection);
             SelectCommand.Parameters.AddWithValue("@1", Id);
-            SQLiteDataReader tmpReader = SelectCommand.ExecuteReader();
+            SqliteDataReader tmpReader = SelectCommand.ExecuteReader();
             if (tmpReader.HasRows)
             {
                 Result = ParseResult<T>(tmpReader);
