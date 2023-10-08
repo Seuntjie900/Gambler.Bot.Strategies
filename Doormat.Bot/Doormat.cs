@@ -18,6 +18,7 @@ using DoormatBot.Helpers;
 using System.Linq;
 using System.ComponentModel;
 using SuperSocket.ClientEngine;
+using System.Text.Json;
 
 namespace DoormatBot
 {
@@ -127,7 +128,7 @@ namespace DoormatBot
                         {
                             Logger.DumpLog("Found Type - " + x.Name, 6);
                             sites.Add(x.Name);
-                            string[] currenices = new string[] { "Btc" };
+                            string[] currenices = new string[] { "btc" };
                             Games[] games = new Games[] { Games.Dice };
                             try
                             {
@@ -984,7 +985,7 @@ namespace DoormatBot
 
         public void SavePersonalSettings(string FileLocation)
         {
-            string Settings = DoormatCore.Helpers.json.JsonSerializer(PersonalSettings);
+            string Settings = JsonSerializer.Serialize(PersonalSettings);
             using (StreamWriter sw = new StreamWriter(FileLocation, false))
             {
                 sw.Write(Settings);
@@ -1001,7 +1002,7 @@ namespace DoormatBot
             };
             tmp.SetStrategy(Strategy);*/
             StoredBetSettings.SetStrategy(strategy);
-            string Settings = DoormatCore.Helpers.json.JsonSerializer(this.StoredBetSettings);
+            string Settings = JsonSerializer.Serialize(this.StoredBetSettings);
             if (!Directory.Exists(Path.GetDirectoryName(FileLocation)))
                 Directory.CreateDirectory(Path.GetDirectoryName(FileLocation));
             using (StreamWriter sw = new StreamWriter(FileLocation, false)) 
@@ -1014,12 +1015,14 @@ namespace DoormatBot
         public void LoadPersonalSettings(string FileLocation)
         {
             string Settings = "";
+            var files = System.IO.Directory.GetFiles(Path.GetDirectoryName(FileLocation));
+            
             using (StreamReader sr = new StreamReader(FileLocation))
             {
                 Settings = sr.ReadToEnd();
             }
             Logger.DumpLog("Loaded Personal Settings File", 5);
-            PersonalSettings tmp = json.JsonDeserialize<PersonalSettings>(Settings);
+            PersonalSettings tmp = JsonSerializer.Deserialize<PersonalSettings>(Settings);
             Logger.DumpLog("Parsed Personal Settings File", 5);
             this.PersonalSettings = tmp;
             string pw = "";
@@ -1069,12 +1072,14 @@ namespace DoormatBot
 
         public ExportBetSettings LoadBetSettings(string FileLocation, bool ApplySettings = true)
         {
+
+            List<Trigger> trig = JsonSerializer.Deserialize<List<Trigger>>(@"[{""Action"":4,""Enabled"":true,""TriggerProperty"":""Wins"",""TargetType"":1,""Target"":""Wins"",""Comparison"":3,""Percentage"":50,""ValueType"":0,""ValueProperty"":null,""ValueValue"":0,""Destination"":null}]");
             string Settings = "";
             using (StreamReader sr = new StreamReader(FileLocation))
             {
                 Settings = sr.ReadToEnd();
             }
-            this.StoredBetSettings = json.JsonDeserialize<ExportBetSettings>(Settings);
+            this.StoredBetSettings = JsonSerializer.Deserialize<ExportBetSettings>(Settings);
             if (StoredBetSettings.BetSettings!=null && ApplySettings)
                 this.BetSettings = StoredBetSettings.BetSettings;
             this.Strategy = StoredBetSettings.GetStrat();

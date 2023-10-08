@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Amazon.SecurityToken.Model;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -117,7 +118,65 @@ namespace DoormatCore.Helpers
             }
             return 0;
         }
-        
+        [System.Text.Json.Serialization.JsonIgnore]
+        public string TriggerDescription { get => ToString(); }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder("When ");
+            sb.Append(TriggerProperty);
+            sb.Append(" ");
+            sb.Append(Comparison.ToString());
+            sb.Append(" ");
+            if (TargetType == CompareAgainst.Value)
+            {
+                sb.Append(Target);
+            }
+            else if (TargetType == CompareAgainst.Percentage)
+            {
+                sb.Append(Percentage);
+                sb.Append("% of ");
+                sb.Append(Target);
+            }
+            else if (TargetType == CompareAgainst.Property)
+            {
+                sb.Append(Target);
+                
+            }
+            sb.Append(" ");
+
+            ToStringAction(sb);
+
+
+            return sb.ToString();
+        }
+        void ToStringAction(StringBuilder sb)
+        {
+            string valuestring = "";
+            switch (ValueType)
+            {
+                case CompareAgainst.Value: valuestring = ValueValue.ToString(); break;
+                case CompareAgainst.Percentage: valuestring = ValueValue.ToString() + "% of " +ValueProperty; break;
+                case CompareAgainst.Property: valuestring = ValueProperty; break;
+            }
+            
+
+            switch (Action)
+            {
+                case TriggerAction.Alarm: sb.Append("play an alarm"); break;
+                case TriggerAction.Bank: sb.Append("bank " + valuestring); break;
+                case TriggerAction.Chime: sb.Append("play a chime"); break;
+                case TriggerAction.Email: sb.Append("send an email to "+Destination); break;
+                case TriggerAction.Invest: sb.Append("invest " + valuestring ); break;
+                case TriggerAction.Popup: sb.Append("show a notification"); break;
+                case TriggerAction.Reset: sb.Append("reset"); break;
+                case TriggerAction.ResetSeed: sb.Append("reset seed"); break;
+                case TriggerAction.Stop: sb.Append("stop betting"); break;
+                case TriggerAction.Switch: sb.Append("switch side"); break;
+                case TriggerAction.Tip: sb.Append("send a tip of " + valuestring + " to " + Destination); break;
+                case TriggerAction.Withdraw: sb.Append("withdraw "+ valuestring +" to "+Destination); break;
+            }
+        }
     }
     public class NotificationEventArgs:EventArgs
     {

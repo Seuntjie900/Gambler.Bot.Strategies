@@ -122,7 +122,7 @@ namespace DoormatBot.Helpers
         public decimal StopWinFromMinProfit { get; set; }
 
 
-        public Trigger[] Triggers { get; private set; } = new Trigger[0];
+        public List<Trigger> Triggers { get; set; } = new List<Trigger>();
 
         #region Process Bet
 

@@ -13,26 +13,26 @@ namespace DoormatBot.Helpers
         private List<Trigger> _triggers = new List<Trigger>();
         private Dictionary<ErrorType, ErrorSetting> _Errors = new Dictionary<ErrorType, ErrorSetting>();
 
-        public Trigger[] Notifications { get { return _triggers.ToArray(); } private set { _triggers = new List<Trigger>(value); } }
-        private ErrorSetting[] errorSettings;
+        public List<Trigger> Notifications { get { return _triggers; } private set { _triggers = value; } }
+        private List<ErrorSetting> errorSettings;
 
-        public ErrorSetting[] ErrorSettings
+        public List<ErrorSetting> ErrorSettings
         {
             get { return ArrayFromDictonary(); }
             set {  CompareErrorDictionary(value); }
         }
 
-        private ErrorSetting[] ArrayFromDictonary()
+        private List<ErrorSetting> ArrayFromDictonary()
         {
             List<ErrorSetting> settings = new List<ErrorSetting>();
             foreach (ErrorType x in _Errors.Keys)
             {
                 settings.Add(_Errors[x]);
             }
-            return settings.ToArray();
+            return settings;
         }
 
-        private void CompareErrorDictionary(ErrorSetting[] newSettings)
+        private void CompareErrorDictionary(List<ErrorSetting> newSettings)
         {
             foreach (ErrorSetting x in newSettings)
             {
@@ -136,7 +136,8 @@ namespace DoormatBot.Helpers
             tmp[6] = new PersonalSettings.ErrorSetting { Type = ErrorType.Tip, Action = PersonalSettings.ErrorActions.Resume };
             tmp[7] = new PersonalSettings.ErrorSetting { Type = ErrorType.Unknown, Action = PersonalSettings.ErrorActions.Stop };
             tmp[8] = new PersonalSettings.ErrorSetting { Type = ErrorType.Withdrawal, Action = PersonalSettings.ErrorActions.Resume };
-            settings.ErrorSettings = tmp;
+            tmp[9] = new PersonalSettings.ErrorSetting { Type = ErrorType.BetTooLow, Action = PersonalSettings.ErrorActions.Stop };
+            settings.ErrorSettings = new List<ErrorSetting>(tmp);
             
             return settings;
         }
