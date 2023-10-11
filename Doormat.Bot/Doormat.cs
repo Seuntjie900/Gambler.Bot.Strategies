@@ -219,10 +219,11 @@ namespace DoormatBot
                     baseSite.Notify -= BaseSite_Notify;
                     baseSite.RegisterFinished -= BaseSite_RegisterFinished;
                     baseSite.StatsUpdated -= BaseSite_StatsUpdated;
-                    baseSite.OnInvestFinished += BaseSite_OnInvestFinished;
-                    baseSite.OnResetSeedFinished += BaseSite_OnResetSeedFinished;
-                    baseSite.OnTipFinished += BaseSite_OnTipFinished;
-                    baseSite.OnWithdrawalFinished += BaseSite_OnWithdrawalFinished;
+                    baseSite.OnInvestFinished -= BaseSite_OnInvestFinished;
+                    baseSite.OnResetSeedFinished -= BaseSite_OnResetSeedFinished;
+                    baseSite.OnTipFinished -= BaseSite_OnTipFinished;
+                    baseSite.OnWithdrawalFinished -= BaseSite_OnWithdrawalFinished;
+                    baseSite.OnBrowserBypassRequired -= BaseSite_OnBrowserBypassRequired;
                     baseSite.Disconnect();                    
                 }
                 baseSite = value;
@@ -240,6 +241,7 @@ namespace DoormatBot
                     baseSite.OnResetSeedFinished += BaseSite_OnResetSeedFinished;
                     baseSite.OnTipFinished += BaseSite_OnTipFinished;
                     baseSite.OnWithdrawalFinished += BaseSite_OnWithdrawalFinished;
+                    baseSite.OnBrowserBypassRequired += BaseSite_OnBrowserBypassRequired;
                     
                     if (!new List<Games>(baseSite.SupportedGames).Contains(CurrentGame))
                     {
@@ -248,6 +250,11 @@ namespace DoormatBot
 
                 }
             }
+        }
+
+        private void BaseSite_OnBrowserBypassRequired(object sender, BypassRequiredArgs e)
+        {
+            OnBypassRequired?.Invoke(sender, e);
         }
 
         private void BaseSite_OnWithdrawalFinished(object sender, GenericEventArgs e)
@@ -294,6 +301,7 @@ namespace DoormatBot
         public event EventHandler<GetConstringPWEventArgs> NeedKeepassPassword;
         public event EventHandler OnStarted;
         public event EventHandler<GenericEventArgs> OnStopped;
+        public event EventHandler<BypassRequiredArgs> OnBypassRequired;
 
         private void BaseSite_StatsUpdated(object sender, StatsUpdatedEventArgs e)
         {
