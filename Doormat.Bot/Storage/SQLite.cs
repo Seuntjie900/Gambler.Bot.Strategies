@@ -147,7 +147,7 @@ namespace DoormatCore.Storage
                     first = false;
                     query += "[" + PI.Name + "]";
                     values += "@" + i.ToString();
-                    tmpCommand.Parameters.AddWithValue("@" + i++.ToString(), PI.GetValue(ValueToInsert));
+                    tmpCommand.Parameters.AddWithValue("@" + i++.ToString(), PI.GetValue(ValueToInsert)?? DBNull.Value );
                 }
             }
             query += ") ";

@@ -203,7 +203,7 @@ namespace DoormatBot.Helpers
 
         
 
-        void GenerateSeeds()
+        public void GenerateSeeds()
         {
             clientseed = Site.GenerateNewClientSeed();
             //new server seed
@@ -268,6 +268,14 @@ namespace DoormatBot.Helpers
         public void MoveLog(string NewLocation)
         {
             File.Move(TmpFileName, NewLocation);
+        }
+        public Stream GetStream()
+        {
+            return File.OpenRead(TmpFileName);
+        }
+        public void DeleteLog()
+        {
+            File.Delete(TmpFileName);
         }
     }
 }
