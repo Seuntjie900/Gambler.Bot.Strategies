@@ -129,12 +129,14 @@ namespace DoormatBot
                             Logger.DumpLog("Found Type - " + x.Name, 6);
                             sites.Add(x.Name);
                             string[] currenices = new string[] { "btc" };
+                            string url = "";
                             Games[] games = new Games[] { Games.Dice };
                             try
                             {
                                 Logger.DumpLog("Fetching currencies for - " + x.Name, 6);
                                 BaseSite SiteInst = Activator.CreateInstance(x) as BaseSite;
                                 currenices = (SiteInst).Currencies;
+                                url = SiteInst.SiteURL;
                             }
                             catch (Exception e)
                             {
@@ -150,7 +152,7 @@ namespace DoormatBot
                             {
                                 Logger.DumpLog(e);
                             }
-                            Sites.Add(new SitesList { Name = x.Name, Currencies = currenices, SupportedGames = games }.SetType(x));
+                            Sites.Add(new SitesList { Name = x.Name, Currencies = currenices, SupportedGames = games, URL= url }.SetType(x));
                         }
                     }
                 }
