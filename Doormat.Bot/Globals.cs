@@ -1,6 +1,5 @@
 ﻿using DoormatBot.Helpers;
 using DoormatCore.Sites;
-using MySqlX.XDevAPI;
 using System;
 
 namespace DoormatCore
