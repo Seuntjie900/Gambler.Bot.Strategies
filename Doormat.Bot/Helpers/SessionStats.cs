@@ -59,7 +59,7 @@ namespace DoormatBot.Helpers
         public decimal LargestBet { get; set; }
         public decimal LargestLoss { get; set; }
         public decimal LargestWin { get; set; }
-        public decimal luck { get; set; }
+        public decimal Luck { get; set; }
         public decimal AvgWin { get; set; }        
         public decimal AvgLoss { get; set; }
         public decimal AvgStreak { get; set; }
@@ -201,11 +201,11 @@ namespace DoormatBot.Helpers
 
         private void CalculateLuck(bool Win, decimal Chance)
         {
-            decimal lucktotal = (decimal)luck * (decimal)((Wins + Losses) - 1);
+            decimal lucktotal = (decimal)Luck * (decimal)((Wins + Losses) - 1);
             if (Win)
                 lucktotal += (decimal)((decimal)100 / (decimal)Chance) * (decimal)100;
             decimal tmp = (decimal)(lucktotal / (decimal)(Wins + Losses));
-            luck = tmp;
+            Luck = tmp;
         }
 
     }

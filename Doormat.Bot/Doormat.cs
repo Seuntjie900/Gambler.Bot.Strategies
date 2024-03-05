@@ -86,6 +86,7 @@ namespace DoormatBot
             Running = false;
             Stop = false;
             BetTimer.Elapsed += BetTimer_Elapsed;
+            CurrentGame = Games.Dice;
         }
 
         
@@ -584,7 +585,7 @@ namespace DoormatBot
             OnSiteAction?.Invoke(sender, e);
         }
 
-        public void Login(BaseSite.LoginParamValue[] LoginParams)
+        public void Login(LoginParamValue[] LoginParams)
         {
             if (CurrentSite==null)
             {
