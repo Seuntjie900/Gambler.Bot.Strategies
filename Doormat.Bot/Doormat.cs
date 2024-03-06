@@ -426,12 +426,12 @@ namespace DoormatBot
             bool win = e.NewBet.GetWin(CurrentSite); 
             string Response = "";
             bool Reset = false;
-            if (BetSettings.CheckResetPreStats(e.NewBet, win, Stats, CurrentSite.Stats))
+            if (BetSettings?.CheckResetPreStats(e.NewBet, win, Stats, CurrentSite.Stats)??false)
             {
                 Reset = true;
                 NextBext = Strategy.RunReset();
             }
-            if (BetSettings.CheckStopPreStats(e.NewBet, win, Stats, out Response, CurrentSite.Stats))
+            if (BetSettings?.CheckStopPreStats(e.NewBet, win, Stats, out Response, CurrentSite.Stats) ?? false)
             {
                 StopStrategy(Response);
             }
