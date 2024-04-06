@@ -61,7 +61,9 @@ namespace DoormatBot
         }
 
         public bool LoggedIn { get; set; }
-        public SessionStats Stats { get; set; }
+        public SessionStats Stats { 
+            get; 
+            set; }
 
         public ExportBetSettings StoredBetSettings { get; set; } = new ExportBetSettings { BetSettings = new InternalBetSettings() };
 
@@ -798,6 +800,8 @@ namespace DoormatBot
                     (Strategy as ProgrammerMode).UpdateSite(CopyHelper.CreateCopy<SiteDetails>(CurrentSite.SiteDetails));
                 }
                 Running = true;
+                if (Stats == null)
+                    Stats = new SessionStats();
                 Stats.StartTime = DateTime.Now;
                 //Indicate to the selected strategy to create a working set and start betting.
                 OnStarted?.Invoke(this, new EventArgs());
@@ -864,10 +868,14 @@ namespace DoormatBot
             
             bool wasrunning = Running;
             Running = false;
-            Stats.EndTime = DateTime.Now;
-            Stats.RunningTime += (long)(Stats.EndTime-Stats.StartTime).TotalMilliseconds;
-            if (wasrunning)
-            Stats= DBInterface?.Save<SessionStats>(Stats);
+            if (Stats != null)
+            {
+                Stats.EndTime = DateTime.Now;
+                Stats.RunningTime += (long)(Stats.EndTime - Stats.StartTime).TotalMilliseconds;
+                if (wasrunning && DBInterface!=null)
+                    Stats = DBInterface?.Save<SessionStats>(Stats);
+            }
+            
             //TotalRuntime +=Stats.EndTime - Stats.StartTime;
             Logger.DumpLog(Reason, 3);
             OnStopped?.Invoke(this, new GenericEventArgs { Message = Reason });
