@@ -1,27 +1,12 @@
-﻿using DoormatCore.Games;
-using DoormatCore.Helpers;
-using System;
-using System.Collections.Generic;
+﻿using DoormatBot.Strategies.PresetListModels;
+using DoormatCore.Games;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DoormatBot.Strategies
 {
     public class PresetList: BaseStrategy, iDiceStrategy
     {
-        public class PresetBet
-        {
-            public decimal Amount { get; set; }
-        }
-        public class PresetDiceBet:PresetBet 
-        {
-            
-            public bool? High { get; set; }
-            public bool Switch { get; set; }
-            public decimal? Chance { get; set; }
-        }
+        
 
         public override string StrategyName { get; protected set; } = "PresetList";
         int presetLevel = 0;
@@ -173,6 +158,21 @@ namespace DoormatBot.Strategies
         public decimal Chance { get ; set ; }
         public decimal StartChance { get ; set ; }
     }
+  
 
+}
 
+namespace DoormatBot.Strategies.PresetListModels
+{
+    public class PresetBet
+    {
+        public decimal Amount { get; set; }
+    }
+    public class PresetDiceBet : PresetBet
+    {
+
+        public bool? High { get; set; }
+        public bool Switch { get; set; }
+        public decimal? Chance { get; set; }
+    }
 }
