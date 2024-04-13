@@ -1,0 +1,27 @@
+{
+  "Notifications": [
+    {
+      "Action": "Alarm",
+      "Enabled": "True",
+      "TriggerProperty": "Profit",
+      "TargetType": "Value",
+      "Target": "1.5",
+      "Comparison": "LargerOrEqualTo"
+    }
+  ],
+  "ErrorSettings": [
+    {
+      "Type": 1,
+      "Action": 4
+    },
+    {
+      "Type": 8,
+      "Action": 3
+    }
+  ],
+  "RetryDelay": 30,
+  "RetryAttempts": 0,
+  "EncrConnectionString": "Data Source=dicebot.db;Version=3;Compress=True;",
+  "Provider": "SQLite",
+  "EncryptConstring": false
+}
