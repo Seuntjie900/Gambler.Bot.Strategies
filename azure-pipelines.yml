@@ -14,7 +14,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
+  solution: '**/DoormatBot.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
