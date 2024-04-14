@@ -58,11 +58,16 @@ stages:
 
     - script: |
         mkdir $(Build.ArtifactStagingDirectory)\Artifacts
-        xcopy /I /E /Y "DoormatBot\Doormat.Bot\bin\Release\net8.0\*" "$(Build.ArtifactStagingDirectory)\Artifacts"
+        xcopy /I /E /Y "Doormat.Bot\bin\Release\net8.0\*" "$(Build.ArtifactStagingDirectory)\Artifacts"
+      displayName: 'Copy Artifacts to a Common Directory'
+
+    - script: |
+        mkdir $(Build.ArtifactStagingDirectory)\Artifacts
+        xcopy /I /E /Y "Doormat.Bot\bin\Release\*" "$(Build.ArtifactStagingDirectory)\Artifacts"
       displayName: 'Copy Artifacts to a Common Directory'
     
     - script: |
-        xcopy /I /E /Y "DoormatBot\DoormatBot.Tests\bin\Release\net8.0\*" "$(Build.ArtifactStagingDirectory)\Artifacts"
+        xcopy /I /E /Y "DoormatBot.Tests\bin\Release\net8.0\*" "$(Build.ArtifactStagingDirectory)\Artifacts"
       displayName: 'Copy Artifacts to a Common Directory'
 
     - task: PublishBuildArtifacts@1
@@ -105,7 +110,7 @@ stages:
     - task: DotNetCoreCLI@2
       inputs:
         command: 'push'
-        packagesToPush: 'DoormatBot\Doormat.Bot\bin\Release\*.nupkg' # Update this to the path of your .nupkg file
+        packagesToPush: 'Doormat.Bot\bin\Release\*.nupkg' # Update this to the path of your .nupkg file
         nuGetFeedType: 'external'
         publishVstsFeed: 'https://api.nuget.org/v3/index.json'
         apiKey: '$(NuGetApiKey)'
