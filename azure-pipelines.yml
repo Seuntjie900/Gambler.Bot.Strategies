@@ -1,0 +1,104 @@
+trigger:
+- master
+
+name: 1.0.$(Build.BuildId)
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+stages:
+- stage: Build
+  jobs:
+  - job: BuildJob
+    steps:    
+        
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          $csprojPath = Get-ChildItem -Path "$(Build.SourcesDirectory)" -Filter "*.csproj" -Recurse | Select-Object -First 1 -ExpandProperty FullName
+          [xml]$csproj = Get-Content -Path $csprojPath
+          $versionNode = $csproj.SelectNodes("//Project/PropertyGroup/Version") | Select-Object -First 1
+          if ($versionNode -eq $null) {
+            $propertyGroup = $csproj.CreateElement("PropertyGroup")
+            $versionNode = $csproj.CreateElement("Version")
+            $versionNode.InnerText = "$(Build.BuildNumber)"
+            $propertyGroup.AppendChild($versionNode)
+            $csproj.DocumentElement.AppendChild($propertyGroup)
+          } else {
+            $versionNode.InnerText = "$(Build.BuildNumber)"
+          }
+          $csproj.Save($csprojPath)
+
+
+    - task: NuGetToolInstaller@1
+
+    - task: NuGetCommand@2
+      inputs:
+        restoreSolution: '$(solution)'
+
+    - task: VSBuild@1
+      inputs:
+        solution: '$(solution)'
+        platform: '$(buildPlatform)'
+        configuration: '$(buildConfiguration)'
+
+    - script: |
+        mkdir $(Build.ArtifactStagingDirectory)\Artifacts
+        xcopy /I /E /Y "DoormatBot\bin\Release\net8.0\*" "$(Build.ArtifactStagingDirectory)\Artifacts"
+      displayName: 'Copy Artifacts to a Common Directory'
+    
+    - script: |
+        xcopy /I /E /Y "DoormatBot.Tests\bin\Release\net8.0\*" "$(Build.ArtifactStagingDirectory)\Artifacts"
+      displayName: 'Copy Artifacts to a Common Directory'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\Artifacts'
+        ArtifactName: 'BuildArtifacts'
+        publishLocation: 'container'
+
+
+- stage: Test
+  dependsOn: Build
+  jobs:
+  - job: TestJob
+    steps:
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'BuildArtifacts'
+        downloadPath: '$(System.ArtifactsDirectory)'
+
+    - task: VSTest@2
+      inputs:
+        testAssemblyVer2: '$(System.ArtifactsDirectory)\**\*Tests.dll'
+        platform: '$(buildPlatform)'
+        configuration: '$(buildConfiguration)'
+
+- stage: Publish
+  dependsOn: Test
+  condition: and(succeeded(), eq(dependencies.Test.result, 'Succeeded'))
+  jobs:
+  - job: PublishJob
+    steps:
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'BuildArtifacts'
+        downloadPath: '$(System.ArtifactsDirectory)'
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'push'
+        packagesToPush: 'DoormatBot\**\bin\Release\*.nupkg' # Update this to the path of your .nupkg file
+        nuGetFeedType: 'external'
+        publishVstsFeed: 'https://api.nuget.org/v3/index.json'
+        apiKey: '$(NuGetApiKey)'
+    
