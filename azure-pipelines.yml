@@ -24,6 +24,7 @@ stages:
   - job: BuildJob
     steps:    
     - checkout: DoormatCore
+    - checkout: Self
 
     - task: PowerShell@2
       inputs:
