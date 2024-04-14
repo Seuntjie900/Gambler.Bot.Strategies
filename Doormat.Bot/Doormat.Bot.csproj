@@ -2,6 +2,27 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
+    <Version>0.0.0.1</Version>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	  <SignAssembly>False</SignAssembly>
+	  <AssemblyOriginatorKeyFile>BotmaSoftwaressc2019.pfx</AssemblyOriginatorKeyFile>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <Version>0.0.1-alpha</Version>
+	  <AssemblyVersion>0.0.0.1</AssemblyVersion>
+	  <FileVersion>0.0.0.1</FileVersion>
+	  <Authors>Seuntjie</Authors>
+	  <Company>Botma Software (Pty) ltd.</Company>
+	  <Description>Library for automated betting and different betting strategies using DoormatCore</Description>
+	  <PackageProjectUrl>https://github.com/Seuntjie900/DoormatBot</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/Seuntjie900/DoormatBot</RepositoryUrl>
+	  <RepositoryType>Github</RepositoryType>
+	  <PackageTags>Seuntjie Gambling DiceBot Doormat DoormatBot</PackageTags>
+	  <PackageReleaseNotes>Test Release for Nuget - Still in alpha.</PackageReleaseNotes>
+	  <NeutralLanguage>en-GB</NeutralLanguage>
+	  <DelaySign>false</DelaySign>
+	  <Title>Doormat.Bot</Title>
+	  <Copyright>Copyright BotmaSoftware 2023</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +37,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\..\Doormat\LICENSE" Link="LICENSE">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
+    </None>
+    <None Include="..\..\Doormat\README.md" Link="README.md">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
+    </None>
     <None Include="SAMPLECS.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
