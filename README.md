@@ -1,3 +1,10 @@
+Build: [![Build Status](https://eugenebotma.visualstudio.com/seuntjie900/_apis/build/status%2FDoormatBot?repoName=Seuntjie900%2FDoormatBot&branchName=master&stageName=Build)](https://eugenebotma.visualstudio.com/seuntjie900/_build/latest?definitionId=3&repoName=Seuntjie900%2FDoormatBot&branchName=master)
+
+Tests: [![Build Status](https://eugenebotma.visualstudio.com/seuntjie900/_apis/build/status%2FDoormatBot?repoName=Seuntjie900%2FDoormatBot&branchName=master&stageName=Test)](https://eugenebotma.visualstudio.com/seuntjie900/_build/latest?definitionId=3&repoName=Seuntjie900%2FDoormatBot&branchName=master)
+
+[![NuGet](https://img.shields.io/nuget/v/Doormat.Bot.svg)](https://www.nuget.org/packages/Doormat.Bot/)
+
+
 This project contains the code I've written so far for the automated betting and strategy library of what I envisioned to be DiceBot v4. 
 
 # How to use
