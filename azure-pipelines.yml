@@ -114,7 +114,7 @@ stages:
     - task: DotNetCoreCLI@2
       inputs:
         command: 'push'
-        packagesToPush: 'Doormat.Bot\bin\Release\*.nupkg' # Update this to the path of your .nupkg file
+        packagesToPush: '$(System.ArtifactsDirectory)\Doormat.Bot*.nupkg' # Update this to the path of your .nupkg file
         nuGetFeedType: 'external'
         publishVstsFeed: 'https://api.nuget.org/v3/index.json'
         apiKey: '$(NuGetApiKey)'
