@@ -1,3 +1,10 @@
+resources:
+  repositories:
+  - repository: DoormatCore # The name used to reference this repository in the checkout step
+    type: github
+    endpoint: Seuntjie900
+    name: Seuntjie900/Doormat
+
 trigger:
 - master
 
