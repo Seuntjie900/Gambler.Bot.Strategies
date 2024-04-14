@@ -75,6 +75,10 @@ namespace DoormatBot.Strategies
         {
 
         }
+        public Martingale()
+        {
+            
+        }
 
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {

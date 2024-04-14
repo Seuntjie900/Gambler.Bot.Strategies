@@ -13,9 +13,18 @@ namespace DoormatBot.Strategies
 {
     public abstract class BaseStrategy
     {
-        protected readonly ILogger _Logger;
+        protected ILogger _Logger;
 
         protected BaseStrategy(ILogger logger)
+        {
+            _Logger = logger;
+        }
+        protected BaseStrategy()
+        {
+            
+        }
+
+        public void SetLogger(ILogger logger)
         {
             _Logger = logger;
         }

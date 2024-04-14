@@ -41,7 +41,10 @@ namespace DoormatBot.Strategies
         {
 
         }
-
+        public ProgrammerLUA()
+        {
+            
+        }
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             try

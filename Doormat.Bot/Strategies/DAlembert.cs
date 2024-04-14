@@ -32,6 +32,11 @@ namespace DoormatBot.Strategies
             
         }
 
+        public DAlembert()
+        {
+            
+        }
+
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             decimal Lastbet = PreviousBet.TotalAmount;

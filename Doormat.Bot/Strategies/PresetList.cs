@@ -16,7 +16,10 @@ namespace DoormatBot.Strategies
         {
 
         }
-
+        public PresetList()
+        {
+            
+        }
         public BindingList<PresetDiceBet> PresetBets { get; set; } = new BindingList<PresetDiceBet>();
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {

@@ -51,6 +51,11 @@ namespace DoormatBot.Strategies
 
         }
 
+        public ProgrammerPython()
+        {
+            
+        }
+
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             try

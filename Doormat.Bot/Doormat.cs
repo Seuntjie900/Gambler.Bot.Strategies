@@ -205,7 +205,7 @@ namespace DoormatBot
             { 
                 if (x.IsSubclassOf(BaseTyope))
                 {                    
-                    Strategies.Add((Activator.CreateInstance(x) as BaseStrategy).StrategyName, x);
+                    Strategies.Add((Activator.CreateInstance(x,_Logger) as BaseStrategy).StrategyName, x);
                 }
             }
             return Strategies;
@@ -1107,6 +1107,7 @@ namespace DoormatBot
             if (StoredBetSettings.BetSettings!=null && ApplySettings)
                 this.BetSettings = StoredBetSettings.BetSettings;
             this.Strategy = StoredBetSettings.GetStrat();
+            this.Strategy.SetLogger(_Logger);
             return StoredBetSettings;
         }
         

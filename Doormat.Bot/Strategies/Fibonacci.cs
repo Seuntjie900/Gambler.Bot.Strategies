@@ -19,6 +19,11 @@ namespace DoormatBot.Strategies
 
         }
 
+        public Fibonacci()
+        {
+            
+        }
+
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             decimal LastBet = PreviousBet.TotalAmount;

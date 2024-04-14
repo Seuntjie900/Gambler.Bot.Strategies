@@ -24,6 +24,11 @@ namespace DoormatBot.Strategies
 
         }
 
+        public Labouchere()
+        {
+            
+        }
+
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             decimal Lastbet = PreviousBet.TotalAmount;
