@@ -95,7 +95,7 @@ stages:
 
     - task: VSTest@2
       inputs:
-        testAssemblyVer2: '$(System.ArtifactsDirectory)\**\*Tests.dll'
+        testAssemblyVer2: '$(System.ArtifactsDirectory)\**\DoormatBot.Tests.dll'
         platform: '$(buildPlatform)'
         configuration: '$(buildConfiguration)'
 
