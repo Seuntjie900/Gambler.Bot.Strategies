@@ -1,5 +1,6 @@
 ﻿using DoormatCore.Games;
 using DoormatCore.Helpers;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,12 @@ namespace DoormatBot.Strategies
     {
         public override string StrategyName { get; protected set; } = "Fibonacci";
         public decimal minbet { get; set; }
+
+        public Fibonacci(ILogger logger) : base(logger)
+        {
+
+        }
+
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             decimal LastBet = PreviousBet.TotalAmount;

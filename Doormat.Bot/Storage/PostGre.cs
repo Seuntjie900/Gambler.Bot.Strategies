@@ -7,6 +7,7 @@ using DoormatCore.Sites;
 using Npgsql;
 using System.Reflection;
 using static DoormatCore.Sites.BaseSite;
+using Microsoft.Extensions.Logging;
 
 namespace DoormatCore.Storage
 {
@@ -16,7 +17,7 @@ namespace DoormatCore.Storage
 
         public PostGre(string ConnectionString) : base(ConnectionString)
         {
-            Logger.DumpLog("Create PostGre Connection", 6);
+            _Logger?.LogDebug("Create PostGre Connection");
             Connection = new NpgsqlConnection(ConnectionString);
             Connection.Open();
         }

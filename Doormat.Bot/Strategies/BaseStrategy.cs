@@ -7,12 +7,18 @@ using DoormatBot.Helpers;
 using DoormatCore.Games;
 using DoormatCore.Helpers;
 using DoormatCore.Sites;
+using Microsoft.Extensions.Logging;
 
 namespace DoormatBot.Strategies
 {
     public abstract class BaseStrategy
     {
+        protected readonly ILogger _Logger;
 
+        protected BaseStrategy(ILogger logger)
+        {
+            _Logger = logger;
+        }
 
         private BaseStrategy WorkingSet = null;
         /// <summary>

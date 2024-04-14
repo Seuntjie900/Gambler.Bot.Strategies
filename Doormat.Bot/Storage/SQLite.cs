@@ -7,6 +7,7 @@ using DoormatCore.Helpers;
 using DoormatCore.Sites;
 using static DoormatCore.Sites.BaseSite;
 using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Logging;
 
 namespace DoormatCore.Storage
 {
@@ -16,7 +17,7 @@ namespace DoormatCore.Storage
 
         public Sqlite(string ConnectionString) : base(ConnectionString)
         {
-            Logger.DumpLog("Create Sqlite Connection", 6);
+            _Logger?.LogDebug("Create Sqlite Connection");
             Connection = new SqliteConnection(ConnectionString);
             Connection.Open();
         }

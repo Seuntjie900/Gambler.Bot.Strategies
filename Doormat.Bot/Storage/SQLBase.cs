@@ -1,6 +1,8 @@
 ﻿
 using DoormatCore.Games;
 using DoormatCore.Helpers;
+using Esprima.Ast;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -15,10 +17,17 @@ namespace DoormatCore.Storage
     /// </summary>
     public abstract class SQLBase
     {
+        protected readonly ILogger _Logger;
+        
+        public SQLBase(ILogger logger)
+        {
+            _Logger = logger;
+        }
+
         public static SQLBase OpenConnection(string ConnectionString, string Provider, List<Type> types)
         {
             SQLBase newbase = null;
-            Logger.DumpLog("Creating SQLBase instance", 6);
+            //_Logger?.Log("Creating SQLBase instance", 6);
             switch (Provider.ToLower())
             {
                 case "mysql": newbase = new MYSql(ConnectionString);break ;
@@ -29,7 +38,7 @@ namespace DoormatCore.Storage
                 default: newbase = new Sqlite(ConnectionString); break;
 
             }
-            Logger.DumpLog("Created SQLBase instance", 6);
+            //_Logger?.Log("Created SQLBase instance", 6);
 
             newbase.CreateTables(types);
             return newbase;
@@ -65,7 +74,7 @@ namespace DoormatCore.Storage
 
         public void CreateTables(List<Type> PersistentClasses)
         {
-            Logger.DumpLog("Creating Tables", 6);
+            _Logger?.LogInformation("Creating Tables");
             
             foreach (Type x in PersistentClasses)
             {
@@ -78,30 +87,30 @@ namespace DoormatCore.Storage
 
                 }
             }           
-            Logger.DumpLog("Tables Created", 6);
+            _Logger?.LogInformation("Tables Created");
         }
 
         protected abstract void CreateTable(Type type);
 
         protected T ParseResult<T>(IDataReader Reader) where T : new()
         {
-            Logger.DumpLog("Parsing result for DB", 5);
+            _Logger?.LogInformation("Parsing result for DB");
             Type typ = typeof(T);
             T tmp = new T();
             foreach (PropertyInfo x in typ.GetProperties())
             {
-                Logger.DumpLog($"Checking {x.Name}", 6);
+                _Logger?.LogDebug("Checking {Property}", x.Name);
                 if (!Attribute.IsDefined(x, typeof(NonPersistent)) && !x.PropertyType.IsArray)
                 {
-                    Logger.DumpLog($"Found {x.Name}, getting index and checking null", 6);
+                    _Logger?.LogDebug("Found {Property}, getting index and checking null", x.Name);
                     int index = Reader.GetOrdinal(x.Name);
                     if (Reader.IsDBNull(index))
                     {
-                        Logger.DumpLog($"Found {x.Name}, null", 6);
+                        _Logger?.LogDebug("Found {Property}, null", x.Name);
                     }
                     else
                     {
-                        Logger.DumpLog($"Found {x.Name}, setting value", 6);
+                        _Logger?.LogDebug("Found {Property}, setting value", x.Name);
                         x.SetValue(tmp, Reader[x.Name]);
                     }
                 }

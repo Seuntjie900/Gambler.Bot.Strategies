@@ -1,6 +1,7 @@
 ﻿using DoormatBot.Helpers;
 using DoormatCore.Games;
 using DoormatCore.Helpers;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,9 @@ namespace DoormatBot.Strategies
     public class DAlembert: BaseStrategy, iDiceStrategy
     {
         public override string StrategyName { get; protected set; } = "D'Alembert";
-        public int AlembertStretchWin { get; set; } = 1;
+        public int AlembertStretchWin { get; set; } = 0;
 
-        public int AlembertStretchLoss { get; set; } = 1;
+        public int AlembertStretchLoss { get; set; } = 0;
 
         public decimal AlembertIncrementLoss { get; set; } = 0.00000100m;
 
@@ -25,6 +26,11 @@ namespace DoormatBot.Strategies
         public decimal Amount { get ; set ; }
         public decimal Chance { get ; set; }
         public decimal StartChance { get; set; }
+
+        public DAlembert(ILogger logger):base(logger)
+        {
+            
+        }
 
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {

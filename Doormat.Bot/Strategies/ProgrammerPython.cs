@@ -10,6 +10,7 @@ using IronPython.Runtime;
 using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
 using Microsoft.Scripting;
+using Microsoft.Extensions.Logging;
 
 namespace DoormatBot.Strategies
 {
@@ -45,9 +46,9 @@ namespace DoormatBot.Strategies
         public event EventHandler<PrintEventArgs> OnScriptError;
         public event EventHandler<PrintEventArgs> OnSetCurrency;
 
-        public ProgrammerPython()
+        public ProgrammerPython(ILogger logger) : base(logger)
         {
-            
+
         }
 
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)

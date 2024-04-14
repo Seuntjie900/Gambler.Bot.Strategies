@@ -5,6 +5,7 @@ using System.Text;
 using DoormatCore.Games;
 using DoormatCore.Helpers;
 using DoormatCore.Sites;
+using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using static DoormatCore.Sites.BaseSite;
 
@@ -16,7 +17,7 @@ namespace DoormatCore.Storage
 
         public MYSql(string ConnectionString):base(ConnectionString)
         {
-            Logger.DumpLog("Create MYSql Connection",6);
+            _Logger?.LogDebug("Create MYSql Connection");
             Connection = new MySqlConnection(ConnectionString);
             Connection.Open();
         }

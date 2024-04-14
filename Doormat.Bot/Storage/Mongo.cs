@@ -4,14 +4,16 @@ using System.Text;
 using DoormatCore.Games;
 using DoormatCore.Helpers;
 using DoormatCore.Sites;
+using Microsoft.Extensions.Logging;
 
 namespace DoormatCore.Storage
 {
     class Mongo : SQLBase
     {
+        
         public Mongo(string ConnectionString) : base(ConnectionString)
         {
-            Logger.DumpLog("Create Mongo Connection", 6);
+            _Logger?.LogDebug("Create Mongo Connection");
         }
 
         public override string GetConnectionString()

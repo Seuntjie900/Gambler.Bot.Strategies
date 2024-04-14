@@ -7,6 +7,7 @@ using DoormatCore.Games;
 using DoormatCore.Helpers;
 using DoormatCore.Sites;
 using Jint;
+using Microsoft.Extensions.Logging;
 
 namespace DoormatBot.Strategies
 {
@@ -37,6 +38,11 @@ namespace DoormatBot.Strategies
         public event EventHandler<ExportSimEventArgs> OnExportSim;
         public event EventHandler<PrintEventArgs> OnScriptError;
         public event EventHandler<PrintEventArgs> OnSetCurrency;
+
+        public ProgrammerJS(ILogger logger):base(logger)
+        {
+            
+        }
 
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
@@ -79,7 +85,7 @@ namespace DoormatBot.Strategies
 
         void withdraw(object sender, EventArgs e)
         {
-            Logger.DumpLog("Ping!",0);
+            _Logger?.LogDebug("Ping!");
         }
 
         public void LoadScript()

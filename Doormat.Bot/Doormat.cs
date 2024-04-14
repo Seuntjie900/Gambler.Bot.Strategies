@@ -19,12 +19,14 @@ using System.Linq;
 using System.ComponentModel;
 using SuperSocket.ClientEngine;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace DoormatBot
 {
     public class Doormat
     {
         #region Internal Variables
+        private readonly ILogger _Logger;
         List<ErrorEventArgs> ActiveErrors = new List<ErrorEventArgs>();
         //PwDatabase Passdb = new PwDatabase();
         System.Timers.Timer BetTimer = new System.Timers.Timer { Interval=1000, Enabled=false, AutoReset=true };
@@ -81,8 +83,11 @@ namespace DoormatBot
         #endregion
 
         string VersionStr = "";
-        public Doormat()
+
+
+        public Doormat(ILogger logger)
         {
+            _Logger = logger;
             VersionStr = string.Format("{0}.{1}.{2}", Environment.Version.Major, Environment.Version.MajorRevision, Environment.Version.Build);
             Stats = new SessionStats();
             Running = false;
@@ -98,17 +103,17 @@ namespace DoormatBot
         {
             if (Sites?.Count == 0)
             {
-                Logger.DumpLog("Compiling Sites", 5);
+                _Logger?.LogInformation("Compiling Sites");
                 List<string> Files = new List<string>();
 
                 Sites = new List<SitesList>();
                 if (Directory.Exists("Sites"))
                 {
-                    Logger.DumpLog("Sites dir found, searching for files", 6);
+                    _Logger?.LogDebug("Sites dir found, searching for files");
                     string Sites = "";
                     foreach (string s in Directory.GetFiles("Sites"))
                     {
-                        Logger.DumpLog("Sites dir found, searching for files. Found " + s, 6);
+                        _Logger?.LogDebug("Sites dir found, searching for files. Found {Description}", s);
                         string outs = File.ReadAllText(s);
                         Sites += outs;
                         Files.Add(outs);
@@ -119,70 +124,70 @@ namespace DoormatBot
                 }
                 //else
                 {
-                    Logger.DumpLog("Site dir not found, Stepping Through Types", 6);
+                    _Logger?.LogDebug("Site dir not found, Stepping Through Types");
                     Assembly SiteAss = Assembly.GetAssembly(typeof(BaseSite));
                     Type[] tps = SiteAss.GetTypes();
 
                     List<string> sites = new List<string>();
                     foreach (Type x in tps)
                     {
-                        Logger.DumpLog("Stepping Through Types - " + x.Name, 6);
+                        _Logger?.LogDebug("Stepping Through Types - {Description}", x.Name);
                         if (x.IsSubclassOf(SiteAss.GetType("DoormatCore.Sites.BaseSite")))
                         {
-                            Logger.DumpLog("Found Type - " + x.Name, 6);
+                            _Logger?.LogDebug("Found Type - " + x.Name, 6);
                             sites.Add(x.Name);
                             string[] currenices = new string[] { "btc" };
                             string url = "";
                             Games[] games = new Games[] { Games.Dice };
                             try
                             {
-                                Logger.DumpLog("Fetching currencies for - " + x.Name, 6);
+                                _Logger?.LogDebug("Fetching currencies for - {Description}",x.Name);
                                 BaseSite SiteInst = Activator.CreateInstance(x) as BaseSite;
                                 currenices = (SiteInst).Currencies;
                                 url = SiteInst.SiteURL;
                             }
                             catch (Exception e)
                             {
-                                Logger.DumpLog(e);
+                                _Logger?.LogError(e.ToString());
                             }
                             try
                             {
-                                Logger.DumpLog("Fetching currencies for - " + x.Name, 6);
+                                _Logger?.LogDebug("Fetching currencies for - {Description}",x.Name);
 
                                 games = (Activator.CreateInstance(x) as BaseSite).SupportedGames;
                             }
                             catch (Exception e)
                             {
-                                Logger.DumpLog(e);
+                                _Logger?.LogError(e.ToString());
                             }
                             Sites.Add(new SitesList { Name = x.Name, Currencies = currenices, SupportedGames = games, URL= url }.SetType(x));
                         }
                     }
                 }
-                Logger.DumpLog("Populated Sites", 6);
+                _Logger?.LogInformation("Populated Sites");
 
                 if (Sites != null && DBInterface != null)
                 {
-                    Logger.DumpLog("Updating Sites Table", 6);
+                    _Logger?.LogInformation("Updating Sites Table");
                     foreach (SitesList x in Sites)
                     {
-                        Logger.DumpLog($"Fetch {x.Name} from SQL", 6);
+                        _Logger?.LogDebug("Fetch {Site} from SQL", x.Name);
                         Site tmp = DBInterface.FindSingle<Site>("Name=@1", "", x.Name);
                         if (tmp == null)
                         {
-                            Logger.DumpLog($"{x.Name} not found in sql, inserting row", 6);
+                            _Logger?.LogDebug("{Site} not found in sql, inserting row", x.Name);
                             tmp = new Site { ClassName = x.SiteType().FullName, Name = x.Name };
                             tmp = DBInterface.Save<Site>(tmp);
                         }
                         else
                         {
-                            Logger.DumpLog($"{x.Name} found in sql", 6);
+                            _Logger?.LogDebug("{Site} found in sql", x.Name);
                         }
                     }
                 }
                 else
                 {
-                    Logger.DumpLog("Not Updating Sites Table", 6);
+                    _Logger?.LogInformation("Not Updating Sites Table");
                 }
             }
             return Sites.ToArray();  
@@ -877,7 +882,7 @@ namespace DoormatBot
             }
             
             //TotalRuntime +=Stats.EndTime - Stats.StartTime;
-            Logger.DumpLog(Reason, 3);
+            _Logger?.LogInformation(Reason);
             OnStopped?.Invoke(this, new GenericEventArgs { Message = Reason });
         }
 
@@ -937,7 +942,7 @@ namespace DoormatBot
                     case "ProgrammerJS": return ProgrammerJS; 
                     case "ProgrammerLUA": return ProgrammerLUA; 
                     case "ProgrammerPython": return ProgrammerPython; 
-                    default: return new Strategies.Martingale(); 
+                    default: return new Strategies.Martingale(null); 
                 }               
             }
             public void SetStrategy(Strategies.BaseStrategy Strat)
@@ -1040,9 +1045,9 @@ namespace DoormatBot
             {
                 Settings = sr.ReadToEnd();
             }
-            Logger.DumpLog("Loaded Personal Settings File", 5);
+            _Logger?.LogInformation("Loaded Personal Settings File");
             PersonalSettings tmp = JsonSerializer.Deserialize<PersonalSettings>(Settings);
-            Logger.DumpLog("Parsed Personal Settings File", 5);
+            _Logger?.LogInformation("Parsed Personal Settings File");
             this.PersonalSettings = tmp;
             string pw = "";
 
@@ -1070,7 +1075,7 @@ namespace DoormatBot
             }
             try
             {
-                Logger.DumpLog("Attempting DB Interface Creation", 6);
+                _Logger?.LogInformation("Attempting DB Interface Creation: {DBProvider}", PersonalSettings.Provider);
                 //get a list of loaded assemblies
                 //get a list of classes that inherit persistentbase
                 var type = typeof(PersistentBase);
@@ -1080,11 +1085,11 @@ namespace DoormatBot
 
 
                 DBInterface = SQLBase.OpenConnection(PersonalSettings.GetConnectionString(pw), PersonalSettings.Provider, types);
-                Logger.DumpLog("DB Interface Created", 5);
+                _Logger?.LogInformation("DB Interface Created: {DBProvider}", PersonalSettings.Provider);
             }
             catch (Exception e)
             {
-                Logger.DumpLog(e); 
+                _Logger?.LogError(e.ToString()); 
                 DBInterface = null;
             }
         }

@@ -1,5 +1,6 @@
 ﻿using DoormatCore.Games;
 using DoormatCore.Helpers;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,12 @@ namespace DoormatBot.Strategies
         public List<decimal> BetList { get; set; } = new List<decimal>();
         public decimal[] SerializableBetList { get { return BetList.ToArray(); } set { BetList = new List<decimal>(value); } }
         List<decimal> LabList = new List<decimal>();
+
+        public Labouchere(ILogger logger) : base(logger)
+        {
+
+        }
+
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             decimal Lastbet = PreviousBet.TotalAmount;

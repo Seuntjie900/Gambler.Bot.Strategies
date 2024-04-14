@@ -7,6 +7,7 @@ using DoormatCore.Games;
 using DoormatCore.Helpers;
 using DoormatCore.Sites;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
 using static DoormatCore.Sites.BaseSite;
 
 namespace DoormatCore.Storage
@@ -18,7 +19,7 @@ namespace DoormatCore.Storage
 
         public MSSQL(string ConnectionString) : base(ConnectionString)
         {
-            Logger.DumpLog("Create MSSQL Connection", 6);
+            _Logger?.LogDebug("Create MSSQL Connection");
             Connection = new SqlConnection(ConnectionString);
             Connection.Open();
         }
@@ -44,7 +45,7 @@ namespace DoormatCore.Storage
 
         protected override void CreateTable(Type type)
         {
-            Logger.DumpLog($"Checking MSSQL Table for {type.Name}", 6);
+            _Logger?.LogDebug("Checking MSSQL Table for {Table}", type.Name);
             string TableName = type.GetCustomAttribute<PersistentTableName>().TableName;
 
             SqlCommand CheckTableExists = new SqlCommand("select [COLUMN_NAME] from [INFORMATION_SCHEMA].[COLUMNS] where [TABLE_SCHEMA]='dbo' and [TABLE_NAME]='"+ TableName + "'", Connection);
@@ -204,28 +205,28 @@ namespace DoormatCore.Storage
 
         protected override T[] PerformFind<T>(string Criteria, string Sorting="", params object[] SqlParams) //where T : PersistentBase, new()
         {
-            Logger.DumpLog("Performing Find in MSSQL", 5);
-            Logger.DumpLog($"Finding {typeof(T).Name} in MSSQL with Criteria {Criteria}", 6);
+            _Logger?.LogInformation("Performing Find in MSSQL", 5);
+            _Logger?.LogDebug("Finding {Type} in MSSQL with Criteria {Criteria}", typeof(T).Name,Criteria);
             string Select = ConstructSelect(typeof(T));
             
             if (!string.IsNullOrWhiteSpace(Criteria))
                 Select += " WHERE " + Criteria;
             if (!string.IsNullOrWhiteSpace(Sorting))
                 Select += "ORDER BY " + Sorting;
-            Logger.DumpLog($"Select Query: {Select}", 6);
+            _Logger?.LogDebug("Select Query: {Select}", Select);
             List<T> results = new List<T>();
             SqlCommand SelectCommand = new SqlCommand(Select, Connection);
-            Logger.DumpLog($"Created Command, adding params", 6);
+            _Logger?.LogDebug("Created Command, adding params");
             for (int i=0;i<SqlParams.Length;i++)
             {
                 SelectCommand.Parameters.AddWithValue("@"+(i+1),SqlParams[i] ?? DBNull.Value);
             }
-            Logger.DumpLog($"Params Added", 6);
+            _Logger?.LogDebug($"Params Added");
             using (SqlDataReader tmpReader = SelectCommand.ExecuteReader())
             {
                 while (tmpReader.Read())
                 {
-                    Logger.DumpLog($"Row Found, parsing", 6);
+                    _Logger?.LogDebug($"Row Found, parsing");
                     results.Add(ParseResult<T>(tmpReader));
                 }
             }

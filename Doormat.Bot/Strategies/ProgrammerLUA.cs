@@ -5,6 +5,7 @@ using DoormatBot.Helpers;
 using DoormatCore.Games;
 using DoormatCore.Helpers;
 using DoormatCore.Sites;
+using Microsoft.Extensions.Logging;
 using MoonSharp.Interpreter;
 
 namespace DoormatBot.Strategies
@@ -35,6 +36,11 @@ namespace DoormatBot.Strategies
         public event EventHandler<ExportSimEventArgs> OnExportSim;
         public event EventHandler<PrintEventArgs> OnScriptError;
         public event EventHandler<PrintEventArgs> OnSetCurrency;
+
+        public ProgrammerLUA(ILogger logger) : base(logger)
+        {
+
+        }
 
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {

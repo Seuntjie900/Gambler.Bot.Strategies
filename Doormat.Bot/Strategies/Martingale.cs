@@ -1,5 +1,6 @@
 ﻿using DoormatCore.Games;
 using DoormatCore.Helpers;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,6 +71,10 @@ namespace DoormatBot.Strategies
         public decimal StartChance { get ; set ; }
         #endregion
 
+        public Martingale(ILogger logger) : base(logger)
+        {
+
+        }
 
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
@@ -104,8 +109,7 @@ namespace DoormatBot.Strategies
                     }
                     catch (Exception e)
                     {
-                        Logger.DumpLog(e);
-                        Logger.DumpLog(e);
+                        _Logger?.LogError(e.ToString());                        
                     }
                 }
                 if (EnableTrazel)
@@ -161,7 +165,7 @@ namespace DoormatBot.Strategies
                     }
                     catch (Exception e)
                     {
-                        Logger.DumpLog(e);
+                        _Logger?.LogError(e.ToString());
                     }
                 }
 
@@ -244,7 +248,7 @@ namespace DoormatBot.Strategies
                     }
                     catch (Exception e)
                     {
-                        Logger.DumpLog(e);
+                        _Logger?.LogError(e.ToString());
                     }
                 }
             }

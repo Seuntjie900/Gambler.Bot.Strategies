@@ -1,5 +1,6 @@
 ﻿using DoormatBot.Strategies.PresetListModels;
 using DoormatCore.Games;
+using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 
 namespace DoormatBot.Strategies
@@ -10,6 +11,12 @@ namespace DoormatBot.Strategies
 
         public override string StrategyName { get; protected set; } = "PresetList";
         int presetLevel = 0;
+
+        public PresetList(ILogger logger) : base(logger)
+        {
+
+        }
+
         public BindingList<PresetDiceBet> PresetBets { get; set; } = new BindingList<PresetDiceBet>();
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {

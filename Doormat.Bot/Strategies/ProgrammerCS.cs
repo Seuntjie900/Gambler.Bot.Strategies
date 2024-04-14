@@ -6,6 +6,7 @@ using DoormatCore.Sites;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,6 +44,11 @@ namespace DoormatBot.Strategies
         Globals globals;
         Script DoDiceBet = null;
         Script ResetDice = null;
+
+        public ProgrammerCS(ILogger logger) : base(logger)
+        {
+
+        }
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             try

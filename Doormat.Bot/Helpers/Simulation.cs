@@ -9,11 +9,13 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using DoormatCore.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace DoormatBot.Helpers
 {
     public class Simulation
     {
+        private readonly ILogger _Logger;
         public event EventHandler OnSimulationWriting;
         public event EventHandler OnSimulationComplete;
         public event EventHandler<BetFinisedEventArgs> OnBetSimulated;
@@ -37,7 +39,19 @@ namespace DoormatBot.Helpers
         string TmpFileName = "";
         public decimal Profit { get; set; } = 0;
         bool log = true;
-        public Simulation(decimal balance, long bets, DoormatCore.Sites.BaseSite Site, Strategies.BaseStrategy DiceStrategy, InternalBetSettings OtherSettings, string TempStorage,bool Log)
+
+        public Simulation(ILogger logger)
+        {
+            _Logger = logger;
+        }
+
+        public void Initialize(decimal balance, 
+            long bets, 
+            DoormatCore.Sites.BaseSite Site, 
+            Strategies.BaseStrategy DiceStrategy, 
+            InternalBetSettings OtherSettings, 
+            string TempStorage,
+            bool Log)
         {
             this.Balance = balance;
             this.Bets = bets;
@@ -197,7 +211,7 @@ namespace DoormatBot.Helpers
             }
             catch (Exception e)
             {
-                Logger.DumpLog(e);
+                _Logger?.LogError(e.ToString());
             }
         }
 
