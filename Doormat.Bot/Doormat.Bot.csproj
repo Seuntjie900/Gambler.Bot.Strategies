@@ -41,6 +41,10 @@
       <PackagePath>\</PackagePath>
       <Pack>True</Pack>
     </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="SAMPLECS.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
