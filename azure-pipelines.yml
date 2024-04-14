@@ -58,11 +58,14 @@ stages:
 
     - script: |
         mkdir $(Build.ArtifactStagingDirectory)\Artifacts
+      displayName: 'Make artifacts common dir'
+
+    - script: |
+        dir
         xcopy /I /E /Y "Doormat.Bot\bin\Release\net8.0\*" "$(Build.ArtifactStagingDirectory)\Artifacts"
       displayName: 'Copy Artifacts to a Common Directory'
 
-    - script: |
-        mkdir $(Build.ArtifactStagingDirectory)\Artifacts
+    - script: |        
         xcopy /I /E /Y "Doormat.Bot\bin\Release\*" "$(Build.ArtifactStagingDirectory)\Artifacts"
       displayName: 'Copy Artifacts to a Common Directory'
     
