@@ -41,10 +41,6 @@
       <PackagePath>\</PackagePath>
       <Pack>True</Pack>
     </None>
-    <None Include="..\..\Doormat\README.md" Link="README.md">
-      <PackagePath>\</PackagePath>
-      <Pack>True</Pack>
-    </None>
     <None Include="SAMPLECS.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
