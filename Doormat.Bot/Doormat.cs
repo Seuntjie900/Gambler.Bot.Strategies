@@ -142,7 +142,7 @@ namespace DoormatBot
                             try
                             {
                                 _Logger?.LogDebug("Fetching currencies for - {Description}",x.Name);
-                                BaseSite SiteInst = Activator.CreateInstance(x) as BaseSite;
+                                BaseSite SiteInst = Activator.CreateInstance(x, _Logger) as BaseSite;
                                 currenices = (SiteInst).Currencies;
                                 url = SiteInst.SiteURL;
                             }
@@ -154,7 +154,7 @@ namespace DoormatBot
                             {
                                 _Logger?.LogDebug("Fetching currencies for - {Description}",x.Name);
 
-                                games = (Activator.CreateInstance(x) as BaseSite).SupportedGames;
+                                games = (Activator.CreateInstance(x, _Logger) as BaseSite).SupportedGames;
                             }
                             catch (Exception e)
                             {
