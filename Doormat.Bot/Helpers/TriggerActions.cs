@@ -1,5 +1,10 @@
-﻿using System;
+﻿using DoormatBot.Helpers;
+using DoormatCore.Sites;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace DoormatCore.Helpers
@@ -7,28 +12,53 @@ namespace DoormatCore.Helpers
     public enum TriggerAction { Alarm, Chime, Email, Popup, Stop, Reset, Withdraw, Tip, Invest, Bank, ResetSeed, Switch }
     public enum CompareAgainst { Value, Percentage, Property }
     public enum TriggerComparison { Equals, LargerThan, SmallerThan, LargerOrEqualTo, SmallerOrEqualTo, Modulus }
-    public class Trigger
+    public class Trigger:INotifyPropertyChanged
     {
-        public TriggerAction Action { get; set; }
-        public bool Enabled { get; set; }
-        public string TriggerProperty { get; set; }
-        public CompareAgainst TargetType { get; set; }
-        public string Target { get; set; }
-        public TriggerComparison Comparison { get; set; }
-        public decimal Percentage { get; set; }
-        public CompareAgainst ValueType { get; set; }
-        public string ValueProperty { get; set; }
-        public decimal ValueValue { get; set; }
-        public string Destination { get; set; }
+        TriggerAction action;
+        public TriggerAction Action { get=>action; set { action = value; RaisePropertyChanged(); } }
+        bool enabled;
+        public bool Enabled { get=>enabled; set { enabled = value; RaisePropertyChanged(); } }
+        string triggerProperty;
+        public string TriggerProperty { get=>triggerProperty; set { triggerProperty = value; RaisePropertyChanged(); } }
+        CompareAgainst targetType;
+        public CompareAgainst TargetType { get=> targetType; set { targetType = value; RaisePropertyChanged(); } }
+        string target;
+        public string Target { get => target; set { target = value; RaisePropertyChanged(); } }
+        TriggerComparison comparison;
+        public TriggerComparison Comparison { get => comparison; set { comparison = value; RaisePropertyChanged(); } }
+        decimal percentage;
+        public decimal Percentage { get => percentage; set { percentage = value; RaisePropertyChanged(); } }
+        CompareAgainst valueType;
+        public CompareAgainst ValueType { get => valueType; set { valueType = value; RaisePropertyChanged(); } }
+        string valueProperty;
+        public string ValueProperty { get => valueProperty; set { valueProperty = value; RaisePropertyChanged(); } }
+        decimal valueValue;
+        public decimal ValueValue { get => valueValue; set { valueValue = value; RaisePropertyChanged(); } }
+        string destination;
+        public string Destination { get => destination; set { destination = value; RaisePropertyChanged(); } }
 
-        public bool CheckNotification(object Stats)
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            Type StatsType = Stats.GetType();
+            if (propertyName is not null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
+        PropertyInfo triggerPropertyInfo;
+        PropertyInfo targetPropertyInfo;
+        PropertyInfo ValuePropertyInfo;
+
+        public bool CheckNotification(SessionStats Stats, SiteStats siteStats)
+        {
+
+            
             decimal Source = 0;
             try
             {
-                Source = (decimal)(StatsType.GetProperty(TriggerProperty).GetValue(Stats));
+               
+                Source=getValue(TriggerProperty, triggerPropertyInfo, Stats, siteStats);
             }
             catch
             {
@@ -49,7 +79,8 @@ namespace DoormatCore.Helpers
                 decimal TargetValue = 0;
                 try
                 {
-                    TargetValue = (decimal)(StatsType.GetProperty(Target).GetValue(Stats));
+                    TargetValue = getValue(Target, targetPropertyInfo, Stats, siteStats);
+
                 }
                 catch
                 {
@@ -63,7 +94,8 @@ namespace DoormatCore.Helpers
                 decimal TargetValue = 0;
                 try
                 {
-                    TargetValue = (decimal)(StatsType.GetProperty(Target).GetValue(Stats));
+
+                    TargetValue = getValue(Target, targetPropertyInfo, Stats, siteStats);
                 }
                 catch
                 {
@@ -74,6 +106,35 @@ namespace DoormatCore.Helpers
             }
 
             return false;
+        }
+
+        decimal getValue(string PropertyName, PropertyInfo prop, SessionStats session, SiteStats site)
+        {
+            string[] parts = PropertyName.Split('.');
+            bool useSession = (parts[0] == nameof(SessionStats));
+            if (prop?.Name != parts[1])
+            {
+                Type type = null;
+                if (useSession)
+                {
+                    type = session.GetType();
+                }
+                else
+                {
+                    type = site.GetType();
+                }
+                triggerPropertyInfo = type.GetProperty(parts[1]);
+            }
+            object result = triggerPropertyInfo.GetValue(useSession ? session : site);
+
+            if (result is int iresult)
+                return (decimal)iresult;
+            else if (result is long lresult)
+                return (decimal)lresult;
+            else if (result is decimal dresult)
+                return dresult;
+            else
+                return 0;
         }
 
         bool DoComparison(TriggerComparison Comparison, decimal Source, decimal TargetValue)
@@ -90,14 +151,15 @@ namespace DoormatCore.Helpers
             return false;
         }
 
-        public decimal GetValue(object Stats)
+        public decimal GetValue(SessionStats Stats, SiteStats stats)
         {
-            Type StatsType = Stats.GetType();
+            
+            
 
             decimal Source = 0;
             try
             {
-                Source = (decimal)(StatsType.GetProperty(ValueProperty).GetValue(Stats));
+                Source = getValue(ValueProperty, ValuePropertyInfo, Stats, stats);
             }
             catch
             {

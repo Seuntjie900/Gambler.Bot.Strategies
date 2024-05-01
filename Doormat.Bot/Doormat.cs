@@ -473,7 +473,7 @@ namespace DoormatBot
             {
                 if (x.Enabled)
                 {
-                    if (x.CheckNotification(Stats))
+                    if (x.CheckNotification(Stats, CurrentSite.Stats))
                     {
                         switch (x.Action)
                         {
@@ -491,19 +491,19 @@ namespace DoormatBot
             {
                 if (x.Enabled)
                 {
-                    if (x.CheckNotification(Stats))
+                    if (x.CheckNotification(Stats, CurrentSite.Stats))
                     {
                         switch (x.Action)
                         {
 
                             case TriggerAction.Bank:throw new NotImplementedException();break;
-                            case TriggerAction.Invest: CurrentSite.Invest(x.GetValue(Stats)); break;
+                            case TriggerAction.Invest: CurrentSite.Invest(x.GetValue(Stats, CurrentSite.Stats)); break;
                             case TriggerAction.Reset: NextBext = Strategy.RunReset(); Reset = true; break;
                             case TriggerAction.ResetSeed: if (CurrentSite.CanChangeSeed) CurrentSite.ResetSeed(CurrentSite.GenerateNewClientSeed()); break;
-                            case TriggerAction.Stop: StopStrategy("Stop trigger fired. Will show more detail about the trigger here later."); break;
+                            case TriggerAction.Stop: StopStrategy($"Stop trigger fired: {x.ToString()}"); break;
                             //case TriggerAction.Switch: Strategy.High = !Strategy.High; if (NewBetObject != null)NewBetObject.High = !e.NewBet.High;  break;
-                            case TriggerAction.Tip: CurrentSite.SendTip(x.Destination, x.GetValue(Stats)); break;
-                            case TriggerAction.Withdraw: CurrentSite.Withdraw(x.Destination, x.GetValue(Stats)); break;
+                            case TriggerAction.Tip: CurrentSite.SendTip(x.Destination, x.GetValue(Stats, CurrentSite.Stats)); break;
+                            case TriggerAction.Withdraw: CurrentSite.Withdraw(x.Destination, x.GetValue(Stats, CurrentSite.Stats)); break;
 
                         }
                     }
@@ -894,7 +894,8 @@ namespace DoormatBot
                 Stats.RunningTime += (long)(Stats.EndTime - Stats.EndTime).TotalMilliseconds;
             }
             TotalRuntime += Stats.RunningTime;
-            Stats = this.DBInterface.Save<SessionStats>(Stats);
+            if (this.DBInterface!=null)
+                Stats = this.DBInterface.Save<SessionStats>(Stats);
 
             Stats = new SessionStats();
         }
