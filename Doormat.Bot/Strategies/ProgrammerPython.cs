@@ -11,6 +11,7 @@ using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
 using Microsoft.Scripting;
 using Microsoft.Extensions.Logging;
+using Doormat.Bot.Helpers;
 
 namespace DoormatBot.Strategies
 {
@@ -140,6 +141,11 @@ namespace DoormatBot.Strategies
             dynamic result = Scope.ResetDice(NextBet);
 
             return NextBet;
+        }
+
+        public override void OnError(BotErrorEventArgs e)
+        {
+            dynamic result = Scope.OnError(e);
         }
 
         public void UpdateSessionStats(SessionStats Stats)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Doormat.Bot.Helpers;
 using DoormatBot.Helpers;
 using DoormatCore.Games;
 using DoormatCore.Helpers;
@@ -62,6 +63,20 @@ namespace DoormatBot.Strategies
                 OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
             }
             return null;
+        }
+
+        public void OnError(BotErrorEventArgs e)
+        {
+            try
+            {
+                //TypeReference.CreateTypeReference
+                Runtime.Invoke("OnError", e);
+            }
+            catch (Exception ex)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
+            }
+            
         }
 
         public void CreateRuntime()

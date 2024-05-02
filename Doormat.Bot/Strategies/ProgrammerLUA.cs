@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Doormat.Bot.Helpers;
 using DoormatBot.Helpers;
 using DoormatCore.Games;
 using DoormatCore.Helpers;
 using DoormatCore.Sites;
 using Microsoft.Extensions.Logging;
 using MoonSharp.Interpreter;
+using static IronPython.Modules._ast;
 
 namespace DoormatBot.Strategies
 {
@@ -78,6 +80,15 @@ namespace DoormatBot.Strategies
                // throw e;
             }
             return null;
+        }
+
+        public override void OnError(BotErrorEventArgs ErrorDetails)
+        {            
+            DynValue CallError = CurrentRuntime.Globals.Get("OnError");
+            if (CallError != null)
+            {
+                DynValue Result = CurrentRuntime.Call(CallError, ErrorDetails);
+            }            
         }
 
         public override PlaceCrashBet CalculateNextCrashBet(CrashBet PreviousBet, bool Win)

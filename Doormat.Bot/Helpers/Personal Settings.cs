@@ -5,6 +5,7 @@ using System.Reflection;
 using DoormatCore.Sites;
 using static DoormatBot.Helpers.PersonalSettings;
 using DoormatCore.Helpers;
+using Doormat.Bot.Helpers;
 
 namespace DoormatBot.Helpers
 {
@@ -103,9 +104,6 @@ namespace DoormatBot.Helpers
             return null;
         }
 
-
-        public enum ErrorActions { ResumeAsWin, ResumeAsLoss, Resume, Stop, Reset, Retry }
-
         public class ErrorSetting
         {
             public ErrorType Type { get; set; }
@@ -127,16 +125,16 @@ namespace DoormatBot.Helpers
             settings.RetryAttempts = 5;
             settings.RetryDelay = 30;
             PersonalSettings.ErrorSetting[] tmp = new PersonalSettings.ErrorSetting[Enum.GetNames(typeof(ErrorType)).Length];
-            tmp[0] = new PersonalSettings.ErrorSetting { Type = ErrorType.BalanceTooLow, Action = PersonalSettings.ErrorActions.Retry };
-            tmp[1] = new PersonalSettings.ErrorSetting { Type = ErrorType.BetMismatch, Action = PersonalSettings.ErrorActions.Stop };
-            tmp[2] = new PersonalSettings.ErrorSetting { Type = ErrorType.InvalidBet, Action = PersonalSettings.ErrorActions.Stop };
-            tmp[3] = new PersonalSettings.ErrorSetting { Type = ErrorType.NotImplemented, Action = PersonalSettings.ErrorActions.Stop };
-            tmp[4] = new PersonalSettings.ErrorSetting { Type = ErrorType.Other, Action = PersonalSettings.ErrorActions.Stop };
-            tmp[5] = new PersonalSettings.ErrorSetting { Type = ErrorType.ResetSeed, Action = PersonalSettings.ErrorActions.Resume };
-            tmp[6] = new PersonalSettings.ErrorSetting { Type = ErrorType.Tip, Action = PersonalSettings.ErrorActions.Resume };
-            tmp[7] = new PersonalSettings.ErrorSetting { Type = ErrorType.Unknown, Action = PersonalSettings.ErrorActions.Stop };
-            tmp[8] = new PersonalSettings.ErrorSetting { Type = ErrorType.Withdrawal, Action = PersonalSettings.ErrorActions.Resume };
-            tmp[9] = new PersonalSettings.ErrorSetting { Type = ErrorType.BetTooLow, Action = PersonalSettings.ErrorActions.Stop };
+            tmp[0] = new PersonalSettings.ErrorSetting { Type = ErrorType.BalanceTooLow, Action = ErrorActions.Retry };
+            tmp[1] = new PersonalSettings.ErrorSetting { Type = ErrorType.BetMismatch, Action = ErrorActions.Stop };
+            tmp[2] = new PersonalSettings.ErrorSetting { Type = ErrorType.InvalidBet, Action = ErrorActions.Stop };
+            tmp[3] = new PersonalSettings.ErrorSetting { Type = ErrorType.NotImplemented, Action = ErrorActions.Stop };
+            tmp[4] = new PersonalSettings.ErrorSetting { Type = ErrorType.Other, Action = ErrorActions.Stop };
+            tmp[5] = new PersonalSettings.ErrorSetting { Type = ErrorType.ResetSeed, Action = ErrorActions.Resume };
+            tmp[6] = new PersonalSettings.ErrorSetting { Type = ErrorType.Tip, Action = ErrorActions.Resume };
+            tmp[7] = new PersonalSettings.ErrorSetting { Type = ErrorType.Unknown, Action = ErrorActions.Stop };
+            tmp[8] = new PersonalSettings.ErrorSetting { Type = ErrorType.Withdrawal, Action = ErrorActions.Resume };
+            tmp[9] = new PersonalSettings.ErrorSetting { Type = ErrorType.BetTooLow, Action = ErrorActions.Stop };
             settings.ErrorSettings = new List<ErrorSetting>(tmp);
             
             return settings;

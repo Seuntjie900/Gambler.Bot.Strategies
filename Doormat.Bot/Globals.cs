@@ -10,6 +10,7 @@ namespace DoormatCore
         public SiteDetails SiteDetails { get; set; }
         public SessionStats Stats { get; set; }
         public object NextDiceBet { get; set; }
+        public object ErrorArgs { get; set; }
         public object PreviousDiceBet { get; set; }
         public bool DiceWin { get; set; }
         public decimal Balance { get; set; }

@@ -1,4 +1,5 @@
-﻿using DoormatBot.Helpers;
+﻿using Doormat.Bot.Helpers;
+using DoormatBot.Helpers;
 using DoormatCore;
 using DoormatCore.Games;
 using DoormatCore.Helpers;
@@ -137,6 +138,19 @@ namespace DoormatBot.Strategies
             DoDiceBet = null;
             globals.Stats = Stats;
             globals.Balance = Balance;
+        }
+
+        public override void OnError(BotErrorEventArgs ErrorDetails)
+        {
+            
+            globals.ErrorArgs = ErrorDetails;
+            //if (ResetDice == null)
+            {
+                runtime = runtime.ContinueWithAsync("OnError(ErrorArgs)").Result;
+                ResetDice = runtime.Script;
+            }
+
+            
         }
 
         public override PlaceDiceBet RunReset()

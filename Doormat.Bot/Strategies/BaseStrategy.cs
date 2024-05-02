@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Doormat.Bot.Helpers;
 using DoormatBot.Helpers;
 using DoormatCore.Games;
 using DoormatCore.Helpers;
 using DoormatCore.Sites;
 using Microsoft.Extensions.Logging;
+using static DoormatBot.Helpers.PersonalSettings;
 
 namespace DoormatBot.Strategies
 {
@@ -141,9 +143,10 @@ namespace DoormatBot.Strategies
         public delegate void dStop(object sender, StopEventArgs e);
         public event dStop Stop;
 
-        public virtual void OnError(ErrorEventArgs ErrorDetails)
+        public virtual void OnError(BotErrorEventArgs ErrorDetails)
         {
             ErrorDetails.Handled = false;
+            
         }
     }
     public class StopEventArgs:EventArgs

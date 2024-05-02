@@ -20,6 +20,7 @@ using System.ComponentModel;
 using SuperSocket.ClientEngine;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using Doormat.Bot.Helpers;
 
 namespace DoormatBot
 {
@@ -336,14 +337,48 @@ namespace DoormatBot
         List<ErrorType> BettingErrorTypes = new List<ErrorType>(new ErrorType[] { ErrorType.BalanceTooLow, ErrorType.BetMismatch, ErrorType.InvalidBet, ErrorType.NotImplemented, ErrorType.Other, ErrorType.Unknown });
         List<ErrorType> NonBettingErrorTypes = new List<ErrorType>(new ErrorType[] { ErrorType.Withdrawal, ErrorType.Tip, ErrorType.ResetSeed });
         
-        private void BaseSite_Error(object sender, ErrorEventArgs e)
+        private void BaseSite_Error(object sender, ErrorEventArgs ea)
         {
-            ActiveErrors.Add(e);
+            BotErrorEventArgs be = new BotErrorEventArgs(ea);
+            ActiveErrors.Add(be);
             if (Strategy != null)
-                Strategy.OnError(e);
-            if (!e.Handled)
             {
-                ErrorSetting tmpSetting = PersonalSettings.GetErrorSetting(e.Type);
+                Strategy.OnError(be);
+                if (be.Handled)
+                {
+                    switch (be.Action)
+                    {
+                        /*ResumeAsWin, ResumeAsLoss, Resume, Stop, Reset, Retry*/
+                        case ErrorActions.Stop: 
+                            StopStrategy(be.Type.ToString() + " error occurred - Set to stop.");
+                            break;
+                        case ErrorActions.Reset:
+                            NextBext = (Strategy.RunReset());
+                            CalculateNextBet();
+                            break;
+                        case ErrorActions.Resume:
+                            //what and how?
+                            break;
+                        case ErrorActions.Retry:
+                            if (Running && !Stop)
+                            {
+                                PlaceBet(NextBext);
+                            }
+                            break;
+                        case ErrorActions.ResumeAsWin:
+                            CalculateNextBet();//what and how?
+                            break;
+                        case ErrorActions.ResumeAsLoss:
+                            CalculateNextBet();//what and how?
+                            break;
+                            
+
+                    }
+                }
+            }
+            if (!be.Handled)
+            {
+                ErrorSetting tmpSetting = PersonalSettings.GetErrorSetting(be.Type);
                 if (tmpSetting!=null)
                 {
                     if (tmpSetting.Action == ErrorActions.Stop)
@@ -373,9 +408,12 @@ namespace DoormatBot
                         {
                             if (Retries <= PersonalSettings.RetryAttempts)
                             {
-                                CalculateNextBet(); Thread.Sleep(PersonalSettings.RetryDelay);
+                                Thread.Sleep(PersonalSettings.RetryDelay);
                                 Retries++;
-                                CalculateNextBet();
+                                if (Running && !Stop)
+                                {
+                                    PlaceBet(NextBext);
+                                }
                             }
                         }
                     }
@@ -391,7 +429,10 @@ namespace DoormatBot
                                         NextBext = (Strategy.RunReset());
                                         Thread.Sleep(PersonalSettings.RetryDelay);
                                         Retries++;
-                                        CalculateNextBet();
+                                        if (Running && !Stop)
+                                        {
+                                            PlaceBet(NextBext);
+                                        }
                                     }
                                 }
                                 break;
@@ -399,7 +440,7 @@ namespace DoormatBot
                             case ErrorActions.Retry:
                                 if (Retries <= PersonalSettings.RetryAttempts)
                                 {
-                                    CalculateNextBet(); Thread.Sleep(PersonalSettings.RetryDelay);
+                                    Thread.Sleep(PersonalSettings.RetryDelay);
                                     Retries++;
                                     CalculateNextBet();
                                 } break;
@@ -407,10 +448,10 @@ namespace DoormatBot
                     }
                 }
             }
-            OnSiteError?.Invoke(sender, e);
+            OnSiteError?.Invoke(sender, be);
             try
             {
-                ActiveErrors.Remove(e);
+                ActiveErrors.Remove(be);
             }
             catch
             {
@@ -422,129 +463,135 @@ namespace DoormatBot
         {
             if (e.NewBet == null)
                 return;
-            DBInterface?.Save<Bet>(e.NewBet);
-            MostRecentBet = e.NewBet;
-            MostRecentBetTime = DateTime.Now;
-            Retries = 0;
-            /*
-             * save bet to DB - invoke async?
-             * send bet to GUI - invoke async?
-             * */
-            bool win = e.NewBet.GetWin(CurrentSite); 
-            string Response = "";
-            bool Reset = false;
-            if (BetSettings?.CheckResetPreStats(e.NewBet, win, Stats, CurrentSite.Stats)??false)
+            try
             {
-                Reset = true;
-                NextBext = Strategy.RunReset();
-            }
-            if (BetSettings?.CheckStopPreStats(e.NewBet, win, Stats, out Response, CurrentSite.Stats) ?? false)
-            {
-                StopStrategy(Response);
-            }
-            Stats.UpdateStats(e.NewBet, win);
-            if (Strategy is ProgrammerMode)
-            {
-                (Strategy as ProgrammerMode).UpdateSessionStats(CopyHelper.CreateCopy<SessionStats>(Stats));
-                (Strategy as ProgrammerMode).UpdateSiteStats(CopyHelper.CreateCopy<SiteStats>(CurrentSite.Stats));
-                (Strategy as ProgrammerMode).UpdateSite(CopyHelper.CreateCopy<SiteDetails>(CurrentSite.SiteDetails));
-            }
-            OnSiteBetFinished?.Invoke(sender, e );
-
-
-            if (e.NewBet.Guid!=LastBetGuid || LastBetsGuids.Contains(e.NewBet.Guid))
-            {
-                StopStrategy("Last bet did not match the latest bet placed.");
-                //stop
-                return;
-            }
-            else
-            {
-                LastBetsGuids.Enqueue(e.NewBet.Guid);
-                if (LastBetsGuids.Count > 10)
-                    LastBetsGuids.Dequeue();
-            }
-
-
-            
-
-
-            foreach (Trigger x in PersonalSettings.Notifications)
-            {
-                if (x.Enabled)
+                DBInterface?.Save<Bet>(e.NewBet);
+                MostRecentBet = e.NewBet;
+                MostRecentBetTime = DateTime.Now;
+                Retries = 0;
+                /*
+                 * save bet to DB - invoke async?
+                 * send bet to GUI - invoke async?
+                 * */
+                bool win = e.NewBet.GetWin(CurrentSite);
+                string Response = "";
+                bool Reset = false;
+                if (BetSettings?.CheckResetPreStats(e.NewBet, win, Stats, CurrentSite.Stats) ?? false)
                 {
-                    if (x.CheckNotification(Stats, CurrentSite.Stats))
+                    Reset = true;
+                    NextBext = Strategy.RunReset();
+                }
+                if (BetSettings?.CheckStopPreStats(e.NewBet, win, Stats, out Response, CurrentSite.Stats) ?? false)
+                {
+                    StopStrategy(Response);
+                }
+                Stats.UpdateStats(e.NewBet, win);
+                if (Strategy is ProgrammerMode)
+                {
+                    (Strategy as ProgrammerMode).UpdateSessionStats(CopyHelper.CreateCopy<SessionStats>(Stats));
+                    (Strategy as ProgrammerMode).UpdateSiteStats(CopyHelper.CreateCopy<SiteStats>(CurrentSite.Stats));
+                    (Strategy as ProgrammerMode).UpdateSite(CopyHelper.CreateCopy<SiteDetails>(CurrentSite.SiteDetails));
+                }
+                OnSiteBetFinished?.Invoke(sender, e);
+
+
+                if (e.NewBet.Guid != LastBetGuid || LastBetsGuids.Contains(e.NewBet.Guid))
+                {
+                    StopStrategy("Last bet did not match the latest bet placed.");
+                    //stop
+                    return;
+                }
+                else
+                {
+                    LastBetsGuids.Enqueue(e.NewBet.Guid);
+                    if (LastBetsGuids.Count > 10)
+                        LastBetsGuids.Dequeue();
+                }
+
+
+
+
+
+                foreach (Trigger x in PersonalSettings.Notifications)
+                {
+                    if (x.Enabled)
                     {
-                        switch (x.Action)
+                        if (x.CheckNotification(Stats, CurrentSite.Stats))
                         {
-                            case TriggerAction.Alarm:
-                            case TriggerAction.Chime:
-                            case TriggerAction.Popup: OnNotification?.Invoke(this, new NotificationEventArgs { NotificationTrigger = x }); break;
-                            case TriggerAction.Email: throw new NotImplementedException("Supporting infrastructure for this still needs to be built.");                                
+                            switch (x.Action)
+                            {
+                                case TriggerAction.Alarm:
+                                case TriggerAction.Chime:
+                                case TriggerAction.Popup: OnNotification?.Invoke(this, new NotificationEventArgs { NotificationTrigger = x }); break;
+                                case TriggerAction.Email: throw new NotImplementedException("Supporting infrastructure for this still needs to be built.");
+                            }
                         }
                     }
                 }
-            }
-            NextBext = null;            
-            
-            foreach (Trigger x in BetSettings.Triggers)
-            {
-                if (x.Enabled)
+                NextBext = null;
+
+                foreach (Trigger x in BetSettings.Triggers)
                 {
-                    if (x.CheckNotification(Stats, CurrentSite.Stats))
+                    if (x.Enabled)
                     {
-                        switch (x.Action)
+                        if (x.CheckNotification(Stats, CurrentSite.Stats))
                         {
+                            switch (x.Action)
+                            {
 
-                            case TriggerAction.Bank:throw new NotImplementedException();break;
-                            case TriggerAction.Invest: CurrentSite.Invest(x.GetValue(Stats, CurrentSite.Stats)); break;
-                            case TriggerAction.Reset: NextBext = Strategy.RunReset(); Reset = true; break;
-                            case TriggerAction.ResetSeed: if (CurrentSite.CanChangeSeed) CurrentSite.ResetSeed(CurrentSite.GenerateNewClientSeed()); break;
-                            case TriggerAction.Stop: StopStrategy($"Stop trigger fired: {x.ToString()}"); break;
-                            //case TriggerAction.Switch: Strategy.High = !Strategy.High; if (NewBetObject != null)NewBetObject.High = !e.NewBet.High;  break;
-                            case TriggerAction.Tip: CurrentSite.SendTip(x.Destination, x.GetValue(Stats, CurrentSite.Stats)); break;
-                            case TriggerAction.Withdraw: CurrentSite.Withdraw(x.Destination, x.GetValue(Stats, CurrentSite.Stats)); break;
+                                case TriggerAction.Bank: throw new NotImplementedException(); break;
+                                case TriggerAction.Invest: CurrentSite.Invest(x.GetValue(Stats, CurrentSite.Stats)); break;
+                                case TriggerAction.Reset: NextBext = Strategy.RunReset(); Reset = true; break;
+                                case TriggerAction.ResetSeed: if (CurrentSite.CanChangeSeed) CurrentSite.ResetSeed(CurrentSite.GenerateNewClientSeed()); break;
+                                case TriggerAction.Stop: StopStrategy($"Stop trigger fired: {x.ToString()}"); break;
+                                //case TriggerAction.Switch: Strategy.High = !Strategy.High; if (NewBetObject != null)NewBetObject.High = !e.NewBet.High;  break;
+                                case TriggerAction.Tip: CurrentSite.SendTip(x.Destination, x.GetValue(Stats, CurrentSite.Stats)); break;
+                                case TriggerAction.Withdraw: CurrentSite.Withdraw(x.Destination, x.GetValue(Stats, CurrentSite.Stats)); break;
 
+                            }
                         }
                     }
                 }
+                if (BetSettings.CheckResetPostStats(e.NewBet, win, Stats, CurrentSite.Stats))
+                {
+                    Reset = true;
+                    NextBext = Strategy.RunReset();
+                }
+                if (BetSettings.CheckStopPOstStats(e.NewBet, win, Stats, out Response, CurrentSite.Stats))
+                {
+                    StopStrategy(Response);
+                }
+                decimal withdrawamount = 0;
+                if (BetSettings.CheckWithdraw(e.NewBet, win, Stats, out withdrawamount, CurrentSite.Stats))
+                {
+                    throw new NotImplementedException();
+                    //if (CurrentSite.AutoWithdraw)
+                    //CurrentSite.Withdraw(BetSettings.)
+                    // this.Balance -= withdrawamount;
+                }
+                if (BetSettings.CheckBank(e.NewBet, win, Stats, out withdrawamount, CurrentSite.Stats))
+                {
+                    throw new NotImplementedException();
+                    //this.Balance -= withdrawamount;
+                }
+                if (BetSettings.CheckTips(e.NewBet, win, Stats, out withdrawamount, CurrentSite.Stats))
+                {
+                    throw new NotImplementedException();
+                    //this.Balance -= withdrawamount;
+                }
+                bool NewHigh = false;
+                if (BetSettings.CheckResetSeed(e.NewBet, win, Stats, CurrentSite.Stats))
+                {
+                    if (CurrentSite.CanChangeSeed)
+                        CurrentSite.ResetSeed("");
+                }
+                if (Running)
+                    CalculateNextBet();
             }
-            if (BetSettings.CheckResetPostStats(e.NewBet, win, Stats, CurrentSite.Stats))
+            catch (Exception E)
             {
-                Reset = true;
-                NextBext = Strategy.RunReset();
+                _Logger?.LogError(E.ToString());
             }
-            if (BetSettings.CheckStopPOstStats(e.NewBet, win, Stats, out Response, CurrentSite.Stats))
-            {
-                StopStrategy(Response);
-            }
-            decimal withdrawamount = 0;
-            if (BetSettings.CheckWithdraw(e.NewBet,win, Stats, out withdrawamount, CurrentSite.Stats))
-            {
-                throw new NotImplementedException();
-                //if (CurrentSite.AutoWithdraw)
-                //CurrentSite.Withdraw(BetSettings.)
-               // this.Balance -= withdrawamount;
-            }
-            if (BetSettings.CheckBank(e.NewBet, win, Stats, out withdrawamount, CurrentSite.Stats))
-            {
-                throw new NotImplementedException();
-                //this.Balance -= withdrawamount;
-            }
-            if (BetSettings.CheckTips(e.NewBet, win, Stats, out withdrawamount, CurrentSite.Stats))
-            {
-                throw new NotImplementedException();
-                //this.Balance -= withdrawamount;
-            }
-            bool NewHigh = false;
-            if (BetSettings.CheckResetSeed(e.NewBet, win, Stats, CurrentSite.Stats))
-            {
-                if (CurrentSite.CanChangeSeed)
-                    CurrentSite.ResetSeed("");
-            }
-            if (Running)
-                CalculateNextBet();
-
         }
 
         void CalculateNextBet()

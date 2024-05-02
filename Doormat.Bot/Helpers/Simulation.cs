@@ -100,6 +100,11 @@ namespace DoormatBot.Helpers
             new Thread(new ThreadStart(SimulationThread)).Start();
         }
 
+        public void StopSim()
+        {
+            Stop = true;
+        }
+
         private void SimulationThread()
         {
             try
