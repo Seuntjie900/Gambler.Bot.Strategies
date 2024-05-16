@@ -47,12 +47,7 @@ namespace DoormatBot
         /// <summary>
         /// Indicates that the bot is currently running placing bets
         /// </summary>
-        public bool Running { get; private set; }
-
-        /// <summary>
-        /// Sets the flag to stop all betting operations.
-        /// </summary>
-        public bool Stop { get; private set; }
+        public bool Running { get; private set; }      
 
         public bool RunningSimulation { get; private set; }
         private long totalRuntime = new long();
@@ -92,7 +87,6 @@ namespace DoormatBot
             VersionStr = string.Format("{0}.{1}.{2}", Environment.Version.Major, Environment.Version.MajorRevision, Environment.Version.Build);
             Stats = new SessionStats();
             Running = false;
-            Stop = false;
             BetTimer.Elapsed += BetTimer_Elapsed;
             CurrentGame = Games.Dice;
         }
@@ -360,7 +354,7 @@ namespace DoormatBot
                             //what and how?
                             break;
                         case ErrorActions.Retry:
-                            if (Running && !Stop)
+                            if (Running )
                             {
                                 PlaceBet(NextBext);
                             }
@@ -389,7 +383,7 @@ namespace DoormatBot
                     {
                         if (ErrorActions.Reset == tmpSetting.Action)
                         {
-                            if (Running && !Stop)
+                            if (Running)
                             {
                                 if (Retries <= PersonalSettings.RetryAttempts)
                                 {
@@ -410,7 +404,7 @@ namespace DoormatBot
                             {
                                 Thread.Sleep(PersonalSettings.RetryDelay);
                                 Retries++;
-                                if (Running && !Stop)
+                                if (Running )
                                 {
                                     PlaceBet(NextBext);
                                 }
@@ -422,14 +416,14 @@ namespace DoormatBot
                         switch (tmpSetting.Action)
                         {
                             case ErrorActions.Reset:
-                                if (Running && !Stop)
+                                if (Running)
                                 {
                                     if (Retries <= PersonalSettings.RetryAttempts)
                                     {
                                         NextBext = (Strategy.RunReset());
                                         Thread.Sleep(PersonalSettings.RetryDelay);
                                         Retries++;
-                                        if (Running && !Stop)
+                                        if (Running)
                                         {
                                             PlaceBet(NextBext);
                                         }
@@ -612,7 +606,7 @@ namespace DoormatBot
             }
             if (NextBext ==null)
                 NextBext = Strategy.CalculateNextBet(MostRecentBet, win);
-            if (Running && !Stop)
+            if (Running)
             {
                 while (CurrentSite.TimeToBet(NextBext) > 0 
                     && (decimal)(DateTime.Now - MostRecentBetTime).TotalMilliseconds>= NextBext.BetDelay
@@ -624,7 +618,7 @@ namespace DoormatBot
                         TimeToBet = (10);
                     Thread.Sleep(TimeToBet);
                 }
-                if (Running && !Stop)
+                if (Running)
                     PlaceBet(NextBext);
             }
         }
