@@ -249,7 +249,7 @@ namespace DoormatBot.Helpers
                 GenerateSeeds();
             }
             
-            Lucky=Site.GetLucky(serverseedhash, serverseed, clientseed, (int)BetsWithSeed);
+            Lucky=Site.GetLucky(serverseed, clientseed, (int)BetsWithSeed);
             
             DiceBet betresult = new DiceBet {
                 TotalAmount = NewBet.Amount,
