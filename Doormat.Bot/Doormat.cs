@@ -21,10 +21,11 @@ using SuperSocket.ClientEngine;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Doormat.Bot.Helpers;
+using System.Runtime.CompilerServices;
 
 namespace DoormatBot
 {
-    public class Doormat
+    public class Doormat: INotifyPropertyChanged
     {
         #region Internal Variables
         private readonly ILogger _Logger;
@@ -187,11 +188,11 @@ namespace DoormatBot
             }
             return Sites.ToArray();  
         }
-
-        public Dictionary<string, Type> Strategies { get; set; }
+        Dictionary<string, Type> strategies;
+        public Dictionary<string, Type> Strategies { get => strategies; set { strategies = value; RaisePropertyChanged(); } }
         public Dictionary<string, Type> GetStrats()
         {
-            Strategies = new Dictionary<string, Type>();
+            var tmpStrategies = new Dictionary<string, Type>();
             Type[] tps = Assembly.GetAssembly(typeof(BaseStrategy)).GetTypes();
             List<string> sites = new List<string>();
 
@@ -199,10 +200,11 @@ namespace DoormatBot
             foreach (Type x in tps)
             { 
                 if (x.IsSubclassOf(BaseTyope))
-                {                    
-                    Strategies.Add((Activator.CreateInstance(x,_Logger) as BaseStrategy).StrategyName, x);
+                {
+                    tmpStrategies.Add((Activator.CreateInstance(x,_Logger) as BaseStrategy).StrategyName, x);
                 }
             }
+            Strategies = tmpStrategies;
             return Strategies;
         }
 
@@ -307,6 +309,7 @@ namespace DoormatBot
         public event EventHandler OnStarted;
         public event EventHandler<GenericEventArgs> OnStopped;
         public event EventHandler<BypassRequiredArgs> OnBypassRequired;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private void BaseSite_StatsUpdated(object sender, StatsUpdatedEventArgs e)
         {
@@ -1152,7 +1155,12 @@ namespace DoormatBot
             this.Strategy.SetLogger(_Logger);
             return StoredBetSettings;
         }
-        
+        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+
+        }
         #region Accounts
         public KPHelper[] GetAccounts()
         {
