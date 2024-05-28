@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Doormat.Bot.Helpers;
-using DoormatBot.Helpers;
-using DoormatCore.Games;
-using DoormatCore.Helpers;
-using DoormatCore.Sites;
+using Gambler.Bot.AutoBet.Helpers;
+using Gambler.Bot.Core.Games;
+using Gambler.Bot.Core.Helpers;
+using Gambler.Bot.Core.Sites;
 using Jint;
 using Microsoft.Extensions.Logging;
 
-namespace DoormatBot.Strategies
+namespace Gambler.Bot.AutoBet.Strategies
 {
     public class ProgrammerJS : BaseStrategy, ProgrammerMode, iDiceStrategy
     {

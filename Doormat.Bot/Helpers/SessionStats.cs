@@ -1,12 +1,12 @@
-﻿using DoormatCore.Games;
-using DoormatCore.Helpers;
-using DoormatCore.Storage;
+﻿using Gambler.Bot.Core.Games;
+using Gambler.Bot.Core.Helpers;
+using Gambler.Bot.Core.Storage;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-namespace DoormatBot.Helpers
+namespace Gambler.Bot.AutoBet.Helpers
 {
     [MoonSharp.Interpreter.MoonSharpUserData]
     [PersistentTableName("SESSIONSTATS")]

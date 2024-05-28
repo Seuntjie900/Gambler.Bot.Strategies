@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using DoormatCore.Games;
-using DoormatCore.Helpers;
-using DoormatCore.Sites;
+using Gambler.Bot.Core.Games;
+using Gambler.Bot.Core.Helpers;
+using Gambler.Bot.Core.Sites;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
-using static DoormatCore.Sites.BaseSite;
+using static Gambler.Bot.Core.Sites.BaseSite;
 
-namespace DoormatCore.Storage
+namespace Gambler.Bot.Core.Storage
 {
     class MYSql : SQLBase
     {

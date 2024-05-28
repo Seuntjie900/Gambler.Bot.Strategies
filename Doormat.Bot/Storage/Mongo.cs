@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using DoormatCore.Games;
-using DoormatCore.Helpers;
-using DoormatCore.Sites;
+using Gambler.Bot.Core.Games;
+using Gambler.Bot.Core.Helpers;
+using Gambler.Bot.Core.Sites;
 using Microsoft.Extensions.Logging;
 
-namespace DoormatCore.Storage
+namespace Gambler.Bot.Core.Storage
 {
     class Mongo : SQLBase
     {

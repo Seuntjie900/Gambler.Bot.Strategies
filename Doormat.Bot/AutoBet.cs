@@ -1,8 +1,8 @@
-﻿using DoormatCore.Games;
-using DoormatCore.Helpers;
-using DoormatCore.Sites;
-using DoormatCore.Storage;
-using DoormatBot.Strategies;
+﻿using Gambler.Bot.Core.Games;
+using Gambler.Bot.Core.Helpers;
+using Gambler.Bot.Core.Sites;
+using Gambler.Bot.Core.Storage;
+using Gambler.Bot.AutoBet.Strategies;
 //using KeePassLib;
 //using KeePassLib.Keys;
 //using KeePassLib.Serialization;
@@ -12,9 +12,9 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using static DoormatBot.Helpers.PersonalSettings;
-using ErrorEventArgs = DoormatCore.Sites.ErrorEventArgs;
-using DoormatBot.Helpers;
+using static Gambler.Bot.AutoBet.Helpers.PersonalSettings;
+using ErrorEventArgs = Gambler.Bot.Core.Sites.ErrorEventArgs;
+using Gambler.Bot.AutoBet.Helpers;
 using System.Linq;
 using System.ComponentModel;
 using SuperSocket.ClientEngine;
@@ -23,9 +23,9 @@ using Microsoft.Extensions.Logging;
 using Doormat.Bot.Helpers;
 using System.Runtime.CompilerServices;
 
-namespace DoormatBot
+namespace Gambler.Bot.AutoBet
 {
-    public class Doormat: INotifyPropertyChanged
+    public class AutoBet: INotifyPropertyChanged
     {
         #region Internal Variables
         private readonly ILogger _Logger;
@@ -82,7 +82,7 @@ namespace DoormatBot
         string VersionStr = "";
 
 
-        public Doormat(ILogger logger)
+        public AutoBet(ILogger logger)
         {
             _Logger = logger;
             VersionStr = string.Format("{0}.{1}.{2}", Environment.Version.Major, Environment.Version.MajorRevision, Environment.Version.Build);
@@ -128,7 +128,7 @@ namespace DoormatBot
                     foreach (Type x in tps)
                     {
                         _Logger?.LogDebug("Stepping Through Types - {Description}", x.Name);
-                        if (x.IsSubclassOf(SiteAss.GetType("DoormatCore.Sites.BaseSite")))
+                        if (x.IsSubclassOf(SiteAss.GetType("Gambler.Bot.Core.Sites.BaseSite")))
                         {
                             _Logger?.LogDebug("Found Type - " + x.Name, 6);
                             sites.Add(x.Name);
@@ -196,7 +196,7 @@ namespace DoormatBot
             Type[] tps = Assembly.GetAssembly(typeof(BaseStrategy)).GetTypes();
             List<string> sites = new List<string>();
 
-            Type BaseTyope = Type.GetType("DoormatBot.Strategies.BaseStrategy");
+            Type BaseTyope = Type.GetType("Gambler.Bot.AutoBet.Strategies.BaseStrategy");
             foreach (Type x in tps)
             { 
                 if (x.IsSubclassOf(BaseTyope))

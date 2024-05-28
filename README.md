@@ -1,6 +1,6 @@
-Build: [![Build Status](https://eugenebotma.visualstudio.com/seuntjie900/_apis/build/status%2FDoormatBot?repoName=Seuntjie900%2FDoormatBot&branchName=master&stageName=Build)](https://eugenebotma.visualstudio.com/seuntjie900/_build/latest?definitionId=3&repoName=Seuntjie900%2FDoormatBot&branchName=master)
+Build: [![Build Status](https://eugenebotma.visualstudio.com/seuntjie900/_apis/build/status%2FGambler.Bot.AutoBet?repoName=Seuntjie900%2FGambler.Bot.AutoBet&branchName=master&stageName=Build)](https://eugenebotma.visualstudio.com/seuntjie900/_build/latest?definitionId=3&repoName=Seuntjie900%2FGambler.Bot.AutoBet&branchName=master)
 
-Tests: [![Build Status](https://eugenebotma.visualstudio.com/seuntjie900/_apis/build/status%2FDoormatBot?repoName=Seuntjie900%2FDoormatBot&branchName=master&stageName=Test)](https://eugenebotma.visualstudio.com/seuntjie900/_build/latest?definitionId=3&repoName=Seuntjie900%2FDoormatBot&branchName=master)
+Tests: [![Build Status](https://eugenebotma.visualstudio.com/seuntjie900/_apis/build/status%2FGambler.Bot.AutoBet?repoName=Seuntjie900%2FGambler.Bot.AutoBet&branchName=master&stageName=Test)](https://eugenebotma.visualstudio.com/seuntjie900/_build/latest?definitionId=3&repoName=Seuntjie900%2FGambler.Bot.AutoBet&branchName=master)
 
 [![NuGet](https://img.shields.io/nuget/v/Doormat.Bot.svg)](https://www.nuget.org/packages/Doormat.Bot/)
 

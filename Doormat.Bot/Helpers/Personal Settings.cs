@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
-using DoormatCore.Sites;
-using static DoormatBot.Helpers.PersonalSettings;
-using DoormatCore.Helpers;
+using Gambler.Bot.Core.Sites;
+using static Gambler.Bot.AutoBet.Helpers.PersonalSettings;
+using Gambler.Bot.Core.Helpers;
 using Doormat.Bot.Helpers;
 
-namespace DoormatBot.Helpers
+namespace Gambler.Bot.AutoBet.Helpers
 {
     public class PersonalSettings
     {

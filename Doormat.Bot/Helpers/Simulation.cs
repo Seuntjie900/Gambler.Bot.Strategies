@@ -1,6 +1,6 @@
-﻿using DoormatCore.Games;
-using DoormatCore.Sites;
-using DoormatBot.Strategies;
+﻿using Gambler.Bot.Core.Games;
+using Gambler.Bot.Core.Sites;
+using Gambler.Bot.AutoBet.Strategies;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,10 +8,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using DoormatCore.Helpers;
+using Gambler.Bot.Core.Helpers;
 using Microsoft.Extensions.Logging;
 
-namespace DoormatBot.Helpers
+namespace Gambler.Bot.AutoBet.Helpers
 {
     public class Simulation
     {
@@ -24,7 +24,7 @@ namespace DoormatBot.Helpers
         public string serverseed { get; set; }
         public string clientseed { get; set; }
         public List<string> bets = new List<string>();
-        public DoormatCore.Sites.BaseSite Site { get; set; }
+        public Gambler.Bot.Core.Sites.BaseSite Site { get; set; }
         public Strategies.BaseStrategy DiceStrategy { get; set; }
         public SessionStats Stats { get; set; }
         public InternalBetSettings BetSettings { get; set; }
@@ -47,7 +47,7 @@ namespace DoormatBot.Helpers
 
         public void Initialize(decimal balance, 
             long bets, 
-            DoormatCore.Sites.BaseSite Site, 
+            Gambler.Bot.Core.Sites.BaseSite Site, 
             Strategies.BaseStrategy DiceStrategy, 
             InternalBetSettings OtherSettings, 
             string TempStorage,

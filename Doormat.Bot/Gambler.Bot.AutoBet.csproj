@@ -13,11 +13,11 @@
 	  <FileVersion>0.0.0.1</FileVersion>
 	  <Authors>Seuntjie</Authors>
 	  <Company>Botma Software (Pty) ltd.</Company>
-	  <Description>Library for automated betting and different betting strategies using DoormatCore</Description>
-	  <PackageProjectUrl>https://github.com/Seuntjie900/DoormatBot</PackageProjectUrl>
-	  <RepositoryUrl>https://github.com/Seuntjie900/DoormatBot</RepositoryUrl>
+	  <Description>Library for automated betting and different betting strategies using Gambler.Bot.Core</Description>
+	  <PackageProjectUrl>https://github.com/Seuntjie900/Gambler.Bot.AutoBet</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/Seuntjie900/Gambler.Bot.AutoBet</RepositoryUrl>
 	  <RepositoryType>Github</RepositoryType>
-	  <PackageTags>Seuntjie Gambling DiceBot Doormat DoormatBot</PackageTags>
+	  <PackageTags>Seuntjie Gambling DiceBot Doormat Gambler.Bot.AutoBet</PackageTags>
 	  <PackageReleaseNotes>Test Release for Nuget - Still in alpha.</PackageReleaseNotes>
 	  <NeutralLanguage>en-GB</NeutralLanguage>
 	  <DelaySign>false</DelaySign>
@@ -64,7 +64,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Doormat\Doormat\Doormat\DoormatCore.csproj" />
+    <ProjectReference Include="..\..\Doormat\Doormat\Doormat\Gambler.Bot.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

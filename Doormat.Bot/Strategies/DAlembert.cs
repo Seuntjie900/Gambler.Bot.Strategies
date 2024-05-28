@@ -1,6 +1,6 @@
-﻿using DoormatBot.Helpers;
-using DoormatCore.Games;
-using DoormatCore.Helpers;
+﻿using Gambler.Bot.AutoBet.Helpers;
+using Gambler.Bot.Core.Games;
+using Gambler.Bot.Core.Helpers;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DoormatBot.Strategies
+namespace Gambler.Bot.AutoBet.Strategies
 {
     public class DAlembert: BaseStrategy, iDiceStrategy
     {

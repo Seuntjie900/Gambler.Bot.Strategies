@@ -1,9 +1,9 @@
-﻿using DoormatBot.Strategies.PresetListModels;
-using DoormatCore.Games;
+﻿using Gambler.Bot.AutoBet.Strategies.PresetListModels;
+using Gambler.Bot.Core.Games;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 
-namespace DoormatBot.Strategies
+namespace Gambler.Bot.AutoBet.Strategies
 {
     public class PresetList: BaseStrategy, iDiceStrategy
     {
@@ -172,7 +172,7 @@ namespace DoormatBot.Strategies
 
 }
 
-namespace DoormatBot.Strategies.PresetListModels
+namespace Gambler.Bot.AutoBet.Strategies.PresetListModels
 {
     public class PresetBet
     {

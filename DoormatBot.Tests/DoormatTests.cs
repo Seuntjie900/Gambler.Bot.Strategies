@@ -1,4 +1,4 @@
-namespace DoormatBot.Tests
+namespace Gambler.Bot.AutoBet.Tests
 {
     public class DoormatTests
 

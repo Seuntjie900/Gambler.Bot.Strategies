@@ -1,8 +1,8 @@
-﻿using DoormatBot.Helpers;
-using DoormatCore.Sites;
+﻿using Gambler.Bot.AutoBet.Helpers;
+using Gambler.Bot.Core.Sites;
 using System;
 
-namespace DoormatCore
+namespace Gambler.Bot.Core
 {
     public class Globals
     {

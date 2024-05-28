@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DoormatCore.Games;
-using DoormatBot.Helpers;
-using DoormatCore.Sites;
+using Gambler.Bot.Core.Games;
+using Gambler.Bot.AutoBet.Helpers;
+using Gambler.Bot.Core.Sites;
 using IronPython.Runtime;
 using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
@@ -13,7 +13,7 @@ using Microsoft.Scripting;
 using Microsoft.Extensions.Logging;
 using Doormat.Bot.Helpers;
 
-namespace DoormatBot.Strategies
+namespace Gambler.Bot.AutoBet.Strategies
 {
     public class ProgrammerPython: BaseStrategy, ProgrammerMode, iDiceStrategy
     {

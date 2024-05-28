@@ -1,12 +1,12 @@
-﻿using DoormatBot.Helpers;
-using DoormatCore.Games;
-using DoormatCore.Helpers;
-using DoormatCore.Sites;
+﻿using Gambler.Bot.AutoBet.Helpers;
+using Gambler.Bot.Core.Games;
+using Gambler.Bot.Core.Helpers;
+using Gambler.Bot.Core.Sites;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DoormatBot.Strategies
+namespace Gambler.Bot.AutoBet.Strategies
 {
     public interface ProgrammerMode
     {

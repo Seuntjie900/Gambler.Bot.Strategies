@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Doormat.Bot.Helpers;
-using DoormatBot.Helpers;
-using DoormatCore.Games;
-using DoormatCore.Helpers;
-using DoormatCore.Sites;
+using Gambler.Bot.AutoBet.Helpers;
+using Gambler.Bot.Core.Games;
+using Gambler.Bot.Core.Helpers;
+using Gambler.Bot.Core.Sites;
 using Microsoft.Extensions.Logging;
-using static DoormatBot.Helpers.PersonalSettings;
+using static Gambler.Bot.AutoBet.Helpers.PersonalSettings;
 
-namespace DoormatBot.Strategies
+namespace Gambler.Bot.AutoBet.Strategies
 {
     public abstract class BaseStrategy
     {

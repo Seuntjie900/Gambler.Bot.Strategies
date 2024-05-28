@@ -1,12 +1,12 @@
-﻿using DoormatBot.Helpers;
-using DoormatBot.Strategies;
-using DoormatCore.Games;
+﻿using Gambler.Bot.AutoBet.Helpers;
+using Gambler.Bot.AutoBet.Strategies;
+using Gambler.Bot.Core.Games;
 using Microsoft.Extensions.Logging;
 using Moq;
-using static DoormatBot.Strategies.BaseStrategy;
+using static Gambler.Bot.AutoBet.Strategies.BaseStrategy;
 
 
-namespace DoormatBot.Tests.Strategies
+namespace Gambler.Bot.AutoBet.Tests.Strategies
 {
     public class DAlembertTests
     {

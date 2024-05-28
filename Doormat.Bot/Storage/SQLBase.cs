@@ -1,6 +1,6 @@
 ﻿
-using DoormatCore.Games;
-using DoormatCore.Helpers;
+using Gambler.Bot.Core.Games;
+using Gambler.Bot.Core.Helpers;
 using Esprima.Ast;
 using Microsoft.Extensions.Logging;
 using System;
@@ -8,9 +8,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Text;
-using static DoormatCore.Sites.BaseSite;
+using static Gambler.Bot.Core.Sites.BaseSite;
 
-namespace DoormatCore.Storage
+namespace Gambler.Bot.Core.Storage
 {
     /// <summary>
     /// Base interface for reading and writing data to and from a database.

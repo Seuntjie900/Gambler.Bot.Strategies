@@ -1,5 +1,5 @@
-﻿using DoormatBot.Helpers;
-using DoormatCore.Sites;
+﻿using Gambler.Bot.AutoBet.Helpers;
+using Gambler.Bot.Core.Sites;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace DoormatCore.Helpers
+namespace Gambler.Bot.Core.Helpers
 {
     public enum TriggerAction { Alarm, Chime, Email, Popup, Stop, Reset, Withdraw, Tip, Invest, Bank, ResetSeed, Switch }
     public enum CompareAgainst { Value, Percentage, Property }

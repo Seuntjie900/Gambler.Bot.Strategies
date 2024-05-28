@@ -1,9 +1,9 @@
 ﻿using Doormat.Bot.Helpers;
-using DoormatBot.Helpers;
-using DoormatCore;
-using DoormatCore.Games;
-using DoormatCore.Helpers;
-using DoormatCore.Sites;
+using Gambler.Bot.AutoBet.Helpers;
+using Gambler.Bot.Core;
+using Gambler.Bot.Core.Games;
+using Gambler.Bot.Core.Helpers;
+using Gambler.Bot.Core.Sites;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
@@ -14,7 +14,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
-namespace DoormatBot.Strategies
+namespace Gambler.Bot.AutoBet.Strategies
 {
     public class ProgrammerCS : BaseStrategy, ProgrammerMode, iDiceStrategy
     {
@@ -73,8 +73,8 @@ namespace DoormatBot.Strategies
                 runtime = runtime.ContinueWithAsync("DoDiceBet(PreviousDiceBet, DiceWin, NextDiceBet)", ScriptOptions.Default.WithReferences(
                         Assembly.GetExecutingAssembly())
                         .WithImports(
-                            "DoormatBot",
-                            "DoormatBot.Games",
+                            "Gambler.Bot.AutoBet",
+                            "Gambler.Bot.AutoBet.Games",
                             "System")).Result;*/
 
 
@@ -97,8 +97,8 @@ namespace DoormatBot.Strategies
                 ScriptOptions.Default.WithReferences(
                     Assembly.GetExecutingAssembly())
                     .WithImports(
-                        "DoormatBot",
-                        "DoormatCore.Games",
+                        "Gambler.Bot.AutoBet",
+                        "Gambler.Bot.Core.Games",
                         "System"), 
                 typeof(Globals));
 

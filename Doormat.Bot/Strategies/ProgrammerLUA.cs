@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Text;
 using Doormat.Bot.Helpers;
-using DoormatBot.Helpers;
-using DoormatCore.Games;
-using DoormatCore.Helpers;
-using DoormatCore.Sites;
+using Gambler.Bot.AutoBet.Helpers;
+using Gambler.Bot.Core.Games;
+using Gambler.Bot.Core.Helpers;
+using Gambler.Bot.Core.Sites;
 using Microsoft.Extensions.Logging;
 using MoonSharp.Interpreter;
 using static IronPython.Modules._ast;
 
-namespace DoormatBot.Strategies
+namespace Gambler.Bot.AutoBet.Strategies
 {
     public class ProgrammerLUA : BaseStrategy, ProgrammerMode, iDiceStrategy
     {
