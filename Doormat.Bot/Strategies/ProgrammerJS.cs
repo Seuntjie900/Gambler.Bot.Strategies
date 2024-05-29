@@ -6,7 +6,7 @@ using Doormat.Bot.Helpers;
 using Gambler.Bot.AutoBet.Helpers;
 using Gambler.Bot.Core.Games;
 using Gambler.Bot.Core.Helpers;
-using Gambler.Bot.Core.Sites;
+using Gambler.Bot.Core.Sites.Classes;
 using Jint;
 using Microsoft.Extensions.Logging;
 

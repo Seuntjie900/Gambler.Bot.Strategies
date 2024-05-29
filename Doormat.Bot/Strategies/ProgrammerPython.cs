@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Gambler.Bot.Core.Games;
 using Gambler.Bot.AutoBet.Helpers;
-using Gambler.Bot.Core.Sites;
 using IronPython.Runtime;
 using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
 using Microsoft.Scripting;
 using Microsoft.Extensions.Logging;
 using Doormat.Bot.Helpers;
+using Gambler.Bot.Core.Sites.Classes;
 
 namespace Gambler.Bot.AutoBet.Strategies
 {

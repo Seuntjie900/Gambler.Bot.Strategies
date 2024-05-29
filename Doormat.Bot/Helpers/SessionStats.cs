@@ -3,14 +3,14 @@ using Gambler.Bot.Core.Helpers;
 using Gambler.Bot.Core.Storage;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using System.Text;
 
 namespace Gambler.Bot.AutoBet.Helpers
 {
-    [MoonSharp.Interpreter.MoonSharpUserData]
-    [PersistentTableName("SESSIONSTATS")]
-    public class SessionStats:PersistentBase
+    [MoonSharp.Interpreter.MoonSharpUserData]    
+    public class SessionStats
     {
         public bool Simulation { get; set; }
         public SessionStats()
@@ -28,9 +28,11 @@ namespace Gambler.Bot.AutoBet.Helpers
             this.Simulation = Simulation;
         }
 
+        public int SessionStatsId { get; set; }
+
         public long RunningTime { get; set; }
 
-        [NonPersistent]
+        [NotMapped]
         public TimeSpan RunningTimeSpan 
         {  
             get 

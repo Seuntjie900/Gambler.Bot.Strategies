@@ -1,9 +1,4 @@
-﻿using Gambler.Bot.Core.Sites;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Gambler.Bot.Core.Events;
 
 namespace Doormat.Bot.Helpers
 {

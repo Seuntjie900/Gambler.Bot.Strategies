@@ -1,5 +1,4 @@
 ﻿using Gambler.Bot.Core.Games;
-using Gambler.Bot.Core.Sites;
 using Gambler.Bot.AutoBet.Strategies;
 using System;
 using System.Collections.Generic;
@@ -10,6 +9,8 @@ using System.Text;
 using System.Threading;
 using Gambler.Bot.Core.Helpers;
 using Microsoft.Extensions.Logging;
+using Gambler.Bot.Core.Sites.Classes;
+using Gambler.Bot.Core.Events;
 
 namespace Gambler.Bot.AutoBet.Helpers
 {

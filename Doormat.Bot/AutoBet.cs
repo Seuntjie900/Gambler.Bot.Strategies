@@ -3,25 +3,23 @@ using Gambler.Bot.Core.Helpers;
 using Gambler.Bot.Core.Sites;
 using Gambler.Bot.Core.Storage;
 using Gambler.Bot.AutoBet.Strategies;
-//using KeePassLib;
-//using KeePassLib.Keys;
-//using KeePassLib.Serialization;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 using static Gambler.Bot.AutoBet.Helpers.PersonalSettings;
-using ErrorEventArgs = Gambler.Bot.Core.Sites.ErrorEventArgs;
 using Gambler.Bot.AutoBet.Helpers;
 using System.Linq;
 using System.ComponentModel;
-using SuperSocket.ClientEngine;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Doormat.Bot.Helpers;
 using System.Runtime.CompilerServices;
+using Gambler.Bot.Core.Events;
+using Gambler.Bot.Core.Enums;
+using Gambler.Bot.Core.Sites.Classes;
+using System.IO;
+using ErrorEventArgs = Gambler.Bot.Core.Events.ErrorEventArgs;
 
 namespace Gambler.Bot.AutoBet
 {
@@ -29,7 +27,7 @@ namespace Gambler.Bot.AutoBet
     {
         #region Internal Variables
         private readonly ILogger _Logger;
-        List<ErrorEventArgs> ActiveErrors = new List<ErrorEventArgs>();
+        List<Core.Events.ErrorEventArgs> ActiveErrors = new List<ErrorEventArgs>();
         //PwDatabase Passdb = new PwDatabase();
         System.Timers.Timer BetTimer = new System.Timers.Timer { Interval=1000, Enabled=false, AutoReset=true };
 
@@ -40,7 +38,7 @@ namespace Gambler.Bot.AutoBet
         }
 
 
-        SQLBase DBInterface { get; set; }
+        BotContext DBInterface { get; set; }
 
         string LastBetGuid = "";
         Queue<string> LastBetsGuids = new Queue<string>();
@@ -141,6 +139,11 @@ namespace Gambler.Bot.AutoBet
                                 BaseSite SiteInst = Activator.CreateInstance(x, _Logger) as BaseSite;
                                 currenices = (SiteInst).Currencies;
                                 url = SiteInst.SiteURL;
+                                if (DBInterface != null)
+                                {
+                                    DBInterface.Sites.Add(SiteInst.SiteDetails);
+
+                                }
                             }
                             catch (Exception e)
                             {
@@ -157,29 +160,16 @@ namespace Gambler.Bot.AutoBet
                                 _Logger?.LogError(e.ToString());
                             }
                             Sites.Add(new SitesList { Name = x.Name, Currencies = currenices, SupportedGames = games, URL= url }.SetType(x));
+                            
                         }
                     }
                 }
                 _Logger?.LogInformation("Populated Sites");
 
-                if (Sites != null && DBInterface != null)
+                if (DBInterface != null)
                 {
                     _Logger?.LogInformation("Updating Sites Table");
-                    foreach (SitesList x in Sites)
-                    {
-                        _Logger?.LogDebug("Fetch {Site} from SQL", x.Name);
-                        Site tmp = DBInterface.FindSingle<Site>("Name=@1", "", x.Name);
-                        if (tmp == null)
-                        {
-                            _Logger?.LogDebug("{Site} not found in sql, inserting row", x.Name);
-                            tmp = new Site { ClassName = x.SiteType().FullName, Name = x.Name };
-                            tmp = DBInterface.Save<Site>(tmp);
-                        }
-                        else
-                        {
-                            _Logger?.LogDebug("{Site} found in sql", x.Name);
-                        }
-                    }
+                    DBInterface.SaveChanges();
                 }
                 else
                 {
@@ -462,7 +452,8 @@ namespace Gambler.Bot.AutoBet
                 return;
             try
             {
-                DBInterface?.Save<Bet>(e.NewBet);
+                DBInterface?.Add(e.NewBet);
+                DBInterface.SaveChanges();
                 MostRecentBet = e.NewBet;
                 MostRecentBetTime = DateTime.Now;
                 Retries = 0;
@@ -921,8 +912,12 @@ namespace Gambler.Bot.AutoBet
             {
                 Stats.EndTime = DateTime.Now;
                 Stats.RunningTime += (long)(Stats.EndTime - Stats.StartTime).TotalMilliseconds;
-                if (wasrunning && DBInterface!=null)
-                    Stats = DBInterface?.Save<SessionStats>(Stats);
+                if (wasrunning && DBInterface != null)
+                {
+                    if (Stats.SessionStatsId<=0)
+                        DBInterface.Add(Stats);
+                    DBInterface?.SaveChanges();
+                }
             }
             
             //TotalRuntime +=Stats.EndTime - Stats.StartTime;
@@ -938,8 +933,11 @@ namespace Gambler.Bot.AutoBet
                 Stats.RunningTime += (long)(Stats.EndTime - Stats.EndTime).TotalMilliseconds;
             }
             TotalRuntime += Stats.RunningTime;
-            if (this.DBInterface!=null)
-                Stats = this.DBInterface.Save<SessionStats>(Stats);
+            if (this.DBInterface != null)
+            {
+               this.DBInterface.Add(Stats);
+                this.DBInterface.SaveChanges();
+            }
 
             Stats = new SessionStats();
         }
@@ -1121,15 +1119,7 @@ namespace Gambler.Bot.AutoBet
             try
             {
                 _Logger?.LogInformation("Attempting DB Interface Creation: {DBProvider}", PersonalSettings.Provider);
-                //get a list of loaded assemblies
-                //get a list of classes that inherit persistentbase
-                var type = typeof(PersistentBase);
-                var types = AppDomain.CurrentDomain.GetAssemblies()
-                    .SelectMany(s => s.GetTypes())
-                    .Where(p => type.IsAssignableFrom(p) && p!=typeof(PersistentBase) ).ToList();
-
-
-                DBInterface = SQLBase.OpenConnection(PersonalSettings.GetConnectionString(pw), PersonalSettings.Provider, types);
+                DBInterface = null;//create a bot context here. 
                 _Logger?.LogInformation("DB Interface Created: {DBProvider}", PersonalSettings.Provider);
             }
             catch (Exception e)

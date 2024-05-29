@@ -1,5 +1,5 @@
 ﻿using Gambler.Bot.AutoBet.Helpers;
-using Gambler.Bot.Core.Sites;
+using Gambler.Bot.Core.Sites.Classes;
 using System;
 
 namespace Gambler.Bot.Core

@@ -1,7 +1,7 @@
 ﻿using Gambler.Bot.AutoBet.Helpers;
 using Gambler.Bot.Core.Games;
 using Gambler.Bot.Core.Helpers;
-using Gambler.Bot.Core.Sites;
+using Gambler.Bot.Core.Sites.Classes;
 using System;
 using System.Collections.Generic;
 using System.Text;

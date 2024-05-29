@@ -3,7 +3,7 @@ using Gambler.Bot.AutoBet.Helpers;
 using Gambler.Bot.Core;
 using Gambler.Bot.Core.Games;
 using Gambler.Bot.Core.Helpers;
-using Gambler.Bot.Core.Sites;
+using Gambler.Bot.Core.Sites.Classes;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;

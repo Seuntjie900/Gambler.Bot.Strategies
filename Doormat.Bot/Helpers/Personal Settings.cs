@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
-using Gambler.Bot.Core.Sites;
 using static Gambler.Bot.AutoBet.Helpers.PersonalSettings;
 using Gambler.Bot.Core.Helpers;
 using Doormat.Bot.Helpers;
+using Gambler.Bot.Core.Enums;
 
 namespace Gambler.Bot.AutoBet.Helpers
 {
