@@ -3,6 +3,7 @@ using Gambler.Bot.Core.Helpers;
 using Gambler.Bot.Core.Storage;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using System.Text;
@@ -27,7 +28,7 @@ namespace Gambler.Bot.AutoBet.Helpers
             RunningTime = 0;
             this.Simulation = Simulation;
         }
-
+        [Key]
         public int SessionStatsId { get; set; }
 
         public long RunningTime { get; set; }

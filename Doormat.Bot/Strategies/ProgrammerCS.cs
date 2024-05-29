@@ -1,18 +1,13 @@
-﻿using Doormat.Bot.Helpers;
-using Gambler.Bot.AutoBet.Helpers;
+﻿using Gambler.Bot.AutoBet.Helpers;
 using Gambler.Bot.Core;
 using Gambler.Bot.Core.Games;
-using Gambler.Bot.Core.Helpers;
 using Gambler.Bot.Core.Sites.Classes;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
 
 namespace Gambler.Bot.AutoBet.Strategies
 {

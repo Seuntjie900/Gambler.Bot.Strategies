@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using Doormat.Bot.Helpers;
-using Gambler.Bot.AutoBet.Helpers;
+﻿using Gambler.Bot.AutoBet.Helpers;
 using Gambler.Bot.Core.Games;
-using Gambler.Bot.Core.Helpers;
 using Gambler.Bot.Core.Sites.Classes;
 using Jint;
 using Microsoft.Extensions.Logging;
+using System;
+using System.IO;
 
 namespace Gambler.Bot.AutoBet.Strategies
 {

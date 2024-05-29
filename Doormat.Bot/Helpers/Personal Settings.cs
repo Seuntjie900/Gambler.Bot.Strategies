@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
-using static Gambler.Bot.AutoBet.Helpers.PersonalSettings;
+﻿using Gambler.Bot.Core.Enums;
 using Gambler.Bot.Core.Helpers;
-using Doormat.Bot.Helpers;
-using Gambler.Bot.Core.Enums;
+using Gambler.Bot.Helpers;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Gambler.Bot.AutoBet.Helpers
 {
@@ -14,7 +14,7 @@ namespace Gambler.Bot.AutoBet.Helpers
         private List<Trigger> _triggers = new List<Trigger>();
         private Dictionary<ErrorType, ErrorSetting> _Errors = new Dictionary<ErrorType, ErrorSetting>();
 
-        public List<Trigger> Notifications { get { return _triggers; } private set { _triggers = value; } }
+        public List<Trigger> Notifications { get { return _triggers; } set { _triggers = value; } }
         private List<ErrorSetting> errorSettings;
 
         public List<ErrorSetting> ErrorSettings
@@ -104,10 +104,20 @@ namespace Gambler.Bot.AutoBet.Helpers
             return null;
         }
 
-        public class ErrorSetting
+        public class ErrorSetting: INotifyPropertyChanged
         {
-            public ErrorType Type { get; set; }
-            public ErrorActions Action { get; set; }
+            ErrorType type;
+            ErrorActions action;
+            public ErrorType Type { get => type; set { type = value; RaisePropertyChanged(); } }
+            public ErrorActions Action { get => action; set { action = value; RaisePropertyChanged(); } }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+            {
+
+                PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+
+            }
         }
         public class GetConstringPWEventArgs:EventArgs
         {
@@ -121,7 +131,7 @@ namespace Gambler.Bot.AutoBet.Helpers
             PersonalSettings settings = new PersonalSettings();
             settings.EncryptConstring = false;
             settings.Provider = "SQLite";
-            settings.EncrConnectionString = string.Format("Data Source={0};Version=3;Compress=True;", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\KryGamesBot\\KryGamesBot.db");
+            settings.EncrConnectionString = string.Format("Data Source={0};",Path.Combine( Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) , "Gambler.Bot","KryGamesBot.db"));
             settings.RetryAttempts = 5;
             settings.RetryDelay = 30;
             PersonalSettings.ErrorSetting[] tmp = new PersonalSettings.ErrorSetting[Enum.GetNames(typeof(ErrorType)).Length];

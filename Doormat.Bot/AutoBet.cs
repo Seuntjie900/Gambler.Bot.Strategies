@@ -1,24 +1,24 @@
-﻿using Gambler.Bot.Core.Games;
+﻿using Gambler.Bot.AutoBet.Helpers;
+using Gambler.Bot.AutoBet.Strategies;
+using Gambler.Bot.Core.Enums;
+using Gambler.Bot.Core.Events;
+using Gambler.Bot.Core.Games;
 using Gambler.Bot.Core.Helpers;
 using Gambler.Bot.Core.Sites;
+using Gambler.Bot.Core.Sites.Classes;
 using Gambler.Bot.Core.Storage;
-using Gambler.Bot.AutoBet.Strategies;
+using Gambler.Bot.Helpers;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Threading;
 using static Gambler.Bot.AutoBet.Helpers.PersonalSettings;
-using Gambler.Bot.AutoBet.Helpers;
-using System.Linq;
-using System.ComponentModel;
-using System.Text.Json;
-using Microsoft.Extensions.Logging;
-using Doormat.Bot.Helpers;
-using System.Runtime.CompilerServices;
-using Gambler.Bot.Core.Events;
-using Gambler.Bot.Core.Enums;
-using Gambler.Bot.Core.Sites.Classes;
-using System.IO;
 using ErrorEventArgs = Gambler.Bot.Core.Events.ErrorEventArgs;
 
 namespace Gambler.Bot.AutoBet
@@ -58,15 +58,19 @@ namespace Gambler.Bot.AutoBet
         }
 
         public bool LoggedIn { get; set; }
-        public SessionStats Stats { 
+        public SessionStats Stats 
+        { 
             get; 
-            set; }
+            set; 
+        }
 
         public ExportBetSettings StoredBetSettings { get; set; } = new ExportBetSettings { BetSettings = new InternalBetSettings() };
 
-        public InternalBetSettings BetSettings { 
+        public InternalBetSettings BetSettings 
+        { 
             get => StoredBetSettings.BetSettings; 
-            set => StoredBetSettings.BetSettings=value; }
+            set => StoredBetSettings.BetSettings=value; 
+        }
 
         public PersonalSettings PersonalSettings { get; set; } = new PersonalSettings();
         Bet MostRecentBet = null;
@@ -452,8 +456,9 @@ namespace Gambler.Bot.AutoBet
                 return;
             try
             {
+                
                 DBInterface?.Add(e.NewBet);
-                DBInterface.SaveChanges();
+                DBInterface?.SaveChanges();
                 MostRecentBet = e.NewBet;
                 MostRecentBetTime = DateTime.Now;
                 Retries = 0;
@@ -1119,7 +1124,13 @@ namespace Gambler.Bot.AutoBet
             try
             {
                 _Logger?.LogInformation("Attempting DB Interface Creation: {DBProvider}", PersonalSettings.Provider);
-                DBInterface = null;//create a bot context here. 
+                DBInterface = new BotContext(_Logger);//create a bot context here. 
+                
+                DBInterface.Settings = PersonalSettings;
+                if (!DBInterface.Database.EnsureCreated())
+                {
+                    DBInterface.Database.Migrate();
+                }
                 _Logger?.LogInformation("DB Interface Created: {DBProvider}", PersonalSettings.Provider);
             }
             catch (Exception e)
@@ -1141,6 +1152,8 @@ namespace Gambler.Bot.AutoBet
             this.StoredBetSettings = JsonSerializer.Deserialize<ExportBetSettings>(Settings);
             if (StoredBetSettings.BetSettings!=null && ApplySettings)
                 this.BetSettings = StoredBetSettings.BetSettings;
+            else
+                this.BetSettings = new InternalBetSettings();
             this.Strategy = StoredBetSettings.GetStrat();
             this.Strategy.SetLogger(_Logger);
             return StoredBetSettings;

@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 using Gambler.Bot.Core.Sites.Classes;
 using Gambler.Bot.AutoBet.Helpers;
+using System.ComponentModel.DataAnnotations;
 
 namespace Gambler.Bot.Core.Storage
 {
@@ -33,14 +34,35 @@ namespace Gambler.Bot.Core.Storage
 
 
         protected readonly ILogger _Logger;
-        
-        public BotContext(ILogger logger)
+        public BotContext()
+        {
+            _Logger = null;
+        }
+        public BotContext(ILogger logger )
         {
             _Logger = logger;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            string password = null;
+            if (Settings?.EncryptConstring??false)
+            {
+                //raise eventy to get connection string
+            }
+            string connectionstring = Settings?.GetConnectionString(password);
+            if (connectionstring == null)
+                connectionstring = "GamblerBot.db";
+            switch (Settings?.Provider)
+            {
+                default:
+                case "Sqlite": optionsBuilder.UseSqlite(connectionstring); break;
+                case "SQLServer": optionsBuilder.UseSqlServer(connectionstring); break;
+                case "PostGres": optionsBuilder.UseNpgsql(connectionstring); break;
+                case "MongoDB": optionsBuilder.UseMongoDB(connectionstring, "GamblerBot"); break;
+                case "MySQL": optionsBuilder.UseMySql(connectionstring, ServerVersion.AutoDetect(connectionstring)); break;
+            }
+            
             base.OnConfiguring(optionsBuilder);
         }
 
@@ -51,7 +73,14 @@ namespace Gambler.Bot.Core.Storage
             
         }
         
-        
+
+        public PersonalSettings Settings
+        {
+            get ;
+            set;
+        }
+
+
 
         public void CreateTables()
         {
@@ -69,6 +98,7 @@ namespace Gambler.Bot.Core.Storage
         
         public SiteDetails Site { get; set; }
         public string UserName { get; set; }
+        [Key]
         public string UserId { get; set; }
     }
     

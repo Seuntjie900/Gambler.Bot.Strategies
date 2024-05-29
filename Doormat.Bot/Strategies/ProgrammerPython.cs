@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Gambler.Bot.AutoBet.Helpers;
 using Gambler.Bot.Core.Games;
-using Gambler.Bot.AutoBet.Helpers;
-using IronPython.Runtime;
-using IronPython.Hosting;
-using Microsoft.Scripting.Hosting;
-using Microsoft.Scripting;
-using Microsoft.Extensions.Logging;
-using Doormat.Bot.Helpers;
 using Gambler.Bot.Core.Sites.Classes;
+using IronPython.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Scripting.Hosting;
+using System;
 
 namespace Gambler.Bot.AutoBet.Strategies
 {

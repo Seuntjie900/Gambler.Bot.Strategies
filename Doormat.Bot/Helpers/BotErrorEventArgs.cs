@@ -1,8 +1,8 @@
 ﻿using Gambler.Bot.Core.Events;
+using Gambler.Bot.Helpers;
 
-namespace Doormat.Bot.Helpers
+namespace Gambler.Bot.AutoBet.Helpers
 {
-    public enum ErrorActions { ResumeAsWin, ResumeAsLoss, Resume, Stop, Reset, Retry }
     public class BotErrorEventArgs:ErrorEventArgs
     {
         public ErrorActions Action { get; set; }
