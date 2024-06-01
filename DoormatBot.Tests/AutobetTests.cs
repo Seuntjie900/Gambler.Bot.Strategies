@@ -1,6 +1,6 @@
 namespace Gambler.Bot.AutoBet.Tests
 {
-    public class DoormatTests
+    public class AutobetTests
 
     {
         [Fact]
