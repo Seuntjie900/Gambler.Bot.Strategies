@@ -52,7 +52,7 @@ namespace Gambler.Bot.Core.Storage
             }
             string connectionstring = Settings?.GetConnectionString(password);
             if (connectionstring == null)
-                connectionstring = "GamblerBot.db";
+                connectionstring = "Data Source=GamblerBot.db;";
             switch (Settings?.Provider)
             {
                 default:

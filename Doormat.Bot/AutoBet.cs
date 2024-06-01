@@ -38,7 +38,7 @@ namespace Gambler.Bot.AutoBet
         }
 
 
-        BotContext DBInterface { get; set; }
+        public BotContext DBInterface { get; private set; }
 
         string LastBetGuid = "";
         Queue<string> LastBetsGuids = new Queue<string>();
@@ -1129,7 +1129,14 @@ namespace Gambler.Bot.AutoBet
                 DBInterface.Settings = PersonalSettings;
                 if (!DBInterface.Database.EnsureCreated())
                 {
-                    DBInterface.Database.Migrate();
+                    try
+                    {
+                        DBInterface.Database.Migrate();
+                    }
+                    catch (Exception e)
+                    {
+                        _Logger?.LogError(e.ToString());
+                    }
                 }
                 _Logger?.LogInformation("DB Interface Created: {DBProvider}", PersonalSettings.Provider);
             }

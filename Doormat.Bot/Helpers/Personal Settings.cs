@@ -131,7 +131,7 @@ namespace Gambler.Bot.AutoBet.Helpers
             PersonalSettings settings = new PersonalSettings();
             settings.EncryptConstring = false;
             settings.Provider = "SQLite";
-            settings.EncrConnectionString = string.Format("Data Source={0};",Path.Combine( Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) , "Gambler.Bot","KryGamesBot.db"));
+            settings.EncrConnectionString = string.Format("Data Source={0};",Path.Combine( Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) , "Gambler.Bot","GamblerBot.db"));
             settings.RetryAttempts = 5;
             settings.RetryDelay = 30;
             PersonalSettings.ErrorSetting[] tmp = new PersonalSettings.ErrorSetting[Enum.GetNames(typeof(ErrorType)).Length];
