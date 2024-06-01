@@ -42,6 +42,7 @@ namespace Gambler.Bot.AutoBet.Strategies
         {
             
         }
+
         public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
         {
             try
@@ -51,6 +52,17 @@ namespace Gambler.Bot.AutoBet.Strategies
                 if (DoDiceBet != null)
                 {
                     DynValue Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
+                }
+                else
+                {
+                    DoDiceBet = CurrentRuntime.Globals.Get("DoBet");
+                    if (DoDiceBet != null)
+                    {
+                        DynValue Result = CurrentRuntime.Call(DoDiceBet);
+                        NextBet.Chance = (decimal)CurrentRuntime.Globals["chance"];
+                        NextBet.Amount = (decimal)CurrentRuntime.Globals["nextbet"];
+                        NextBet.High = (bool)CurrentRuntime.Globals["bethigh"];
+                    }
                 }
                 return NextBet;
             }
@@ -222,12 +234,14 @@ namespace Gambler.Bot.AutoBet.Strategies
         {
             CurrentRuntime.Globals["Stats"] = Stats;
             CurrentRuntime.Globals["Balance"] = this.Balance;
-
+            SetLegacyVars();
         }
 
         public void UpdateSite(SiteDetails Details)
         {
             CurrentRuntime.Globals["SiteDetails"] = Details;
+            CurrentRuntime.Globals["site"] = Details;
+            CurrentRuntime.Globals["currencies"] = Details.Currencies;
         }
 
         public void UpdateSiteStats(SiteStats Stats)
@@ -326,6 +340,36 @@ namespace Gambler.Bot.AutoBet.Strategies
         public void SetCurrency(string newCurrency)
         {               
             OnSetCurrency?.Invoke(this, new PrintEventArgs { Message = newCurrency });
+        }
+
+        void SetLegacyVars()
+        {
+            try
+            {
+                
+                //Lua.clear();
+                CurrentRuntime.Globals["balance"] = this.Balance;
+                CurrentRuntime.Globals["profit"] = this.Stats.Profit;
+                CurrentRuntime.Globals["currentstreak"] = (this.Stats.WinStreak > 0) ? this.Stats.WinStreak : -this.Stats.LossStreak;
+                CurrentRuntime.Globals["previousbet"] = Amount;
+                CurrentRuntime.Globals["nextbet"] = Amount;
+                CurrentRuntime.Globals["chance"] = Chance;
+                CurrentRuntime.Globals["bethigh"] = High;
+                CurrentRuntime.Globals["bets"] = this.Stats.Wins + this.Stats.Losses;
+                CurrentRuntime.Globals["wins"] = this.Stats.Wins;
+                CurrentRuntime.Globals["losses"] = this.Stats.Losses;
+                CurrentRuntime.Globals["wagered"] = Stats.Wagered;
+
+
+            }
+            catch (Exception e)
+            {
+                _Logger?.LogError(e.Message, 1);
+                _Logger?.LogError(e.StackTrace, 2);
+                CallStop("LUA ERROR!!");
+                Print("LUA ERROR!!");
+                Print(e.Message);
+            }
         }
     }
 }
