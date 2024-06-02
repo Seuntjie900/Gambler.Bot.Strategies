@@ -94,9 +94,9 @@ namespace Gambler.Bot.Strategies.Helpers
             SiteStats.Balance = Balance;
             Running = true;
             Stop = false;
-            if (DiceStrategy is ProgrammerMode)
+            if (DiceStrategy is IProgrammerMode)
             {
-                (DiceStrategy as ProgrammerMode).LoadScript();
+                (DiceStrategy as IProgrammerMode).LoadScript();
             }
             new Thread(new ThreadStart(SimulationThread)).Start();
         }
@@ -153,11 +153,11 @@ namespace Gambler.Bot.Strategies.Helpers
                         this.Stop = (true);
                     }
                     Stats.UpdateStats(NewBet, win);
-                    if (DiceStrategy is ProgrammerMode)
+                    if (DiceStrategy is IProgrammerMode)
                     {
-                        (DiceStrategy as ProgrammerMode).UpdateSessionStats(CopyHelper.CreateCopy<SessionStats>(Stats));
-                        (DiceStrategy as ProgrammerMode).UpdateSiteStats(CopyHelper.CreateCopy<SiteStats>(SiteStats));
-                        (DiceStrategy as ProgrammerMode).UpdateSite(CopyHelper.CreateCopy<SiteDetails>(Site));
+                        (DiceStrategy as IProgrammerMode).UpdateSessionStats(CopyHelper.CreateCopy<SessionStats>(Stats));
+                        (DiceStrategy as IProgrammerMode).UpdateSiteStats(CopyHelper.CreateCopy<SiteStats>(SiteStats));
+                        (DiceStrategy as IProgrammerMode).UpdateSite(CopyHelper.CreateCopy<SiteDetails>(Site));
                     }
                     if (BetSettings.CheckResetPostStats(NewBet, NewBet.GetWin(Site.maxroll), Stats, SiteStats))
                     {

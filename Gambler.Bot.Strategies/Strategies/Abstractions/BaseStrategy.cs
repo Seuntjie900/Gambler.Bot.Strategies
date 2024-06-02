@@ -61,7 +61,7 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
         /// <returns></returns>
         public PlaceBet Start()
         {
-            if (!(this is ProgrammerMode))
+            if (!(this is IProgrammerMode))
             {
                 /*WorkingSet = CopyHelper.CreateCopy(this.GetType(), this) as BaseStrategy;
                 WorkingSet.NeedBalance += WorkingSet_NeedBalance;

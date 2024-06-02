@@ -8,7 +8,7 @@ using System;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
-    public class ProgrammerLUA : BaseStrategy, ProgrammerMode, iDiceStrategy
+    public class ProgrammerLUA : BaseStrategy, IProgrammerMode, iDiceStrategy
     {
         public override string StrategyName { get; protected set; } = "ProgrammerLUA";
         public string FileName { get; set; }

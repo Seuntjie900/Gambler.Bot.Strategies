@@ -9,7 +9,7 @@ using System;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
-    public class ProgrammerPython: BaseStrategy, ProgrammerMode, iDiceStrategy
+    public class ProgrammerPython: BaseStrategy, IProgrammerMode, iDiceStrategy
     {
         public override string StrategyName { get; protected set; } = "ProgrammerPython";
         public string FileName { get; set; }

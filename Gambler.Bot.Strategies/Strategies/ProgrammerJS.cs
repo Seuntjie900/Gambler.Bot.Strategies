@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
-    public class ProgrammerJS : BaseStrategy, ProgrammerMode, iDiceStrategy
+    public class ProgrammerJS : BaseStrategy, IProgrammerMode, iDiceStrategy
     {
         public override string StrategyName { get; protected set; } = "ProgrammerJS";
         Engine Runtime;

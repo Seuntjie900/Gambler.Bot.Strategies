@@ -12,7 +12,7 @@ using System.Reflection;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
-    public class ProgrammerCS : BaseStrategy, ProgrammerMode, iDiceStrategy
+    public class ProgrammerCS : BaseStrategy, IProgrammerMode, iDiceStrategy
     {
         public override string StrategyName { get; protected set; } = "ProgrammerCS";
         public string FileName { get; set; }

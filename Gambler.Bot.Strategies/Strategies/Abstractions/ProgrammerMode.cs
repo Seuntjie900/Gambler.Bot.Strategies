@@ -5,7 +5,7 @@ using System;
 
 namespace Gambler.Bot.Strategies.Strategies.Abstractions
 {
-    public interface ProgrammerMode
+    public interface IProgrammerMode
     {
         void CreateRuntime();
         void UpdateSessionStats(SessionStats Stats);
