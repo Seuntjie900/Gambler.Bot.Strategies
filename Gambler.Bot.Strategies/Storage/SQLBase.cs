@@ -1,18 +1,8 @@
-﻿
-using Gambler.Bot.Core.Games;
-using Gambler.Bot.Core.Helpers;
-using Esprima.Ast;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Reflection;
-using System.Text;
-using static Gambler.Bot.Core.Sites.BaseSite;
+﻿using Gambler.Bot.AutoBet.Helpers;
+using Gambler.Bot.Common.Games;
+using Gambler.Bot.Common.Helpers;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
-using Gambler.Bot.Core.Sites.Classes;
-using Gambler.Bot.AutoBet.Helpers;
+using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
 namespace Gambler.Bot.Core.Storage

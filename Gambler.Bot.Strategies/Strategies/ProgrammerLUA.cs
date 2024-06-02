@@ -1,6 +1,7 @@
 ﻿using Gambler.Bot.AutoBet.Helpers;
-using Gambler.Bot.Core.Games;
-using Gambler.Bot.Core.Sites.Classes;
+using Gambler.Bot.AutoBet.Strategies.Abstractions;
+using Gambler.Bot.Common.Games;
+using Gambler.Bot.Common.Helpers;
 using Microsoft.Extensions.Logging;
 using MoonSharp.Interpreter;
 using System;

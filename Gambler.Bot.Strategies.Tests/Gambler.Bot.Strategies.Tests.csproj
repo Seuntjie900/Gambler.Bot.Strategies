@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -26,7 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Gambler.Bot.Core\Gambler.Bot.Core\Gambler.Bot.Core\Gambler.Bot.Core.csproj" />
-    <ProjectReference Include="..\Gambler.Bot.AutoBet\Gambler.Bot.AutoBet.csproj" />
+    <ProjectReference Include="..\Gambler.Bot.Strategies\Gambler.Bot.Strategies.csproj" />
   </ItemGroup>
 
   <ItemGroup>

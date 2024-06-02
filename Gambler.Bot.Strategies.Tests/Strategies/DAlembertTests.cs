@@ -1,9 +1,8 @@
 ﻿using Gambler.Bot.AutoBet.Helpers;
 using Gambler.Bot.AutoBet.Strategies;
-using Gambler.Bot.Core.Games;
+using Gambler.Bot.Common.Games;
 using Microsoft.Extensions.Logging;
 using Moq;
-using static Gambler.Bot.AutoBet.Strategies.BaseStrategy;
 
 
 namespace Gambler.Bot.AutoBet.Tests.Strategies

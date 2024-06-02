@@ -1,5 +1,6 @@
-﻿using Gambler.Bot.AutoBet.Strategies.PresetListModels;
-using Gambler.Bot.Core.Games;
+﻿using Gambler.Bot.AutoBet.Strategies.Abstractions;
+using Gambler.Bot.AutoBet.Strategies.PresetListModels;
+using Gambler.Bot.Common.Games;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 

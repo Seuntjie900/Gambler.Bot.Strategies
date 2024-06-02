@@ -1,12 +1,7 @@
-﻿using Gambler.Bot.Core.Games;
-using Gambler.Bot.Core.Helpers;
-using Gambler.Bot.Core.Storage;
+﻿using Gambler.Bot.Common.Games;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection;
-using System.Text;
 
 namespace Gambler.Bot.AutoBet.Helpers
 {

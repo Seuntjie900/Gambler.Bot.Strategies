@@ -1,27 +1,24 @@
 ﻿using Gambler.Bot.AutoBet.Helpers;
-using Gambler.Bot.Core.Games;
-using Gambler.Bot.Core.Sites.Classes;
-using IronPython.Hosting;
+using Gambler.Bot.AutoBet.Strategies.Abstractions;
+using Gambler.Bot.Common.Games;
+using Gambler.Bot.Common.Helpers;
+using Jint;
 using Microsoft.Extensions.Logging;
-using Microsoft.Scripting.Hosting;
 using System;
+using System.IO;
 
 namespace Gambler.Bot.AutoBet.Strategies
 {
-    public class ProgrammerPython: BaseStrategy, ProgrammerMode, iDiceStrategy
+    public class ProgrammerJS : BaseStrategy, ProgrammerMode, iDiceStrategy
     {
-        public override string StrategyName { get; protected set; } = "ProgrammerPython";
+        public override string StrategyName { get; protected set; } = "ProgrammerJS";
+        Engine Runtime;
+        
         public string FileName { get; set; }
         public bool High { get ; set ; }
         public decimal Amount { get ; set ; }
         public decimal Chance { get ; set ; }
         public decimal StartChance { get ; set ; }
-
-        ScriptRuntime CurrentRuntime;
-        
-        ScriptEngine Engine;
-        dynamic Scope;
-        CompiledCode CompCode;
 
         public event EventHandler<WithdrawEventArgs> OnWithdraw;
         public event EventHandler<InvestEventArgs> OnInvest;
@@ -40,12 +37,11 @@ namespace Gambler.Bot.AutoBet.Strategies
         public event EventHandler<PrintEventArgs> OnScriptError;
         public event EventHandler<PrintEventArgs> OnSetCurrency;
 
-        public ProgrammerPython(ILogger logger) : base(logger)
+        public ProgrammerJS(ILogger logger):base(logger)
         {
-
+            
         }
-
-        public ProgrammerPython()
+        public ProgrammerJS()
         {
             
         }
@@ -55,9 +51,8 @@ namespace Gambler.Bot.AutoBet.Strategies
             try
             {
                 PlaceDiceBet NextBet = new PlaceDiceBet(PreviousBet.TotalAmount, PreviousBet.High, PreviousBet.Chance);
-
-                dynamic result = Scope.DoDiceBet(PreviousBet, Win, NextBet);
-
+                //TypeReference.CreateTypeReference
+                Runtime.Invoke("DoDiceBet", PreviousBet, Win, NextBet);
                 return NextBet;
             }
             catch (Exception e)
@@ -67,93 +62,79 @@ namespace Gambler.Bot.AutoBet.Strategies
             return null;
         }
 
-        public override PlaceCrashBet CalculateNextCrashBet(CrashBet PreviousBet, bool Win)
+        public void OnError(BotErrorEventArgs e)
         {
-            PlaceCrashBet NextBet = new PlaceCrashBet();
-
-            dynamic result = Scope.DoCrashBet(PreviousBet, Win, NextBet);
-
-            return result;
+            try
+            {
+                //TypeReference.CreateTypeReference
+                Runtime.Invoke("OnError", e);
+            }
+            catch (Exception ex)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
+            }
+            
         }
-
-        public override PlacePlinkoBet CalculateNextPlinkoBet(PlinkoBet PreviousBet, bool Win)
-        {
-            PlacePlinkoBet NextBet = new PlacePlinkoBet();
-
-            dynamic result = Scope.DoPlinkoBet(PreviousBet, Win, NextBet);
-
-            return result;
-        }
-
-        public override PlaceRouletteBet CalculateNextRouletteBet(RouletteBet PreviousBet, bool Win)
-        {
-            PlaceRouletteBet NextBet = new PlaceRouletteBet();
-
-            dynamic result = Scope.DoRouletteBet(PreviousBet, Win, NextBet);
-
-            return result;
-        }
-
 
         public void CreateRuntime()
         {
-            //CurrentRuntime = Python.CreateRuntime();
-            Engine = Python.CreateEngine();
-            Scope = Engine.CreateScope();
-            (Scope as ScriptScope).SetVariable("Withdraw", (Action<string,decimal>)Withdraw);
-            (Scope as ScriptScope).SetVariable("Invest", (Action< decimal>)Invest);
-            (Scope as ScriptScope).SetVariable("Tip", (Action<string, decimal>)Tip);
-            (Scope as ScriptScope).SetVariable("ResetSeed", (Action)ResetSeed);
-            (Scope as ScriptScope).SetVariable("Print", (Action<string>)Print);
-            (Scope as ScriptScope).SetVariable("RunSim", (Action < decimal, long>)RunSim);
-            (Scope as ScriptScope).SetVariable("ResetStats", (Action)ResetStats);
-            (Scope as ScriptScope).SetVariable("Read", (Func<string, int, object>)Read);
-            (Scope as ScriptScope).SetVariable("Readadv", (Func<string, int,string,string,string, object> )Readadv);
-            (Scope as ScriptScope).SetVariable("Alarm", (Action)Alarm);
-            (Scope as ScriptScope).SetVariable("Ching", (Action)Ching);
-            (Scope as ScriptScope).SetVariable("ResetBuiltIn", (Action)ResetBuiltIn);
-            (Scope as ScriptScope).SetVariable("ExportSim", (Action<string>)ExportSim);
-            (Scope as ScriptScope).SetVariable("Stop", (Action)_Stop);
-            (Scope as ScriptScope).SetVariable("SetCurrency", (Action<string>)SetCurrency);
-        }                                      
+            Runtime = new Engine();
+            
+            Runtime.SetValue("Stats", Stats);
+            Runtime.SetValue("Balance", Balance);
+            Runtime.SetValue("Withdraw", (Action<string,decimal>)Withdraw);
+            Runtime.SetValue("Invest", (Action< decimal>)Invest);
+            Runtime.SetValue("Tip", (Action<string, decimal>)Tip);
+            Runtime.SetValue("ResetSeed", (Action)ResetSeed);
+            Runtime.SetValue("Print", (Action<string>)Print);
+            Runtime.SetValue("RunSim", (Action < decimal, long>)RunSim);
+            Runtime.SetValue("ResetStats", (Action)ResetStats);
+            Runtime.SetValue("Read", (Func<string, int, object>)Read);
+            Runtime.SetValue("Readadv", (Func<string, int,string,string,string, object> )Readadv);
+            Runtime.SetValue("Alarm", (Action)Alarm);
+            Runtime.SetValue("Ching", (Action)Ching);
+            Runtime.SetValue("ResetBuiltIn", (Action)ResetBuiltIn);
+            Runtime.SetValue("ExportSim", (Action<string>)ExportSim);
+            Runtime.SetValue("Stop", (Action)_Stop);
+            Runtime.SetValue("SetCurrency", (Action<string>)SetCurrency);
+        }
+
+        void withdraw(object sender, EventArgs e)
+        {
+            _Logger?.LogDebug("Ping!");
+        }
 
         public void LoadScript()
         {
-             Scope.SetVariable("Stats", Stats);
-             Scope.SetVariable("Balance", Balance);
-             var source = Engine.CreateScriptSourceFromFile(FileName);
-             CompCode = source.Compile();
-             dynamic result = CompCode.Execute(Scope);
-            
+            Runtime.SetValue("Stats", Stats);
+            Runtime.SetValue("Balance", Balance);
+            string scriptBody = File.ReadAllText(FileName);
+
+            Runtime.Execute(scriptBody);
         }
 
         public override PlaceDiceBet RunReset()
         {
-            PlaceDiceBet NextBet = new PlaceDiceBet(0,false,0);
-
-            dynamic result = Scope.ResetDice(NextBet);
-
+            PlaceDiceBet NextBet = new PlaceDiceBet(0, false, 0);
+            Runtime.Invoke("ResetDice", NextBet);
             return NextBet;
-        }
-
-        public override void OnError(BotErrorEventArgs e)
-        {
-            dynamic result = Scope.OnError(e);
         }
 
         public void UpdateSessionStats(SessionStats Stats)
         {
-            Scope.SetVariable("Stats", Stats);
+            Runtime.SetValue("Stats", Stats);
+            Runtime.SetValue("Balance", Balance);
+
         }
 
         public void UpdateSite(SiteDetails Stats)
         {
-            Scope.SetVariable("SiteDetails", Stats);
+            Runtime.SetValue("SiteDetails", Stats);
         }
 
         public void UpdateSiteStats(SiteStats Stats)
         {
-            Scope.SetVariable("SiteStats", Stats);
+            Runtime.SetValue("SiteStats", Stats);
         }
         void Withdraw(string Address, decimal Amount)
         {
@@ -214,12 +195,18 @@ namespace Gambler.Bot.AutoBet.Strategies
 
         public void ExecuteCommand(string Command)
         {
-            Engine.Execute(Command);
+            try
+            {
+                Runtime.Execute(Command);
+            }
+            catch (Exception e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
+            }
         }
-        
         public void _Stop()
         {
-            CallStop("Stop() function called from programmer mode.");
+            CallStop("Stop() function called in programmer mode.");
         }
         private void SetCurrency(string newCurrency)
         {

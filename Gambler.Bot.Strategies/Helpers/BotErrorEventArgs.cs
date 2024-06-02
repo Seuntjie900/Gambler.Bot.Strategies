@@ -1,4 +1,4 @@
-﻿using Gambler.Bot.Core.Events;
+﻿using Gambler.Bot.Common.Events;
 using Gambler.Bot.Helpers;
 
 namespace Gambler.Bot.AutoBet.Helpers

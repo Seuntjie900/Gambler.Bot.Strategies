@@ -1,12 +1,7 @@
 ﻿using Gambler.Bot.AutoBet.Helpers;
-using Gambler.Bot.Core.Games;
-using Gambler.Bot.Core.Helpers;
+using Gambler.Bot.AutoBet.Strategies.Abstractions;
+using Gambler.Bot.Common.Games;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Gambler.Bot.AutoBet.Strategies
 {

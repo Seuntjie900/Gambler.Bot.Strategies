@@ -1,9 +1,9 @@
 ﻿using Gambler.Bot.AutoBet.Helpers;
-using Gambler.Bot.Core.Games;
+using Gambler.Bot.Common.Games;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Gambler.Bot.AutoBet.Strategies
+namespace Gambler.Bot.AutoBet.Strategies.Abstractions
 {
     public abstract class BaseStrategy
     {
@@ -15,7 +15,7 @@ namespace Gambler.Bot.AutoBet.Strategies
         }
         protected BaseStrategy()
         {
-            
+
         }
 
         public void SetLogger(ILogger logger)
@@ -35,8 +35,8 @@ namespace Gambler.Bot.AutoBet.Strategies
                 return WorkingSet.CalculateNextBet(PreviousBet, Win);
             else
             {
-                if (PreviousBet is DiceBet && this is iDiceStrategy dc)
-                    return dc.CalculateNextDiceBet(PreviousBet as DiceBet, Win);
+                if (PreviousBet is DiceBet db && this is iDiceStrategy dc)
+                    return dc.CalculateNextDiceBet(db, Win);
                 else if (PreviousBet is CrashBet)
                     return CalculateNextCrashBet(PreviousBet as CrashBet, Win);
                 else if (PreviousBet is RouletteBet)
@@ -75,21 +75,6 @@ namespace Gambler.Bot.AutoBet.Strategies
             }
         }
 
-        private void WorkingSet_Stop(object sender, StopEventArgs e)
-        {
-            Stop?.Invoke(sender, e);
-        }
-
-        private SessionStats WorkingSet_OnNeedStats(object sender, EventArgs e)
-        {
-            return OnNeedStats?.Invoke(sender, e);
-        }
-
-        private decimal WorkingSet_NeedBalance()
-        {
-           return NeedBalance?.Invoke()??0;
-        }
-
         /// <summary>
         /// Reset the betting strategy
         /// </summary>
@@ -99,8 +84,8 @@ namespace Gambler.Bot.AutoBet.Strategies
         /// <summary>
         /// Gets the users balance from the site
         /// </summary>
-        protected decimal Balance {get{return GetBalance();}}
-               
+        protected decimal Balance { get { return GetBalance(); } }
+
 
         protected decimal GetBalance()
         {
@@ -116,12 +101,12 @@ namespace Gambler.Bot.AutoBet.Strategies
         public delegate SessionStats dNeedStats(object sender, EventArgs e);
         public event dNeedStats OnNeedStats;
 
-        
+
 
         public SessionStats Stats
         {
             get { return OnNeedStats?.Invoke(this, new EventArgs()); }
-            
+
         }
 
 
@@ -138,31 +123,7 @@ namespace Gambler.Bot.AutoBet.Strategies
         public virtual void OnError(BotErrorEventArgs ErrorDetails)
         {
             ErrorDetails.Handled = false;
-            
-        }
-    }
-    public class StopEventArgs:EventArgs
-    {
-        public string Reason { get; set; }
 
-        public StopEventArgs(string Reason)
-        {
-            this.Reason = Reason;
         }
-    }
-    
-    public interface iDiceStrategy
-    {
-        public bool High { get; set; }
-        public decimal Amount { get; set; }
-        public decimal Chance { get; set; } 
-        public decimal StartChance { get; set; }
-
-        /// <summary>
-        /// The main logic for the strategy. This is called in between every bet.
-        /// </summary>
-        /// <param name="PreviousBet">The bet details for the last bet that was placed</param>
-        /// <returns>Bet details for the bet to be placed next.</returns>
-        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win);
     }
 }

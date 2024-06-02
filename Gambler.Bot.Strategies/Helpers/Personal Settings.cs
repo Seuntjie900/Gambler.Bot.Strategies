@@ -1,4 +1,4 @@
-﻿using Gambler.Bot.Core.Enums;
+﻿using Gambler.Bot.Common.Enums;
 using Gambler.Bot.Core.Helpers;
 using Gambler.Bot.Helpers;
 using System;

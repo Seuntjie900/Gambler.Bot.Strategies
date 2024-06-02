@@ -1,12 +1,9 @@
 ﻿using Gambler.Bot.AutoBet.Helpers;
-using Gambler.Bot.Core.Games;
-using Gambler.Bot.Core.Helpers;
-using Gambler.Bot.Core.Sites.Classes;
+using Gambler.Bot.Common.Games;
+using Gambler.Bot.Common.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Gambler.Bot.AutoBet.Strategies
+namespace Gambler.Bot.AutoBet.Strategies.Abstractions
 {
     public interface ProgrammerMode
     {
@@ -27,7 +24,7 @@ namespace Gambler.Bot.AutoBet.Strategies
         event EventHandler<ReadEventArgs> OnRead;
         event EventHandler<ReadEventArgs> OnReadAdv;
         event EventHandler<EventArgs> OnAlarm;
-        event EventHandler<EventArgs> OnChing;        
+        event EventHandler<EventArgs> OnChing;
         event EventHandler<ExportSimEventArgs> OnExportSim;
         event EventHandler<PrintEventArgs> OnScriptError;
         event EventHandler<PrintEventArgs> OnSetCurrency;
@@ -58,7 +55,7 @@ namespace Gambler.Bot.AutoBet.Strategies
         public decimal Balance { get; set; }
         public long Bets { get; set; }
     }
-    public class ReadEventArgs: EventArgs
+    public class ReadEventArgs : EventArgs
     {
         public string Prompt { get; set; }
         public int DataType { get; set; }

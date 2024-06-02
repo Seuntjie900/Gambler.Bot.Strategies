@@ -1,16 +1,14 @@
-﻿using Gambler.Bot.Core.Games;
-using Gambler.Bot.AutoBet.Strategies;
+﻿using Gambler.Bot.AutoBet.Strategies.Abstractions;
+using Gambler.Bot.Common.Events;
+using Gambler.Bot.Common.Games;
+using Gambler.Bot.Common.Helpers;
+using Gambler.Bot.Common.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using Gambler.Bot.Core.Helpers;
-using Microsoft.Extensions.Logging;
-using Gambler.Bot.Core.Sites.Classes;
-using Gambler.Bot.Core.Events;
 
 namespace Gambler.Bot.AutoBet.Helpers
 {
@@ -25,8 +23,9 @@ namespace Gambler.Bot.AutoBet.Helpers
         public string serverseed { get; set; }
         public string clientseed { get; set; }
         public List<string> bets = new List<string>();
-        public Gambler.Bot.Core.Sites.BaseSite Site { get; set; }
-        public Strategies.BaseStrategy DiceStrategy { get; set; }
+        public IProvablyFair LuckyGenerator { get; set; }
+        public SiteDetails Site { get; set; }
+        public BaseStrategy DiceStrategy { get; set; }
         public SessionStats Stats { get; set; }
         public InternalBetSettings BetSettings { get; set; }
         SiteStats SiteStats = null;
@@ -48,8 +47,9 @@ namespace Gambler.Bot.AutoBet.Helpers
 
         public void Initialize(decimal balance, 
             long bets, 
-            Gambler.Bot.Core.Sites.BaseSite Site, 
-            Strategies.BaseStrategy DiceStrategy, 
+            IProvablyFair LuckyGenerator, 
+            SiteDetails site,
+            BaseStrategy DiceStrategy, 
             InternalBetSettings OtherSettings, 
             string TempStorage,
             bool Log)
@@ -77,7 +77,7 @@ namespace Gambler.Bot.AutoBet.Helpers
                 this.bets.Add("");
                 this.bets.Add(columns);
             }
-            TmpFileName = TempStorage + (Site?.R.Next()??0)+".csv."+ Process.GetCurrentProcess().Id;
+            TmpFileName = TempStorage + (LuckyGenerator?.Random.Next()??0)+".csv."+ Process.GetCurrentProcess().Id;
         }
 
         public void Save(string NewFile)
@@ -90,13 +90,13 @@ namespace Gambler.Bot.AutoBet.Helpers
         public void Start()
         {
             this.Stats = new SessionStats(true);
-            this.SiteStats = CopyHelper.CreateCopy<SiteStats>(Site.Stats);
+            this.SiteStats = new SiteStats();
             SiteStats.Balance = Balance;
             Running = true;
             Stop = false;
-            if (DiceStrategy is Strategies.ProgrammerMode)
+            if (DiceStrategy is ProgrammerMode)
             {
-                (DiceStrategy as Strategies.ProgrammerMode).LoadScript();
+                (DiceStrategy as ProgrammerMode).LoadScript();
             }
             new Thread(new ThreadStart(SimulationThread)).Start();
         }
@@ -118,7 +118,7 @@ namespace Gambler.Bot.AutoBet.Helpers
                     if (log)
                     {
                         bets.Add(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}"
-                        , TotalBetsPlaced, NewBet.Roll, NewBet.Chance, (NewBet.High ? ">" : "<"), NewBet.GetWin(Site) ? "win" : "lose", NewBet.TotalAmount, NewBet.Profit, this.Balance, Profit));
+                        , TotalBetsPlaced, NewBet.Roll, NewBet.Chance, (NewBet.High ? ">" : "<"), NewBet.GetWin(Site.maxroll) ? "win" : "lose", NewBet.TotalAmount, NewBet.Profit, this.Balance, Profit));
                     }
 
                     if (TotalBetsPlaced % 10000 == 0)
@@ -141,14 +141,14 @@ namespace Gambler.Bot.AutoBet.Helpers
                     BetsWithSeed++;
                     bool Reset = false;
                     PlaceDiceBet NewBetObject = null;
-                    bool win = NewBet.GetWin(Site);
+                    bool win = NewBet.GetWin(Site.maxroll);
                     string Response = "";
-                    if (BetSettings.CheckResetPreStats(NewBet, NewBet.GetWin(Site), Stats, SiteStats)) 
+                    if (BetSettings.CheckResetPreStats(NewBet, NewBet.GetWin(Site.maxroll), Stats, SiteStats)) 
                     {
                         Reset = true;
                         NewBetObject = DiceStrategy.RunReset();
                     }
-                    if (BetSettings.CheckStopPreStats(NewBet, NewBet.GetWin(Site), Stats, out Response, SiteStats))
+                    if (BetSettings.CheckStopPreStats(NewBet, NewBet.GetWin(Site.maxroll), Stats, out Response, SiteStats))
                     {
                         this.Stop = (true);
                     }
@@ -157,36 +157,36 @@ namespace Gambler.Bot.AutoBet.Helpers
                     {
                         (DiceStrategy as ProgrammerMode).UpdateSessionStats(CopyHelper.CreateCopy<SessionStats>(Stats));
                         (DiceStrategy as ProgrammerMode).UpdateSiteStats(CopyHelper.CreateCopy<SiteStats>(SiteStats));
-                        (DiceStrategy as ProgrammerMode).UpdateSite(CopyHelper.CreateCopy<SiteDetails>(Site.SiteDetails));
+                        (DiceStrategy as ProgrammerMode).UpdateSite(CopyHelper.CreateCopy<SiteDetails>(Site));
                     }
-                    if (BetSettings.CheckResetPostStats(NewBet, NewBet.GetWin(Site), Stats, SiteStats))
+                    if (BetSettings.CheckResetPostStats(NewBet, NewBet.GetWin(Site.maxroll), Stats, SiteStats))
                     {
                         Reset = true;
                         NewBetObject = DiceStrategy.RunReset();
                     }
-                    if (BetSettings.CheckStopPOstStats(NewBet, NewBet.GetWin(Site), Stats, out Response, SiteStats))
+                    if (BetSettings.CheckStopPOstStats(NewBet, NewBet.GetWin(Site.maxroll), Stats, out Response, SiteStats))
                     {
                         Stop = true;
                     }
                     decimal withdrawamount = 0;
-                    if (BetSettings.CheckWithdraw(NewBet, NewBet.GetWin(Site), Stats, out withdrawamount, SiteStats))
+                    if (BetSettings.CheckWithdraw(NewBet, NewBet.GetWin(Site.maxroll), Stats, out withdrawamount, SiteStats))
                     {
                         this.Balance -= withdrawamount;
                     }
-                    if (BetSettings.CheckBank(NewBet, NewBet.GetWin(Site), Stats, out withdrawamount, SiteStats))
+                    if (BetSettings.CheckBank(NewBet, NewBet.GetWin(Site.maxroll), Stats, out withdrawamount, SiteStats))
                     {
                         this.Balance -= withdrawamount;
                     }
-                    if (BetSettings.CheckTips(NewBet, NewBet.GetWin(Site), Stats, out withdrawamount, SiteStats))
+                    if (BetSettings.CheckTips(NewBet, NewBet.GetWin(Site.maxroll), Stats, out withdrawamount, SiteStats))
                     {
                         this.Balance -= withdrawamount;
                     }
                     bool NewHigh = false;
-                    if (BetSettings.CheckResetSeed(NewBet, NewBet.GetWin(Site), Stats, SiteStats))
+                    if (BetSettings.CheckResetSeed(NewBet, NewBet.GetWin(Site.maxroll), Stats, SiteStats))
                     {
                         GenerateSeeds();
                     }
-                    if (BetSettings.CheckHighLow(NewBet, NewBet.GetWin(Site), Stats, out NewHigh, SiteStats))
+                    if (BetSettings.CheckHighLow(NewBet, NewBet.GetWin(Site.maxroll), Stats, out NewHigh, SiteStats))
                     {
                         (DiceStrategy as iDiceStrategy).High = NewHigh;
                     }
@@ -225,18 +225,18 @@ namespace Gambler.Bot.AutoBet.Helpers
 
         public void GenerateSeeds()
         {
-            clientseed = Site.GenerateNewClientSeed();
+            clientseed = LuckyGenerator.GenerateNewClientSeed();
             //new server seed
             //new client seed
             string serverseed = "";
             string Alphabet = "1234567890QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
             while (serverseed.Length<64)
             {
-                serverseed += Alphabet[Site.R.Next(0, Alphabet.Length)];
+                serverseed += Alphabet[LuckyGenerator.Random.Next(0, Alphabet.Length)];
             }
             this.serverseed = serverseed;
             //new server seed hash
-            serverseedhash = Site.GetHash(serverseed);
+            serverseedhash = LuckyGenerator.GetHash(serverseed);
             BetsWithSeed = 0;
         }
 
@@ -250,7 +250,7 @@ namespace Gambler.Bot.AutoBet.Helpers
                 GenerateSeeds();
             }
             
-            Lucky=Site.GetLucky(serverseed, clientseed, (int)BetsWithSeed);
+            Lucky=LuckyGenerator.GetLucky(serverseed, clientseed, (int)BetsWithSeed);
             
             DiceBet betresult = new DiceBet {
                 TotalAmount = NewBet.Amount,
@@ -265,12 +265,12 @@ namespace Gambler.Bot.AutoBet.Helpers
                 ServerHash = serverseedhash,
                 ServerSeed = serverseed
             };
-            betresult.Profit = betresult.GetWin(Site) ?  ((((100.0m - Site.Edge) / NewBet.Chance) * NewBet.Amount)-NewBet.Amount): -NewBet.Amount;
+            betresult.Profit = betresult.GetWin(Site.maxroll) ?  ((((100.0m - Site.edge) / NewBet.Chance) * NewBet.Amount)-NewBet.Amount): -NewBet.Amount;
             OnBetSimulated?.Invoke(this, new BetFinisedEventArgs(betresult));
             return betresult;
         }
 
-        private void DiceStrategy_Stop(object sender, Strategies.StopEventArgs e)
+        private void DiceStrategy_Stop(object sender, StopEventArgs e)
         {
             Stop = true;
         }

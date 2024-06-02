@@ -9,11 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gambler.Bot.Core", "..\Gamb
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalsObject", "..\Gambler.Bot.Core\Gambler.Bot.Core\GlobalsObject\GlobalsObject.csproj", "{A2CB11A3-ADB2-458E-BB24-683DF95AE796}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gambler.Bot.AutoBet", "Gambler.Bot.AutoBet\Gambler.Bot.AutoBet.csproj", "{C873A91D-D4B2-4C27-909A-BA2F348DA33F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gambler.Bot.AutoBet.Tests", "Gambler.Bot.AutoBet.Tests\Gambler.Bot.AutoBet.Tests.csproj", "{696B1655-41C1-4B9D-8CEC-8DF0A9349A33}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gambler.Bot.Core.Tests", "..\Gambler.Bot.Core\Gambler.Bot.Core\Gambler.Bot.Core.Tests\Gambler.Bot.Core.Tests.csproj", "{623019CB-0B7A-4983-98A8-936F533055E7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gambler.Bot.Strategies", "Gambler.Bot.Strategies\Gambler.Bot.Strategies.csproj", "{2DB4524C-0136-4140-96DE-0216DA4355CD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gambler.Bot.Strategies.Tests", "Gambler.Bot.Strategies.Tests\Gambler.Bot.Strategies.Tests.csproj", "{CE53092E-B590-4486-A577-9E61215BFD7D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,25 +29,25 @@ Global
 		{A2CB11A3-ADB2-458E-BB24-683DF95AE796}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2CB11A3-ADB2-458E-BB24-683DF95AE796}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2CB11A3-ADB2-458E-BB24-683DF95AE796}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C873A91D-D4B2-4C27-909A-BA2F348DA33F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C873A91D-D4B2-4C27-909A-BA2F348DA33F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C873A91D-D4B2-4C27-909A-BA2F348DA33F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C873A91D-D4B2-4C27-909A-BA2F348DA33F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{696B1655-41C1-4B9D-8CEC-8DF0A9349A33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{696B1655-41C1-4B9D-8CEC-8DF0A9349A33}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{696B1655-41C1-4B9D-8CEC-8DF0A9349A33}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{696B1655-41C1-4B9D-8CEC-8DF0A9349A33}.Release|Any CPU.Build.0 = Release|Any CPU
 		{623019CB-0B7A-4983-98A8-936F533055E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{623019CB-0B7A-4983-98A8-936F533055E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{623019CB-0B7A-4983-98A8-936F533055E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{623019CB-0B7A-4983-98A8-936F533055E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DB4524C-0136-4140-96DE-0216DA4355CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DB4524C-0136-4140-96DE-0216DA4355CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DB4524C-0136-4140-96DE-0216DA4355CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DB4524C-0136-4140-96DE-0216DA4355CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE53092E-B590-4486-A577-9E61215BFD7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE53092E-B590-4486-A577-9E61215BFD7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE53092E-B590-4486-A577-9E61215BFD7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE53092E-B590-4486-A577-9E61215BFD7D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{696B1655-41C1-4B9D-8CEC-8DF0A9349A33} = {86A6124A-0E67-47E3-A5B6-004326D4E0BB}
 		{623019CB-0B7A-4983-98A8-936F533055E7} = {86A6124A-0E67-47E3-A5B6-004326D4E0BB}
+		{CE53092E-B590-4486-A577-9E61215BFD7D} = {86A6124A-0E67-47E3-A5B6-004326D4E0BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A967686E-E1F5-462C-84A0-A186162FD711}

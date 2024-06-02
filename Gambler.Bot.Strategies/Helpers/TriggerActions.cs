@@ -1,7 +1,6 @@
 ﻿using Gambler.Bot.AutoBet.Helpers;
-using Gambler.Bot.Core.Sites.Classes;
+using Gambler.Bot.Common.Helpers;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
