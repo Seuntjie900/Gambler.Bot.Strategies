@@ -87,7 +87,7 @@ namespace Gambler.Bot.Strategies.Strategies
             Runtime.SetValue("Tip", (Action<string, decimal>)Tip);
             Runtime.SetValue("ResetSeed", (Action)ResetSeed);
             Runtime.SetValue("Print", (Action<string>)Print);
-            Runtime.SetValue("RunSim", (Action < decimal, long>)RunSim);
+            Runtime.SetValue("RunSim", (Action < decimal, long, bool>)RunSim);
             Runtime.SetValue("ResetStats", (Action)ResetStats);
             Runtime.SetValue("Read", (Func<string, int, object>)Read);
             Runtime.SetValue("Readadv", (Func<string, int,string,string,string, object> )Readadv);
@@ -156,9 +156,9 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             OnPrint?.Invoke(this, new PrintEventArgs { Message = PrintValue });
         }
-        void RunSim(decimal Balance, long Bets)
+        void RunSim(decimal Balance, long Bets, bool log)
         {
-            OnRunSim?.Invoke(this, new RunSimEventArgs { Balance = Balance, Bets = Bets });
+            OnRunSim?.Invoke(this, new RunSimEventArgs { Balance = Balance, Bets = Bets, WriteLog=log });
         }
         void ResetStats()
         {

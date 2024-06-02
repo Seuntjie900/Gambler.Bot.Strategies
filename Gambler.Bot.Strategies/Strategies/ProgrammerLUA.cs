@@ -153,7 +153,7 @@ namespace Gambler.Bot.Strategies.Strategies
             CurrentRuntime.Globals["Tip"] = (Action<string, decimal>)Tip;
             CurrentRuntime.Globals["ResetSeed"] = (Action)ResetSeed;
             CurrentRuntime.Globals["Print"] = (Action<string>)Print;
-            CurrentRuntime.Globals["RunSim"] = (Action < decimal, long>)RunSim;
+            CurrentRuntime.Globals["RunSim"] = (Action < decimal, long, bool>)RunSim;
             CurrentRuntime.Globals["ResetStats"] = (Action)ResetStats;
             CurrentRuntime.Globals["Read"] = (Func<string, int, object>)Read;
             CurrentRuntime.Globals["Readadv"] = (Func<string, int,string,string,string, object> )Readadv;
@@ -270,9 +270,9 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             OnPrint?.Invoke(this, new PrintEventArgs {  Message=PrintValue});
         }
-        void RunSim(decimal Balance, long Bets)
+        void RunSim(decimal Balance, long Bets, bool log)
         {
-            OnRunSim?.Invoke(this, new RunSimEventArgs { Balance=Balance, Bets=Bets });
+            OnRunSim?.Invoke(this, new RunSimEventArgs { Balance=Balance, Bets=Bets, WriteLog=log });
         }
         void ResetStats()
         {

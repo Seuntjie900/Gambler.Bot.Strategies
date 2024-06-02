@@ -54,6 +54,7 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
     {
         public decimal Balance { get; set; }
         public long Bets { get; set; }
+        public bool WriteLog { get; set; }
     }
     public class ReadEventArgs : EventArgs
     {

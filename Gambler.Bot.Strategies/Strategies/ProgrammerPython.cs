@@ -106,7 +106,7 @@ namespace Gambler.Bot.Strategies.Strategies
             (Scope as ScriptScope).SetVariable("Tip", (Action<string, decimal>)Tip);
             (Scope as ScriptScope).SetVariable("ResetSeed", (Action)ResetSeed);
             (Scope as ScriptScope).SetVariable("Print", (Action<string>)Print);
-            (Scope as ScriptScope).SetVariable("RunSim", (Action < decimal, long>)RunSim);
+            (Scope as ScriptScope).SetVariable("RunSim", (Action < decimal, long, bool>)RunSim);
             (Scope as ScriptScope).SetVariable("ResetStats", (Action)ResetStats);
             (Scope as ScriptScope).SetVariable("Read", (Func<string, int, object>)Read);
             (Scope as ScriptScope).SetVariable("Readadv", (Func<string, int,string,string,string, object> )Readadv);
@@ -176,9 +176,9 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             OnPrint?.Invoke(this, new PrintEventArgs { Message = PrintValue });
         }
-        void RunSim(decimal Balance, long Bets)
+        void RunSim(decimal Balance, long Bets, bool log)
         {
-            OnRunSim?.Invoke(this, new RunSimEventArgs { Balance = Balance, Bets = Bets });
+            OnRunSim?.Invoke(this, new RunSimEventArgs { Balance = Balance, Bets = Bets, WriteLog=log });
         }
         void ResetStats()
         {

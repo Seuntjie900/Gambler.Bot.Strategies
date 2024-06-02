@@ -47,7 +47,7 @@ namespace Gambler.Bot.Strategies.Helpers
 
         public void Initialize(decimal balance, 
             long bets, 
-            IProvablyFair LuckyGenerator, 
+            IProvablyFair luckyGenerator, 
             SiteDetails site,
             BaseStrategy DiceStrategy, 
             InternalBetSettings OtherSettings, 
@@ -56,8 +56,9 @@ namespace Gambler.Bot.Strategies.Helpers
         {
             this.Balance = balance;
             this.Bets = bets;
-            this.Site = Site;
+            this.Site = site;
             this.BetSettings = OtherSettings;
+            this.LuckyGenerator = luckyGenerator;
             ///copy strategy
             this.DiceStrategy = DiceStrategy;
             if (DiceStrategy != null)
@@ -249,6 +250,11 @@ namespace Gambler.Bot.Strategies.Helpers
             {
                 GenerateSeeds();
             }
+            else if (string.IsNullOrEmpty(serverseed) || string.IsNullOrEmpty(clientseed))
+            {
+                GenerateSeeds();
+            }
+                
             
             Lucky=LuckyGenerator.GetLucky(serverseed, clientseed, (int)BetsWithSeed);
             

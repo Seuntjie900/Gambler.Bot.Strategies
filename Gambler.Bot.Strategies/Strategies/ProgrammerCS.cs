@@ -199,9 +199,9 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             OnPrint?.Invoke(this, new PrintEventArgs { Message = PrintValue });
         }
-        void RunSim(decimal Balance, long Bets)
+        void RunSim(decimal Balance, long Bets, bool log)
         {
-            OnRunSim?.Invoke(this, new RunSimEventArgs { Balance = Balance, Bets = Bets });
+            OnRunSim?.Invoke(this, new RunSimEventArgs { Balance = Balance, Bets = Bets, WriteLog = log });
         }
         void ResetStats()
         {

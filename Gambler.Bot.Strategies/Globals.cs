@@ -19,7 +19,7 @@ namespace Gambler.Bot.Core
         public Action<string, decimal> Tip{ get; set; }
         public Action ResetSeed{ get; set; }
         public Action<string> Print{ get; set; }
-        public Action<decimal, long> RunSim{ get; set; }
+        public Action<decimal, long, bool> RunSim{ get; set; }
         public Action ResetStats{ get; set; }
         public Func<string, int, object> Read{ get; set; }
         public Func<string, int, string, string, string, object>  Readadv { get; set; }
