@@ -25,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Gambler.Bot.Core\Gambler.Bot.Core\Gambler.Bot.Core\Gambler.Bot.Core.csproj" />
     <ProjectReference Include="..\Gambler.Bot.Strategies\Gambler.Bot.Strategies.csproj" />
   </ItemGroup>
 
