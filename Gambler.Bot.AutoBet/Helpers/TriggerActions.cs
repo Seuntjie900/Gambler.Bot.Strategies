@@ -67,7 +67,7 @@ namespace Gambler.Bot.Core.Helpers
             if (TargetType == CompareAgainst.Value)
             {
                 decimal TargetValue = 0;
-                if (!decimal.TryParse(Target, System.Globalization.NumberStyles.Number, System.Globalization.NumberFormatInfo.InvariantInfo, out TargetValue))
+                if (!decimal.TryParse(Target,  out TargetValue))
                 {
                     throw new Exception("Invalid Target Value");
                 }
