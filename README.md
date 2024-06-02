@@ -1,8 +1,8 @@
-Build: [![Build Status](https://eugenebotma.visualstudio.com/seuntjie900/_apis/build/status%2FGambler.Bot.AutoBet?repoName=Seuntjie900%2FGambler.Bot.AutoBet&branchName=master&stageName=Build)](https://eugenebotma.visualstudio.com/seuntjie900/_build/latest?definitionId=3&repoName=Seuntjie900%2FGambler.Bot.AutoBet&branchName=master)
+Build: [![Build Status](https://eugenebotma.visualstudio.com/seuntjie900/_apis/build/status%2FSeuntjie900.Gambler.Bot.Core?branchName=master&stageName=Build)](https://eugenebotma.visualstudio.com/seuntjie900/_build/latest?definitionId=4&branchName=master)
 
-Tests: [![Build Status](https://eugenebotma.visualstudio.com/seuntjie900/_apis/build/status%2FGambler.Bot.AutoBet?repoName=Seuntjie900%2FGambler.Bot.AutoBet&branchName=master&stageName=Test)](https://eugenebotma.visualstudio.com/seuntjie900/_build/latest?definitionId=3&repoName=Seuntjie900%2FGambler.Bot.AutoBet&branchName=master)
+Tests: [![Test Status](https://eugenebotma.visualstudio.com/seuntjie900/_apis/build/status%2FSeuntjie900.Gambler.Bot.Core?branchName=master&stageName=Test)](https://eugenebotma.visualstudio.com/seuntjie900/_build/latest?definitionId=4&branchName=master)
 
-[![NuGet](https://img.shields.io/nuget/v/Doormat.Bot.svg)](https://www.nuget.org/packages/Doormat.Bot/)
+[![NuGet](https://img.shields.io/nuget/v/Gambler.Bot.AutoBet.svg)](https://www.nuget.org/packages/Gambler.Bot.AutoBet/)
 
 
 This project contains the code I've written so far for the automated betting and strategy library of what I envisioned to be DiceBot v4. 
