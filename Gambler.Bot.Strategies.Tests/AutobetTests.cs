@@ -1,4 +1,4 @@
-namespace Gambler.Bot.AutoBet.Tests
+namespace Gambler.Bot.Strategies.Tests
 {
     public class AutobetTests
 

@@ -1,12 +1,12 @@
-﻿using Gambler.Bot.AutoBet.Helpers;
-using Gambler.Bot.AutoBet.Strategies.Abstractions;
+﻿using Gambler.Bot.Strategies.Helpers;
+using Gambler.Bot.Strategies.Strategies.Abstractions;
 using Gambler.Bot.Common.Games;
 using Gambler.Bot.Common.Helpers;
 using Microsoft.Extensions.Logging;
 using MoonSharp.Interpreter;
 using System;
 
-namespace Gambler.Bot.AutoBet.Strategies
+namespace Gambler.Bot.Strategies.Strategies
 {
     public class ProgrammerLUA : BaseStrategy, ProgrammerMode, iDiceStrategy
     {

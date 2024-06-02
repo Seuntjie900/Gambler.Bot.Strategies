@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Gambler.Bot.AutoBet.Strategies.Abstractions
+namespace Gambler.Bot.Strategies.Strategies.Abstractions
 {
     public class StopEventArgs : EventArgs
     {

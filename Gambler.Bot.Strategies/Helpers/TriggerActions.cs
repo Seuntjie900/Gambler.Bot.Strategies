@@ -1,12 +1,11 @@
-﻿using Gambler.Bot.AutoBet.Helpers;
-using Gambler.Bot.Common.Helpers;
+﻿using Gambler.Bot.Common.Helpers;
 using System;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Gambler.Bot.Core.Helpers
+namespace Gambler.Bot.Strategies.Helpers
 {
     public enum TriggerAction { Alarm, Chime, Email, Popup, Stop, Reset, Withdraw, Tip, Invest, Bank, ResetSeed, Switch }
     public enum CompareAgainst { Value, Percentage, Property }

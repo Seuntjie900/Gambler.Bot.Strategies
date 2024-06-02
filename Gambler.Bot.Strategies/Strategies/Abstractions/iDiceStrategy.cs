@@ -1,6 +1,6 @@
 ﻿using Gambler.Bot.Common.Games;
 
-namespace Gambler.Bot.AutoBet.Strategies.Abstractions
+namespace Gambler.Bot.Strategies.Strategies.Abstractions
 {
     public interface iDiceStrategy
     {

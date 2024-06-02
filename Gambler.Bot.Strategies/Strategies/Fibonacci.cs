@@ -1,9 +1,9 @@
-﻿using Gambler.Bot.AutoBet.Strategies.Abstractions;
+﻿using Gambler.Bot.Strategies.Strategies.Abstractions;
 using Gambler.Bot.Common.Games;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Gambler.Bot.AutoBet.Strategies
+namespace Gambler.Bot.Strategies.Strategies
 {
     public class Fibonacci: BaseStrategy, iDiceStrategy
     {

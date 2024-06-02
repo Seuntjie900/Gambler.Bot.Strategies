@@ -1,7 +1,7 @@
 ﻿using Gambler.Bot.Common.Events;
 using Gambler.Bot.Helpers;
 
-namespace Gambler.Bot.AutoBet.Helpers
+namespace Gambler.Bot.Strategies.Helpers
 {
     public class BotErrorEventArgs:ErrorEventArgs
     {

@@ -1,10 +1,10 @@
-﻿using Gambler.Bot.AutoBet.Strategies.Abstractions;
-using Gambler.Bot.AutoBet.Strategies.PresetListModels;
+﻿using Gambler.Bot.Strategies.Strategies.Abstractions;
+using Gambler.Bot.Strategies.Strategies.PresetListModels;
 using Gambler.Bot.Common.Games;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 
-namespace Gambler.Bot.AutoBet.Strategies
+namespace Gambler.Bot.Strategies.Strategies
 {
     public class PresetList: BaseStrategy, iDiceStrategy
     {
@@ -173,7 +173,7 @@ namespace Gambler.Bot.AutoBet.Strategies
 
 }
 
-namespace Gambler.Bot.AutoBet.Strategies.PresetListModels
+namespace Gambler.Bot.Strategies.Strategies.PresetListModels
 {
     public class PresetBet
     {

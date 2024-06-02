@@ -1,4 +1,4 @@
-﻿using Gambler.Bot.AutoBet.Strategies.Abstractions;
+﻿using Gambler.Bot.Strategies.Strategies.Abstractions;
 using Gambler.Bot.Common.Events;
 using Gambler.Bot.Common.Games;
 using Gambler.Bot.Common.Helpers;
@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
-namespace Gambler.Bot.AutoBet.Helpers
+namespace Gambler.Bot.Strategies.Helpers
 {
     public class Simulation
     {

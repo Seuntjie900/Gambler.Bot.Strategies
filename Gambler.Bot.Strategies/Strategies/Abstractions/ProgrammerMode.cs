@@ -1,9 +1,9 @@
-﻿using Gambler.Bot.AutoBet.Helpers;
+﻿using Gambler.Bot.Strategies.Helpers;
 using Gambler.Bot.Common.Games;
 using Gambler.Bot.Common.Helpers;
 using System;
 
-namespace Gambler.Bot.AutoBet.Strategies.Abstractions
+namespace Gambler.Bot.Strategies.Strategies.Abstractions
 {
     public interface ProgrammerMode
     {

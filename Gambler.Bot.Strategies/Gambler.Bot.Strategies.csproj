@@ -14,14 +14,14 @@
 	  <Authors>Seuntjie</Authors>
 	  <Company>Botma Software (Pty) ltd.</Company>
 	  <Description>Library for automated betting and different betting strategies using Gambler.Bot.Core</Description>
-	  <PackageProjectUrl>https://github.com/Seuntjie900/Gambler.Bot.AutoBet</PackageProjectUrl>
-	  <RepositoryUrl>https://github.com/Seuntjie900/Gambler.Bot.AutoBet</RepositoryUrl>
+	  <PackageProjectUrl>https://github.com/Seuntjie900/Gambler.Bot.Strategies</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/Seuntjie900/Gambler.Bot.Strategies</RepositoryUrl>
 	  <RepositoryType>Github</RepositoryType>
-	  <PackageTags>Seuntjie Gambling DiceBot Gambler.Bot.AutoBet</PackageTags>
+	  <PackageTags>Seuntjie Gambling DiceBot Gambler.Bot.Strategies</PackageTags>
 	  <PackageReleaseNotes>Test Release for Nuget - Still in alpha.</PackageReleaseNotes>
 	  <NeutralLanguage>en-GB</NeutralLanguage>
 	  <DelaySign>false</DelaySign>
-	  <Title>Gambler.Bot.AutoBet</Title>
+	  <Title>Gambler.Bot.Strategies</Title>
 	  <Copyright>Copyright BotmaSoftware 2023</Copyright>
   </PropertyGroup>
 

@@ -1,11 +1,11 @@
-﻿using Gambler.Bot.AutoBet.Helpers;
-using Gambler.Bot.AutoBet.Strategies;
+﻿using Gambler.Bot.Strategies.Helpers;
+using Gambler.Bot.Strategies.Strategies;
 using Gambler.Bot.Common.Games;
 using Microsoft.Extensions.Logging;
 using Moq;
 
 
-namespace Gambler.Bot.AutoBet.Tests.Strategies
+namespace Gambler.Bot.Strategies.Tests.Strategies
 {
     public class DAlembertTests
     {

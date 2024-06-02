@@ -3,7 +3,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Gambler.Bot.AutoBet.Helpers
+namespace Gambler.Bot.Strategies.Helpers
 {
     [MoonSharp.Interpreter.MoonSharpUserData]    
     public class SessionStats

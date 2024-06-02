@@ -1,10 +1,9 @@
 ﻿using Gambler.Bot.Common.Games;
 using Gambler.Bot.Common.Helpers;
-using Gambler.Bot.Core.Helpers;
 using System;
 using System.Collections.Generic;
 
-namespace Gambler.Bot.AutoBet.Helpers
+namespace Gambler.Bot.Strategies.Helpers
 {
     public class InternalBetSettings
     {

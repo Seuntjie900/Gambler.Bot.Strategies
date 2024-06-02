@@ -1,4 +1,4 @@
-﻿using Gambler.Bot.AutoBet.Helpers;
+﻿using Gambler.Bot.Strategies.Helpers;
 using Gambler.Bot.Common.Helpers;
 using System;
 

@@ -1,5 +1,5 @@
-﻿using Gambler.Bot.AutoBet.Helpers;
-using Gambler.Bot.AutoBet.Strategies.Abstractions;
+﻿using Gambler.Bot.Strategies.Helpers;
+using Gambler.Bot.Strategies.Strategies.Abstractions;
 using Gambler.Bot.Common.Games;
 using Gambler.Bot.Common.Helpers;
 using IronPython.Hosting;
@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Scripting.Hosting;
 using System;
 
-namespace Gambler.Bot.AutoBet.Strategies
+namespace Gambler.Bot.Strategies.Strategies
 {
     public class ProgrammerPython: BaseStrategy, ProgrammerMode, iDiceStrategy
     {

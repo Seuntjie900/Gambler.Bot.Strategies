@@ -1,5 +1,5 @@
-﻿using Gambler.Bot.AutoBet.Helpers;
-using Gambler.Bot.AutoBet.Strategies.Abstractions;
+﻿using Gambler.Bot.Strategies.Helpers;
+using Gambler.Bot.Strategies.Strategies.Abstractions;
 using Gambler.Bot.Common.Games;
 using Gambler.Bot.Common.Helpers;
 using Gambler.Bot.Core;
@@ -10,7 +10,7 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace Gambler.Bot.AutoBet.Strategies
+namespace Gambler.Bot.Strategies.Strategies
 {
     public class ProgrammerCS : BaseStrategy, ProgrammerMode, iDiceStrategy
     {
@@ -69,8 +69,8 @@ namespace Gambler.Bot.AutoBet.Strategies
                 runtime = runtime.ContinueWithAsync("DoDiceBet(PreviousDiceBet, DiceWin, NextDiceBet)", ScriptOptions.Default.WithReferences(
                         Assembly.GetExecutingAssembly())
                         .WithImports(
-                            "Gambler.Bot.AutoBet",
-                            "Gambler.Bot.AutoBet.Games",
+                            "Gambler.Bot.Strategies",
+                            "Gambler.Bot.Strategies.Games",
                             "System")).Result;*/
 
 
@@ -93,7 +93,7 @@ namespace Gambler.Bot.AutoBet.Strategies
                 ScriptOptions.Default.WithReferences(
                     Assembly.GetExecutingAssembly())
                     .WithImports(
-                        "Gambler.Bot.AutoBet",
+                        "Gambler.Bot.Strategies",
                         "Gambler.Bot.Core.Games",
                         "System"), 
                 typeof(Globals));

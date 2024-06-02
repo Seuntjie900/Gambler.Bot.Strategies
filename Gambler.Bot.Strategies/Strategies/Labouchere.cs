@@ -1,10 +1,10 @@
-﻿using Gambler.Bot.AutoBet.Strategies.Abstractions;
+﻿using Gambler.Bot.Strategies.Strategies.Abstractions;
 using Gambler.Bot.Common.Games;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Gambler.Bot.AutoBet.Strategies
+namespace Gambler.Bot.Strategies.Strategies
 {
     public class Labouchere: BaseStrategy, iDiceStrategy
     {
