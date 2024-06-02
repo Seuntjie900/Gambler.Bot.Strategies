@@ -660,22 +660,22 @@ namespace Gambler.Bot.AutoBet
                     strategy.OnNeedStats -= Strategy_OnNeedStats;
                     if (strategy is ProgrammerMode)
                     {
-                        (Strategy as ProgrammerMode).OnAlarm -= Doormat_OnAlarm;
-                        (Strategy as ProgrammerMode).OnChing -= Doormat_OnChing;
-                        (Strategy as ProgrammerMode).OnExportSim -= Doormat_OnExportSim;
-                        (Strategy as ProgrammerMode).OnInvest -= Doormat_OnInvest;
-                        (Strategy as ProgrammerMode).OnPrint -= Doormat_OnPrint;
-                        (Strategy as ProgrammerMode).OnRead -= Doormat_OnRead;
-                        (Strategy as ProgrammerMode).OnReadAdv -= Doormat_OnReadAdv;
-                        //(Strategy as ProgrammerMode).OnResetBuiltIn -= Doormat_OnResetBuiltIn;
-                        (Strategy as ProgrammerMode).OnResetSeed -= Doormat_OnResetSeed;
-                        (Strategy as ProgrammerMode).OnResetStats -= Doormat_OnResetStats;
-                        (Strategy as ProgrammerMode).OnRunSim -= Doormat_OnRunSim;
-                        //(Strategy as ProgrammerMode).OnStop -= Doormat_OnStop;
-                        (Strategy as ProgrammerMode).OnTip -= Doormat_OnTip;
-                        (Strategy as ProgrammerMode).OnWithdraw -= Doormat_OnWithdraw;
-                        (Strategy as ProgrammerMode).OnScriptError -= Doormat_OnScriptError;
-                        (Strategy as ProgrammerMode).OnSetCurrency -= Doormat_OnSetCurrency;
+                        (Strategy as ProgrammerMode).OnAlarm -= Autobet_OnAlarm;
+                        (Strategy as ProgrammerMode).OnChing -= Autobet_OnChing;
+                        (Strategy as ProgrammerMode).OnExportSim -= Autobet_OnExportSim;
+                        (Strategy as ProgrammerMode).OnInvest -= Autobet_OnInvest;
+                        (Strategy as ProgrammerMode).OnPrint -= Autobet_OnPrint;
+                        (Strategy as ProgrammerMode).OnRead -= Autobet_OnRead;
+                        (Strategy as ProgrammerMode).OnReadAdv -= Autobet_OnReadAdv;
+                        //(Strategy as ProgrammerMode).OnResetBuiltIn -= Autobet_OnResetBuiltIn;
+                        (Strategy as ProgrammerMode).OnResetSeed -= Autobet_OnResetSeed;
+                        (Strategy as ProgrammerMode).OnResetStats -= Autobet_OnResetStats;
+                        (Strategy as ProgrammerMode).OnRunSim -= Autobet_OnRunSim;
+                        //(Strategy as ProgrammerMode).OnStop -= Autobet_OnStop;
+                        (Strategy as ProgrammerMode).OnTip -= Autobet_OnTip;
+                        (Strategy as ProgrammerMode).OnWithdraw -= Autobet_OnWithdraw;
+                        (Strategy as ProgrammerMode).OnScriptError -= Autobet_OnScriptError;
+                        (Strategy as ProgrammerMode).OnSetCurrency -= Autobet_OnSetCurrency;
 
                     }
                 }
@@ -688,22 +688,22 @@ namespace Gambler.Bot.AutoBet
                     if (strategy is ProgrammerMode)
                     {
                         (strategy as ProgrammerMode).CreateRuntime();
-                        (Strategy as ProgrammerMode).OnAlarm += Doormat_OnAlarm;
-                        (Strategy as ProgrammerMode).OnChing += Doormat_OnChing;
-                        (Strategy as ProgrammerMode).OnExportSim += Doormat_OnExportSim;
-                        (Strategy as ProgrammerMode).OnInvest += Doormat_OnInvest;
-                        (Strategy as ProgrammerMode).OnPrint += Doormat_OnPrint;
-                        (Strategy as ProgrammerMode).OnRead += Doormat_OnRead;
-                        (Strategy as ProgrammerMode).OnReadAdv += Doormat_OnReadAdv;
-                        //(Strategy as ProgrammerMode).OnResetBuiltIn += Doormat_OnResetBuiltIn;
-                        (Strategy as ProgrammerMode).OnResetSeed += Doormat_OnResetSeed;
-                        (Strategy as ProgrammerMode).OnResetStats += Doormat_OnResetStats;
-                        (Strategy as ProgrammerMode).OnRunSim += Doormat_OnRunSim;
-                        //(Strategy as ProgrammerMode).OnStop += Doormat_OnStop;
-                        (Strategy as ProgrammerMode).OnTip += Doormat_OnTip;
-                        (Strategy as ProgrammerMode).OnWithdraw += Doormat_OnWithdraw;
-                        (Strategy as ProgrammerMode).OnScriptError += Doormat_OnScriptError;
-                        (Strategy as ProgrammerMode).OnSetCurrency += Doormat_OnSetCurrency;
+                        (Strategy as ProgrammerMode).OnAlarm += Autobet_OnAlarm;
+                        (Strategy as ProgrammerMode).OnChing += Autobet_OnChing;
+                        (Strategy as ProgrammerMode).OnExportSim += Autobet_OnExportSim;
+                        (Strategy as ProgrammerMode).OnInvest += Autobet_OnInvest;
+                        (Strategy as ProgrammerMode).OnPrint += Autobet_OnPrint;
+                        (Strategy as ProgrammerMode).OnRead += Autobet_OnRead;
+                        (Strategy as ProgrammerMode).OnReadAdv += Autobet_OnReadAdv;
+                        //(Strategy as ProgrammerMode).OnResetBuiltIn += Autobet_OnResetBuiltIn;
+                        (Strategy as ProgrammerMode).OnResetSeed += Autobet_OnResetSeed;
+                        (Strategy as ProgrammerMode).OnResetStats += Autobet_OnResetStats;
+                        (Strategy as ProgrammerMode).OnRunSim += Autobet_OnRunSim;
+                        //(Strategy as ProgrammerMode).OnStop += Autobet_OnStop;
+                        (Strategy as ProgrammerMode).OnTip += Autobet_OnTip;
+                        (Strategy as ProgrammerMode).OnWithdraw += Autobet_OnWithdraw;
+                        (Strategy as ProgrammerMode).OnScriptError += Autobet_OnScriptError;
+                        (Strategy as ProgrammerMode).OnSetCurrency += Autobet_OnSetCurrency;
                     }
                 }
                 StoredBetSettings.SetStrategy(value);
@@ -712,7 +712,7 @@ namespace Gambler.Bot.AutoBet
             }
         }
 
-        private void Doormat_OnSetCurrency(object sender, PrintEventArgs e)
+        private void Autobet_OnSetCurrency(object sender, PrintEventArgs e)
         {
             if (CurrentSite != null)
             {
@@ -723,83 +723,83 @@ namespace Gambler.Bot.AutoBet
             }
         }
 
-        private void Doormat_OnScriptError(object sender, PrintEventArgs e)
+        private void Autobet_OnScriptError(object sender, PrintEventArgs e)
         {
             StopStrategy("Error received from programmer mode, check console for more details.");
         }
 
-        private void Doormat_OnWithdraw(object sender, WithdrawEventArgs e)
+        private void Autobet_OnWithdraw(object sender, WithdrawEventArgs e)
         {
             if (CurrentSite.AutoWithdraw)
                 CurrentSite.Withdraw(e.Address, e.Amount);
         }
 
-        private void Doormat_OnTip(object sender, TipEventArgs e)
+        private void Autobet_OnTip(object sender, TipEventArgs e)
         {
             if (CurrentSite.CanTip)
                 CurrentSite.SendTip(e.Receiver, e.Amount);
         }
 
-        private void Doormat_OnStop(object sender, EventArgs e)
+        private void Autobet_OnStop(object sender, EventArgs e)
         {
             StopStrategy("Programmer mode stop signal received.");
         }
 
-        private void Doormat_OnRunSim(object sender, RunSimEventArgs e)
+        private void Autobet_OnRunSim(object sender, RunSimEventArgs e)
         {
             throw new NotImplementedException();
         }
 
-        private void Doormat_OnResetStats(object sender, EventArgs e)
+        private void Autobet_OnResetStats(object sender, EventArgs e)
         {
             ResetStats();
         }
 
-        private void Doormat_OnResetSeed(object sender, EventArgs e)
+        private void Autobet_OnResetSeed(object sender, EventArgs e)
         {
             if (CurrentSite.CanChangeSeed)
                 CurrentSite.ResetSeed(CurrentSite.R.Next(0, int.MaxValue).ToString());
         }
 
-        private void Doormat_OnResetBuiltIn(object sender, EventArgs e)
+        private void Autobet_OnResetBuiltIn(object sender, EventArgs e)
         {
             Strategy.RunReset();
         }
 
-        private void Doormat_OnReadAdv(object sender, ReadEventArgs e)
+        private void Autobet_OnReadAdv(object sender, ReadEventArgs e)
         {
             throw new NotImplementedException();
         }
 
-        private void Doormat_OnRead(object sender, ReadEventArgs e)
+        private void Autobet_OnRead(object sender, ReadEventArgs e)
 
         {
             throw new NotImplementedException();
         }
 
-        private void Doormat_OnPrint(object sender, PrintEventArgs e)
+        private void Autobet_OnPrint(object sender, PrintEventArgs e)
         {
             //send print to UI
             
         }
 
-        private void Doormat_OnInvest(object sender, InvestEventArgs e)
+        private void Autobet_OnInvest(object sender, InvestEventArgs e)
         {
             if (CurrentSite.AutoInvest)
                 CurrentSite.Invest(e.Amount);
         }
 
-        private void Doormat_OnExportSim(object sender, ExportSimEventArgs e)
+        private void Autobet_OnExportSim(object sender, ExportSimEventArgs e)
         {
             throw new NotImplementedException();
         }
 
-        private void Doormat_OnChing(object sender, EventArgs e)
+        private void Autobet_OnChing(object sender, EventArgs e)
         {
             throw new NotImplementedException();
         }
 
-        private void Doormat_OnAlarm(object sender, EventArgs e)
+        private void Autobet_OnAlarm(object sender, EventArgs e)
         {
             throw new NotImplementedException();
         }

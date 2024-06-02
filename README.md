@@ -13,7 +13,7 @@ coming soon.
 
 
 
-A summary of stuff that doormat.bot should be capable of when finished
+A summary of stuff that Gambler.Bot.AutoBet should be capable of when finished
 
 - .net standard library to allow cross platform betting.
 - Multi game support. The strategy and site interfaces (and programmer modes) were designed to handle multiple games, not just dice anymore.

@@ -25,8 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Doormat\Doormat\Doormat\Gambler.Bot.Core.csproj" />
-    <ProjectReference Include="..\Doormat.Bot\Gambler.Bot.AutoBet.csproj" />
+    <ProjectReference Include="..\..\Gambler.Bot.Core\Gambler.Bot.Core\Gambler.Bot.Core\Gambler.Bot.Core.csproj" />
+    <ProjectReference Include="..\Gambler.Bot.AutoBet\Gambler.Bot.AutoBet.csproj" />
   </ItemGroup>
 
   <ItemGroup>

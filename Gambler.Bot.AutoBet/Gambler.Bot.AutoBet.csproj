@@ -17,7 +17,7 @@
 	  <PackageProjectUrl>https://github.com/Seuntjie900/Gambler.Bot.AutoBet</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/Seuntjie900/Gambler.Bot.AutoBet</RepositoryUrl>
 	  <RepositoryType>Github</RepositoryType>
-	  <PackageTags>Seuntjie Gambling DiceBot Doormat Gambler.Bot.AutoBet</PackageTags>
+	  <PackageTags>Seuntjie Gambling DiceBot Gambler.Bot.AutoBet</PackageTags>
 	  <PackageReleaseNotes>Test Release for Nuget - Still in alpha.</PackageReleaseNotes>
 	  <NeutralLanguage>en-GB</NeutralLanguage>
 	  <DelaySign>false</DelaySign>
@@ -37,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\Doormat\LICENSE" Link="LICENSE">
+    <None Include="..\..\Gambler.Bot.Core\LICENSE" Link="LICENSE">
       <PackagePath>\</PackagePath>
       <Pack>True</Pack>
     </None>
@@ -71,10 +71,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Doormat\Doormat\Doormat\Gambler.Bot.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="Samples\CSTemplate.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -85,6 +81,10 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Samples\PYTemplate.py" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Gambler.Bot.Core\Gambler.Bot.Core\Gambler.Bot.Core\Gambler.Bot.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
