@@ -250,6 +250,11 @@ namespace Gambler.Bot.Strategies.Strategies
             CurrentRuntime.Globals["SiteStats"] = Stats;
         }
 
+        public void SetSimulation(bool IsSimulation)
+        {
+            CurrentRuntime.Globals["InSimulation"] = IsSimulation;
+        }
+
         void Withdraw(string Address, decimal Amount)
         {
             OnWithdraw?.Invoke(this, new WithdrawEventArgs { Address=Address, Amount=Amount });            
@@ -372,5 +377,7 @@ namespace Gambler.Bot.Strategies.Strategies
                 Print(e.Message);
             }
         }
+
+        
     }
 }

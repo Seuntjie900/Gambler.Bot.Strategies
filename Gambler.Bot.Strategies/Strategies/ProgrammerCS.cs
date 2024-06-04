@@ -179,6 +179,11 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             globals.SiteStats = Stats;
         }
+
+        public void SetSimulation(bool IsSimulation)
+        {
+            globals.InSimulation = IsSimulation;
+        }
         void Withdraw(string Address, decimal Amount)
         {
             OnWithdraw?.Invoke(this, new WithdrawEventArgs { Address = Address, Amount = Amount });

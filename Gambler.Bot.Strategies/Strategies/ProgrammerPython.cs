@@ -155,6 +155,11 @@ namespace Gambler.Bot.Strategies.Strategies
         public void UpdateSiteStats(SiteStats Stats)
         {
             Scope.SetVariable("SiteStats", Stats);
+            Scope.SetVariable("Balance",Stats.Balance);
+        }
+        public void SetSimulation(bool IsSimulation)
+        {
+            Scope.SetVariable("InSimulation",IsSimulation);
         }
         void Withdraw(string Address, decimal Amount)
         {

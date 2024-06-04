@@ -136,6 +136,10 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             Runtime.SetValue("SiteStats", Stats);
         }
+        public void SetSimulation(bool IsSimulation)
+        {
+            Runtime.SetValue("InSimulation", IsSimulation);
+        }
         void Withdraw(string Address, decimal Amount)
         {
             OnWithdraw?.Invoke(this, new WithdrawEventArgs { Address = Address, Amount = Amount });

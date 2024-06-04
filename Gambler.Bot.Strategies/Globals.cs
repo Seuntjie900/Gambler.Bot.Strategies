@@ -29,5 +29,6 @@ namespace Gambler.Bot.Core
         public Action<string> ExportSim { get; set; }
         public Action Stop { get; set; }
         public Action<string> SetCurrency { get; set; }
+        public bool InSimulation { get; set; }
     }
 }

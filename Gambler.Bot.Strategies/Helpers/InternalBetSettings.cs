@@ -2,6 +2,7 @@
 using Gambler.Bot.Common.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Gambler.Bot.Strategies.Helpers
 {
@@ -120,7 +121,7 @@ namespace Gambler.Bot.Strategies.Helpers
         public decimal StopWinFromMinProfit { get; set; }
 
 
-        public List<Trigger> Triggers { get; set; } = new List<Trigger>();
+        public ObservableCollection<Trigger> Triggers { get; set; } = new ObservableCollection<Trigger>();
 
         #region Process Bet
 

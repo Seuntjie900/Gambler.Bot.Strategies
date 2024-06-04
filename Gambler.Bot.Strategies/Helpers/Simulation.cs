@@ -95,9 +95,10 @@ namespace Gambler.Bot.Strategies.Helpers
             SiteStats.Balance = Balance;
             Running = true;
             Stop = false;
-            if (DiceStrategy is IProgrammerMode)
+            if (DiceStrategy is IProgrammerMode prog)
             {
-                (DiceStrategy as IProgrammerMode).LoadScript();
+                prog.SetSimulation(true);
+                prog.LoadScript();                
             }
             new Thread(new ThreadStart(SimulationThread)).Start();
         }
