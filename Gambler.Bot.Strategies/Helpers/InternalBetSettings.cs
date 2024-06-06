@@ -330,14 +330,16 @@ namespace Gambler.Bot.Strategies.Helpers
             return false;
         }
 
-        public bool CheckWithdraw(Bet NewBet, bool win, SessionStats Stats,  out decimal Amount, SiteStats siteStats)
+        public bool CheckWithdraw(Bet NewBet, bool win, SessionStats Stats,  out decimal Amount, SiteStats siteStats, out string address)
         {
+            
             Amount = 0;
             if (EnableUpperLimit && UpperLimitCompare == "Balance" && UpperLimitAction == LimitAction.Withdraw)
             {
                 if (siteStats.Balance >= UpperLimit)
                 {
                     Amount = UpperLimitActionAmount;
+                    address = UpperLimitAddress;
                     return true;
                 }
             }
@@ -346,6 +348,7 @@ namespace Gambler.Bot.Strategies.Helpers
                 if (siteStats.Balance <= LowerLimit)
                 {
                     Amount = LowerLimitActionAmount;
+                    address = LowerLimitAddress;
                     return true;
                 }
                 
@@ -355,6 +358,7 @@ namespace Gambler.Bot.Strategies.Helpers
                 if (Stats.Profit >= UpperLimit)
                 {
                     Amount = UpperLimitActionAmount;
+                    address = UpperLimitAddress;
                     return true;
                 }
             }
@@ -363,21 +367,24 @@ namespace Gambler.Bot.Strategies.Helpers
                 if (Stats.Profit <= LowerLimit)
                 {
                     Amount = LowerLimitActionAmount;
+                    address = LowerLimitAddress;
                     return true;
                 }
             }
+            address = null;
             return false;
         }
 
-        public bool CheckTips(Bet NewBet, bool win, SessionStats Stats, out decimal Amount, SiteStats siteStats)
+        public bool CheckTips(Bet NewBet, bool win, SessionStats Stats, out decimal Amount, SiteStats siteStats, out string address)
         {
            Amount = 0;
-            Amount = 0;
+            
             if (EnableUpperLimit && UpperLimitCompare == "Balance" && UpperLimitAction == LimitAction.Tip)
             {
                 if (siteStats.Balance >= UpperLimit)
                 {
                     Amount = UpperLimitActionAmount;
+                    address = UpperLimitAddress;
                     return true;
                 }
             }
@@ -386,6 +393,7 @@ namespace Gambler.Bot.Strategies.Helpers
                 if (siteStats.Balance <= LowerLimit)
                 {
                     Amount = LowerLimitActionAmount;
+                    address = LowerLimitAddress;
                     return true;
                 }
                 
@@ -395,6 +403,7 @@ namespace Gambler.Bot.Strategies.Helpers
                 if (Stats.Profit >= UpperLimit)
                 {
                     Amount = UpperLimitActionAmount;
+                    address = UpperLimitAddress;
                     return true;
                 }
             }
@@ -403,10 +412,11 @@ namespace Gambler.Bot.Strategies.Helpers
                 if (Stats.Profit <= LowerLimit)
                 {
                     Amount = LowerLimitActionAmount;
+                    address = LowerLimitAddress;
                     return true;
                 }
             }
-            
+            address = null;
             return false;
         }
 

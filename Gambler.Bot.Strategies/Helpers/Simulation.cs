@@ -171,7 +171,8 @@ namespace Gambler.Bot.Strategies.Helpers
                         Stop = true;
                     }
                     decimal withdrawamount = 0;
-                    if (BetSettings.CheckWithdraw(NewBet, NewBet.GetWin(Site.maxroll), Stats, out withdrawamount, SiteStats))
+                    string address = "";
+                    if (BetSettings.CheckWithdraw(NewBet, NewBet.GetWin(Site.maxroll), Stats, out withdrawamount, SiteStats, out address))
                     {
                         this.Balance -= withdrawamount;
                     }
@@ -179,7 +180,7 @@ namespace Gambler.Bot.Strategies.Helpers
                     {
                         this.Balance -= withdrawamount;
                     }
-                    if (BetSettings.CheckTips(NewBet, NewBet.GetWin(Site.maxroll), Stats, out withdrawamount, SiteStats))
+                    if (BetSettings.CheckTips(NewBet, NewBet.GetWin(Site.maxroll), Stats, out withdrawamount, SiteStats, out address))
                     {
                         this.Balance -= withdrawamount;
                     }
