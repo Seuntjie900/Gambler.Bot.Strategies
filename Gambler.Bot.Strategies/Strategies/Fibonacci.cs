@@ -57,8 +57,8 @@ namespace Gambler.Bot.Strategies.Strategies
 
                 }
             }
-            if (FibonacciLevel < 0)
-                FibonacciLevel = 0;
+            if (FibonacciLevel < 1)
+                FibonacciLevel = 1;
 
             if (FibonacciLevel >= FiboLeve & EnableFiboLevel)
             {
@@ -81,10 +81,13 @@ namespace Gambler.Bot.Strategies.Strategies
             FibonacciLevel = 1;
             return new PlaceDiceBet(CalculateFibonacci(FibonacciLevel),High,(decimal)Chance);
         }
-
+        int Fib(int n)
+        {
+            return (n < 2) ? n : Fib(n - 1) + Fib(n - 2);
+        }
         decimal CalculateFibonacci(int n)
         {
-            int x = (int)((1.0 / (Math.Sqrt(5.0))) * (Math.Pow((1.0 + Math.Sqrt(5.0)) / 2.0, n) - Math.Pow((1.0 + Math.Sqrt(5.0)) / 2.0, n)));
+            int x = Fib(n);
             return minbet * (decimal)(x);
         }
 
