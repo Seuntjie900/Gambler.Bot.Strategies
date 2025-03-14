@@ -9,7 +9,7 @@ namespace Gambler.Bot.Strategies.Strategies
     {
         public override string StrategyName { get; protected set; } = "Martingale";
         #region Settings
-        public int WinMultiplierMode { get; set; }
+        public MartingaleMultiplierMode WinMultiplierMode { get; set; }
         public decimal WinMaxMultiplies { get; set; } = 1;
         public decimal WinMultiplier { get; private set; } = 1;
         public decimal WinBaseMultiplier { get; set; } = 1;
@@ -46,7 +46,7 @@ namespace Gambler.Bot.Strategies.Strategies
         public int MaxMultiplies { get; set; } = 20;
         public decimal Multiplier { get; private set; } = 2;
         public decimal BaseMultiplier { get; set; } = 2;
-        public int MultiplierMode { get; set; } = 0;
+        public MartingaleMultiplierMode MultiplierMode { get; set; } = 0;
         public int Devidecounter { get; set; } = 10;
         public decimal Devider { get; set; } = 1;        
         public decimal TrazelMultiplier { get; set; } = 1;
@@ -82,15 +82,15 @@ namespace Gambler.Bot.Strategies.Strategies
             var Stats = this.Stats;
             if (Win)
             {
-                if (WinMultiplierMode==1 && Stats.WinStreak >= WinMaxMultiplies)
+                if (WinMultiplierMode== MartingaleMultiplierMode.Variable && Stats.WinStreak >= WinMaxMultiplies)
                 {
                     WinMultiplier = 1;
                 }
-                else if (WinMultiplierMode==2 && Stats.WinStreak % WinDevideCounter == 1 && Stats.WinStreak > 0)
+                else if (WinMultiplierMode== MartingaleMultiplierMode.ChangeOnce && Stats.WinStreak % WinDevideCounter == 1 && Stats.WinStreak > 0)
                 {
                     WinMultiplier *= WinDevider;
                 }
-                else if (WinMultiplierMode == 3 && Stats.WinStreak == WinDevidecounter && Stats.WinStreak > 0)
+                else if (WinMultiplierMode ==  MartingaleMultiplierMode.Max && Stats.WinStreak == WinDevidecounter && Stats.WinStreak > 0)
 
                 {
                     WinMultiplier *= WinDevider;
@@ -175,11 +175,11 @@ namespace Gambler.Bot.Strategies.Strategies
             {
                 //stop multiplying if at max or if it goes below 1
 
-                if (MultiplierMode==1 && Stats.LossStreak >= MaxMultiplies)
+                if (MultiplierMode== MartingaleMultiplierMode.Variable && Stats.LossStreak >= MaxMultiplies)
                 {
                     Multiplier = 1;
                 }
-                else if (MultiplierMode==2 && Stats.LossStreak % Devidecounter == 0 && Stats.LossStreak > 0)
+                else if (MultiplierMode== MartingaleMultiplierMode.ChangeOnce && Stats.LossStreak % Devidecounter == 0 && Stats.LossStreak > 0)
                 {
                     Multiplier *= Devider;
                     if (Multiplier < 1)
@@ -187,7 +187,7 @@ namespace Gambler.Bot.Strategies.Strategies
                 }
                 //adjust multiplier according to devider
 
-                else if (MultiplierMode == 3 && Stats.LossStreak == Devidecounter && Stats.LossStreak > 0)
+                else if (MultiplierMode == MartingaleMultiplierMode.Max && Stats.LossStreak == Devidecounter && Stats.LossStreak > 0)
                 {
                     Multiplier *= Devider;
                 }
@@ -270,5 +270,10 @@ namespace Gambler.Bot.Strategies.Strategies
         }
 
 
+    }
+
+    public enum MartingaleMultiplierMode
+    {
+        Constant = 0, Variable =1, ChangeOnce=2, Max=3
     }
 }
