@@ -94,7 +94,7 @@ namespace Gambler.Bot.Strategies.Strategies
                     Assembly.GetExecutingAssembly())
                     .WithImports(
                         "Gambler.Bot.Strategies",
-                        "Gambler.Bot.Core.Games",
+                        "Gambler.Bot.Common.Games",
                         "System"), 
                 typeof(Globals));
 

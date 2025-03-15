@@ -47,7 +47,7 @@ namespace Gambler.Bot.Strategies.Strategies
             }
             if (presetLevel < 0)
                 presetLevel = 0;
-            if (presetLevel > PresetBets.Count - 1)
+            if (presetLevel >= PresetBets.Count - 1)
             {
                 switch (EndAction)
                 {
@@ -88,68 +88,6 @@ namespace Gambler.Bot.Strategies.Strategies
             return PresetBets[Level].Amount;
 
 
-            /*decimal Lastbet = 0;
-            decimal Betval = -1;
-            string[] Vars = null;
-            if (lstPresetList[Level].Contains("-"))
-            {
-                Vars = lstPresetList[Level].Split('-');
-            }
-            else if (lstPresetList[Level].Contains("/"))
-            {
-                Vars = lstPresetList[Level].Split('/');
-            }
-            else if (lstPresetList[Level].Contains("\\"))
-            {
-                Vars = lstPresetList[Level].Split('\\');
-            }
-            else
-            {
-                Vars = lstPresetList[Level].Split('&');
-            }
-
-            if (decimal.TryParse(Vars[0], out Betval))
-            {
-                Lastbet = Betval;
-            }
-            if (Vars.Length >= 2)
-            {
-                decimal chance = -1;
-                if (decimal.TryParse(Vars[1], out chance))
-                {
-                    Chance=(decimal)(chance);
-                }
-                else
-                {
-                    if (Vars[1].ToLower() == "low" || Vars[1].ToLower() == "lo")
-                        High=(false);
-                    else if (Vars[1].ToLower() == "high" || Vars[1].ToLower() == "hi")
-                    {
-                        High=(true);
-                    }
-                }
-                if (Vars.Length >= 3)
-                {
-                    if (decimal.TryParse(Vars[2], out chance))
-                    {
-                        Chance=(decimal)(chance);
-                    }
-                    else
-                    {
-                        if (Vars[2].ToLower() == "low" || Vars[2].ToLower() == "lo")
-                            High=(false);
-                        else if (Vars[2].ToLower() == "high" || Vars[2].ToLower() == "hi")
-                        {
-                            High=(true);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                CallStop("Invalid bet inpreset list");
-            }
-            return Lastbet;*/
         }
 
 
