@@ -9,10 +9,11 @@ using Gambler.Bot.Common.Games.Dice;
 using Gambler.Bot.Common.Games.Crash;
 using Gambler.Bot.Common.Games.Plinko;
 using Gambler.Bot.Common.Games.Roulette;
+using Gambler.Bot.Common.Games;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
-    public class ProgrammerPython: BaseStrategy, IProgrammerMode, iDiceStrategy
+    public class ProgrammerPython: BaseStrategy, IProgrammerMode
     {
         public override string StrategyName { get; protected set; } = "ProgrammerPython";
         public string FileName { get; set; }
@@ -54,11 +55,11 @@ namespace Gambler.Bot.Strategies.Strategies
             
         }
 
-        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        protected override PlaceBet NextBet(Bet PreviousBet, bool Win)
         {
             try
             {
-                PlaceDiceBet NextBet = new PlaceDiceBet(PreviousBet.TotalAmount, PreviousBet.High, PreviousBet.Chance);
+                PlaceBet NextBet = PreviousBet.CreateRetry();
 
                 dynamic result = Scope.DoDiceBet(PreviousBet, Win, NextBet);
 
@@ -71,32 +72,7 @@ namespace Gambler.Bot.Strategies.Strategies
             return null;
         }
 
-        public override PlaceCrashBet CalculateNextCrashBet(CrashBet PreviousBet, bool Win)
-        {
-            PlaceCrashBet NextBet = new PlaceCrashBet();
-
-            dynamic result = Scope.DoCrashBet(PreviousBet, Win, NextBet);
-
-            return result;
-        }
-
-        public override PlacePlinkoBet CalculateNextPlinkoBet(PlinkoBet PreviousBet, bool Win)
-        {
-            PlacePlinkoBet NextBet = new PlacePlinkoBet();
-
-            dynamic result = Scope.DoPlinkoBet(PreviousBet, Win, NextBet);
-
-            return result;
-        }
-
-        public override PlaceRouletteBet CalculateNextRouletteBet(RouletteBet PreviousBet, bool Win)
-        {
-            PlaceRouletteBet NextBet = new PlaceRouletteBet();
-
-            dynamic result = Scope.DoRouletteBet(PreviousBet, Win, NextBet);
-
-            return result;
-        }
+        
 
 
         public void CreateRuntime()
@@ -131,9 +107,9 @@ namespace Gambler.Bot.Strategies.Strategies
             
         }
 
-        public override PlaceDiceBet RunReset()
+        public override PlaceBet RunReset(Games Game)
         {
-            PlaceDiceBet NextBet = new PlaceDiceBet(0,false,0);
+            PlaceBet NextBet = CreateEmptyPlaceBet(Game);
 
             dynamic result = Scope.ResetDice(NextBet);
 

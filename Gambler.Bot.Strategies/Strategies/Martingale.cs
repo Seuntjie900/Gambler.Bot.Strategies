@@ -2,10 +2,12 @@
 using Microsoft.Extensions.Logging;
 using System;
 using Gambler.Bot.Common.Games.Dice;
+using Gambler.Bot.Common.Games.Limbo;
+using Gambler.Bot.Common.Games;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
-    public class Martingale: BaseStrategy, iDiceStrategy
+    public class Martingale: BaseStrategy
     {
         public override string StrategyName { get; protected set; } = "Martingale";
         #region Settings
@@ -76,7 +78,7 @@ namespace Gambler.Bot.Strategies.Strategies
             
         }
 
-        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        protected override PlaceBet NextBet(Bet PreviousBet, bool Win)
         {
             decimal Lastbet = PreviousBet.TotalAmount;
             var Stats = this.Stats;
@@ -256,20 +258,32 @@ namespace Gambler.Bot.Strategies.Strategies
             {
                 Lastbet = (Percentage / 100.0m) * Balance;
             }
-            return new PlaceDiceBet(Lastbet, High, (decimal)Chance);
+            if (PreviousBet is DiceBet diceb && PreviousBet.Game == Games.Dice)
+                return new PlaceDiceBet(Lastbet, High, diceb.Chance);
+            if (PreviousBet is LimboBet limbob && PreviousBet.Game == Games.Limbo)
+                return new PlaceLimboBet(Lastbet, limbob.Payout);
+            else throw new NotImplementedException("Strategy does not support this game.");
         }
 
-        public override PlaceDiceBet RunReset()
+        public override PlaceBet RunReset(Games Game)
         {
             Amount = MinBet;
             High = starthigh;
             Chance = BaseChance;
             Multiplier = BaseMultiplier;
             WinMultiplier = WinBaseMultiplier;
-            return new PlaceDiceBet((decimal)MinBet, starthigh, (decimal)Chance);
+            if (Game == Games.Dice)
+            {
+                return new PlaceDiceBet((decimal)MinBet, High, (decimal)Chance);
+            }
+            if (Game == Games.Limbo)
+            {
+                return new PlaceLimboBet((decimal)MinBet, 99 / (decimal)Chance);
+            }
+            else throw new NotImplementedException("Strategy does not support this game");
         }
 
-
+     
     }
 
     public enum MartingaleMultiplierMode

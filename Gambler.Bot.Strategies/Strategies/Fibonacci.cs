@@ -2,10 +2,12 @@
 using Microsoft.Extensions.Logging;
 using System;
 using Gambler.Bot.Common.Games.Dice;
+using Gambler.Bot.Common.Games;
+using Gambler.Bot.Common.Games.Limbo;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
-    public class Fibonacci: BaseStrategy, iDiceStrategy
+    public class Fibonacci: BaseStrategy
     {
         public override string StrategyName { get; protected set; } = "Fibonacci";
         public decimal minbet { get; set; }
@@ -20,7 +22,7 @@ namespace Gambler.Bot.Strategies.Strategies
             
         }
 
-        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        protected override PlaceBet NextBet(Bet PreviousBet, bool Win)
         {
             decimal LastBet = PreviousBet.TotalAmount;
             if (Win)
@@ -73,13 +75,22 @@ namespace Gambler.Bot.Strategies.Strategies
                 }
             }
             LastBet = CalculateFibonacci(FibonacciLevel);
-            return new PlaceDiceBet(LastBet, High, PreviousBet.Chance);
+            if (PreviousBet is DiceBet diceb && PreviousBet.Game == Games.Dice)
+                return new PlaceDiceBet(LastBet, High, diceb.Chance);
+            if (PreviousBet is LimboBet limbob && PreviousBet.Game == Games.Limbo)
+                return new PlaceLimboBet(LastBet, limbob.Payout);
+            else throw new NotImplementedException("Strategy does not support this game.");
         }
 
-        public override PlaceDiceBet RunReset()
+        public override PlaceBet RunReset(Games game)
         {
             FibonacciLevel = 1;
-            return new PlaceDiceBet(CalculateFibonacci(FibonacciLevel),High,(decimal)Chance);
+            //return new PlaceDiceBet(CalculateFibonacci(FibonacciLevel),High,(decimal)Chance);
+            if (game == Games.Dice)
+                return new PlaceDiceBet(CalculateFibonacci(FibonacciLevel), High, Chance);
+            if (game == Games.Limbo)
+                return new PlaceLimboBet(CalculateFibonacci(FibonacciLevel), 100/ Chance);
+            else throw new NotImplementedException("Strategy does not support this game.");
         }
         int Fib(int n)
         {

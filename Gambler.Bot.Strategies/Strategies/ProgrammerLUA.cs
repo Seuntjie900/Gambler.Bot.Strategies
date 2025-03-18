@@ -8,10 +8,11 @@ using Gambler.Bot.Common.Games.Dice;
 using Gambler.Bot.Common.Games.Crash;
 using Gambler.Bot.Common.Games.Plinko;
 using Gambler.Bot.Common.Games.Roulette;
+using Gambler.Bot.Common.Games;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
-    public class ProgrammerLUA : BaseStrategy, IProgrammerMode, iDiceStrategy
+    public class ProgrammerLUA : BaseStrategy, IProgrammerMode
     {
         public override string StrategyName { get; protected set; } = "ProgrammerLUA";
         public string FileName { get; set; }
@@ -47,12 +48,14 @@ namespace Gambler.Bot.Strategies.Strategies
             
         }
 
-        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        protected override PlaceBet NextBet(Bet PreviousBet, bool Win)
         {
             try
             {
-                PlaceDiceBet NextBet = new PlaceDiceBet(PreviousBet.TotalAmount, PreviousBet.High, PreviousBet.Chance);
-                DynValue DoDiceBet = CurrentRuntime.Globals.Get("DoDiceBet");
+                PlaceBet NextBet = PreviousBet.CreateRetry();
+                
+                
+                DynValue DoDiceBet = CurrentRuntime.Globals.Get("CalculateBet");
                 if (DoDiceBet != null)
                 {
                     DynValue Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
@@ -60,12 +63,12 @@ namespace Gambler.Bot.Strategies.Strategies
                 else
                 {
                     DoDiceBet = CurrentRuntime.Globals.Get("DoBet");
-                    if (DoDiceBet != null)
+                    if (DoDiceBet != null && NextBet is PlaceDiceBet nxt)
                     {
                         DynValue Result = CurrentRuntime.Call(DoDiceBet);
-                        NextBet.Chance = (decimal)CurrentRuntime.Globals["chance"];
-                        NextBet.Amount = (decimal)CurrentRuntime.Globals["nextbet"];
-                        NextBet.High = (bool)CurrentRuntime.Globals["bethigh"];
+                        nxt.Chance = (decimal)CurrentRuntime.Globals["chance"];
+                        nxt.Amount = (decimal)CurrentRuntime.Globals["nextbet"];
+                        nxt.High = (bool)CurrentRuntime.Globals["bethigh"];
                     }
                 }
                 return NextBet;
@@ -102,38 +105,38 @@ namespace Gambler.Bot.Strategies.Strategies
             }            
         }
 
-        public override PlaceCrashBet CalculateNextCrashBet(CrashBet PreviousBet, bool Win)
-        {
-            PlaceCrashBet NextBet = new PlaceCrashBet();
-            DynValue DoDiceBet = CurrentRuntime.Globals.Get("DoCrashBet");
-            if (DoDiceBet != null)
-            {
-                DynValue Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
-            }
-            return NextBet;
-        }
+        //public override PlaceCrashBet CalculateNextCrashBet(CrashBet PreviousBet, bool Win)
+        //{
+        //    PlaceCrashBet NextBet = new PlaceCrashBet();
+        //    DynValue DoDiceBet = CurrentRuntime.Globals.Get("DoCrashBet");
+        //    if (DoDiceBet != null)
+        //    {
+        //        DynValue Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
+        //    }
+        //    return NextBet;
+        //}
 
-        public override PlacePlinkoBet CalculateNextPlinkoBet(PlinkoBet PreviousBet, bool Win)
-        {
-            PlacePlinkoBet NextBet = new PlacePlinkoBet();
-            DynValue DoDiceBet = CurrentRuntime.Globals.Get("DoPlinkoBet");
-            if (DoDiceBet != null)
-            {
-                DynValue Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
-            }
-            return NextBet;
-        }
+        //public override PlacePlinkoBet CalculateNextPlinkoBet(PlinkoBet PreviousBet, bool Win)
+        //{
+        //    PlacePlinkoBet NextBet = new PlacePlinkoBet();
+        //    DynValue DoDiceBet = CurrentRuntime.Globals.Get("DoPlinkoBet");
+        //    if (DoDiceBet != null)
+        //    {
+        //        DynValue Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
+        //    }
+        //    return NextBet;
+        //}
 
-        public override PlaceRouletteBet CalculateNextRouletteBet(RouletteBet PreviousBet, bool Win)
-        {
-            PlaceRouletteBet NextBet = new PlaceRouletteBet();
-            DynValue DoDiceBet = CurrentRuntime.Globals.Get("DoRouletteBet");
-            if (DoDiceBet != null)
-            {
-                DynValue Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
-            }
-            return NextBet;
-        }
+        //public override PlaceRouletteBet CalculateNextRouletteBet(RouletteBet PreviousBet, bool Win)
+        //{
+        //    PlaceRouletteBet NextBet = new PlaceRouletteBet();
+        //    DynValue DoDiceBet = CurrentRuntime.Globals.Get("DoRouletteBet");
+        //    if (DoDiceBet != null)
+        //    {
+        //        DynValue Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
+        //    }
+        //    return NextBet;
+        //}
        
 
         public void CreateRuntime()
@@ -199,15 +202,15 @@ namespace Gambler.Bot.Strategies.Strategies
             }
         }
 
-        public override PlaceDiceBet RunReset()
+        public override PlaceBet RunReset(Games Game)
         {
             try
             {
-                DynValue DoDiceBet = CurrentRuntime.Globals.Get("ResetDice");
+                DynValue DoDiceBet = CurrentRuntime.Globals.Get("Reset");
                 if (DoDiceBet != null)
                 {
-                    PlaceDiceBet NextBet = new PlaceDiceBet(0, false, 0);
-                    DynValue Result = CurrentRuntime.Call(DoDiceBet, NextBet);
+                    PlaceBet NextBet = CreateEmptyPlaceBet(Game);
+                    DynValue Result = CurrentRuntime.Call(DoDiceBet, NextBet, Game);
                     return NextBet;
                 }
             }

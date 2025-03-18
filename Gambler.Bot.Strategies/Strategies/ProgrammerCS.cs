@@ -9,10 +9,12 @@ using System;
 using System.IO;
 using System.Reflection;
 using Gambler.Bot.Common.Games.Dice;
+using Gambler.Bot.Common.Games;
+using Gambler.Bot.Common.Games.Limbo;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
-    public class ProgrammerCS : BaseStrategy, IProgrammerMode, iDiceStrategy
+    public class ProgrammerCS : BaseStrategy, IProgrammerMode
     {
         public override string StrategyName { get; protected set; } = "ProgrammerCS";
         public string FileName { get; set; }
@@ -50,19 +52,19 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             
         }
-        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        protected override PlaceBet NextBet(Bet PreviousBet, bool Win)
         {
             try
             {
-                PlaceDiceBet NextBet = new PlaceDiceBet(PreviousBet.TotalAmount, PreviousBet.High, PreviousBet.Chance);
+                PlaceBet NextBet = PreviousBet.CreateRetry();
 
-                globals.NextDiceBet = NextBet;
-                globals.PreviousDiceBet = PreviousBet;
-                globals.DiceWin = Win;
+                globals.NextBet = NextBet;
+                globals.PreviousBet = PreviousBet;
+                globals.Win = Win;
                 //if (DoDiceBet == null)
                 {
 
-                    runtime = runtime.ContinueWithAsync("DoDiceBet(PreviousDiceBet, DiceWin, NextDiceBet)").Result;
+                    runtime = runtime.ContinueWithAsync("CalculateBet(PreviousBet, Win, NextBet)").Result;
                     DoDiceBet = runtime.Script;
                 }
                 /*else
@@ -149,13 +151,15 @@ namespace Gambler.Bot.Strategies.Strategies
             
         }
 
-        public override PlaceDiceBet RunReset()
+        public override PlaceBet RunReset(Games Game)
         {
-            PlaceDiceBet NextBet = new PlaceDiceBet(0, false, 0);
-            globals.NextDiceBet = NextBet;            
+            PlaceBet NextBet = CreateEmptyPlaceBet(Game);
+            
+            globals.NextBet = NextBet;
+            
             //if (ResetDice == null)
             {
-                runtime = runtime.ContinueWithAsync("ResetDice(NextDiceBet)").Result;
+                runtime = runtime.ContinueWithAsync("Reset(NextBet)").Result;
                 ResetDice = runtime.Script;
             }
             

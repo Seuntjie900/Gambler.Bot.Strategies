@@ -3,10 +3,11 @@ using Gambler.Bot.Strategies.Strategies.PresetListModels;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 using Gambler.Bot.Common.Games.Dice;
+using Gambler.Bot.Common.Games;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
-    public class PresetList: BaseStrategy, iDiceStrategy
+    public class PresetList: BaseStrategy
     {
         
 
@@ -22,7 +23,7 @@ namespace Gambler.Bot.Strategies.Strategies
             
         }
         public BindingList<PresetDiceBet> PresetBets { get; set; } = new BindingList<PresetDiceBet>();
-        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        protected override PlaceBet NextBet(Bet PreviousBet, bool Win)
         {
             decimal Lastbet = PreviousBet.TotalAmount;
             if (Win)
@@ -70,7 +71,7 @@ namespace Gambler.Bot.Strategies.Strategies
             return new PlaceDiceBet(Lastbet, High, Chance);
         }
 
-        public override PlaceDiceBet RunReset()
+        public override PlaceBet RunReset(Games Game)
         {
             presetLevel = 0;
             decimal Lastbet = SetPresetValues(presetLevel);

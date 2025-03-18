@@ -6,10 +6,11 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using Gambler.Bot.Common.Games.Dice;
+using Gambler.Bot.Common.Games;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
-    public class ProgrammerJS : BaseStrategy, IProgrammerMode, iDiceStrategy
+    public class ProgrammerJS : BaseStrategy, IProgrammerMode
     {
         public override string StrategyName { get; protected set; } = "ProgrammerJS";
         Engine Runtime;
@@ -46,13 +47,13 @@ namespace Gambler.Bot.Strategies.Strategies
             
         }
 
-        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        protected override PlaceBet NextBet(Bet PreviousBet, bool Win)
         {
             try
             {
-                PlaceDiceBet NextBet = new PlaceDiceBet(PreviousBet.TotalAmount, PreviousBet.High, PreviousBet.Chance);
+                PlaceBet NextBet = PreviousBet.CreateRetry();
                 //TypeReference.CreateTypeReference
-                Runtime.Invoke("DoDiceBet", PreviousBet, Win, NextBet);
+                Runtime.Invoke("CalculateBet", PreviousBet, Win, NextBet);
                 return NextBet;
             }
             catch (Exception e)
@@ -113,9 +114,9 @@ namespace Gambler.Bot.Strategies.Strategies
             Runtime.Execute(scriptBody);
         }
 
-        public override PlaceDiceBet RunReset()
+        public override PlaceBet RunReset(Games Game)
         {
-            PlaceDiceBet NextBet = new PlaceDiceBet(0, false, 0);
+            PlaceBet NextBet = CreateEmptyPlaceBet(Game);
             Runtime.Invoke("ResetDice", NextBet);
             return NextBet;
         }

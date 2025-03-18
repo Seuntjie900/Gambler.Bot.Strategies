@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using Gambler.Bot.Common.Games.Dice;
+using Gambler.Bot.Common.Games;
 
 namespace Gambler.Bot.Strategies.Helpers
 {
@@ -112,7 +113,7 @@ namespace Gambler.Bot.Strategies.Helpers
         {
             try
             {
-                DiceBet NewBet = SimulatedBet(DiceStrategy.RunReset());
+                DiceBet NewBet = SimulatedBet(DiceStrategy.RunReset(Games.Dice) as PlaceDiceBet);
                 this.Balance += (decimal)NewBet.Profit;
                 Profit += (decimal)NewBet.Profit;
                 while (TotalBetsPlaced < Bets && !Stop && Running)
@@ -148,7 +149,7 @@ namespace Gambler.Bot.Strategies.Helpers
                     if (BetSettings.CheckResetPreStats(NewBet, NewBet.GetWin(Site.maxroll), Stats, SiteStats)) 
                     {
                         Reset = true;
-                        NewBetObject = DiceStrategy.RunReset();
+                        NewBetObject = DiceStrategy.RunReset(Games.Dice) as PlaceDiceBet;
                     }
                     if (BetSettings.CheckStopPreStats(NewBet, NewBet.GetWin(Site.maxroll), Stats, out Response, SiteStats))
                     {
@@ -164,7 +165,7 @@ namespace Gambler.Bot.Strategies.Helpers
                     if (BetSettings.CheckResetPostStats(NewBet, NewBet.GetWin(Site.maxroll), Stats, SiteStats))
                     {
                         Reset = true;
-                        NewBetObject = DiceStrategy.RunReset();
+                        NewBetObject = DiceStrategy.RunReset(Games.Dice) as PlaceDiceBet;
                     }
                     if (BetSettings.CheckStopPOstStats(NewBet, NewBet.GetWin(Site.maxroll), Stats, out Response, SiteStats))
                     {

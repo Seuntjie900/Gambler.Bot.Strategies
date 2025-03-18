@@ -6,6 +6,7 @@ using Gambler.Bot.Common.Games.Dice;
 using Gambler.Bot.Common.Games.Crash;
 using Gambler.Bot.Common.Games.Plinko;
 using Gambler.Bot.Common.Games.Roulette;
+using Gambler.Bot.Common.Games.Limbo;
 
 namespace Gambler.Bot.Strategies.Strategies.Abstractions
 {
@@ -39,31 +40,32 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
                 return WorkingSet.CalculateNextBet(PreviousBet, Win);
             else
             {
-                if (PreviousBet is DiceBet db && this is iDiceStrategy dc)
-                    return dc.CalculateNextDiceBet(db, Win);
-                else if (PreviousBet is CrashBet)
-                    return CalculateNextCrashBet(PreviousBet as CrashBet, Win);
-                else if (PreviousBet is RouletteBet)
-                    return CalculateNextRouletteBet(PreviousBet as RouletteBet, Win);
-                else if (PreviousBet is PlinkoBet)
-                    return CalculateNextPlinkoBet(PreviousBet as PlinkoBet, Win);
+                NextBet(PreviousBet, Win);
             }
             return null;
         }
 
+        protected PlaceBet CreateEmptyPlaceBet(Games game)
+        {
+            switch (game)
+            {
+                case Games.Dice:
+                    return new PlaceDiceBet(0, false, 0);
+                    break;
+                case Games.Limbo:
+                    return new PlaceLimboBet(0, 0);
+                    break;
+            };
+            return null;
+        }
 
-        public virtual PlaceCrashBet CalculateNextCrashBet(CrashBet PreviousBet, bool Win) { throw new NotImplementedException(); }
-
-        public virtual PlaceRouletteBet CalculateNextRouletteBet(RouletteBet PreviousBet, bool Win) { throw new NotImplementedException(); }
-
-        public virtual PlacePlinkoBet CalculateNextPlinkoBet(PlinkoBet PreviousBet, bool Win) { throw new NotImplementedException(); }
-
+        protected abstract PlaceBet NextBet(Bet PreviousBet, bool Win);
 
         /// <summary>
         /// Indicates to the strategy that automated betting is starting.
         /// </summary>
         /// <returns></returns>
-        public PlaceBet Start()
+        public PlaceBet Start(Games game)
         {
             if (!(this is IProgrammerMode))
             {
@@ -71,11 +73,11 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
                 WorkingSet.NeedBalance += WorkingSet_NeedBalance;
                 WorkingSet.OnNeedStats += WorkingSet_OnNeedStats;
                 WorkingSet.Stop += WorkingSet_Stop;*/
-                return RunReset();
+                return RunReset(game);
             }
             else
             {
-                return RunReset();
+                return RunReset(game);
             }
         }
 
@@ -83,7 +85,7 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
         /// Reset the betting strategy
         /// </summary>
         /// <returns></returns>
-        public abstract PlaceDiceBet RunReset();
+        public abstract PlaceBet RunReset(Games game);
 
         /// <summary>
         /// Gets the users balance from the site

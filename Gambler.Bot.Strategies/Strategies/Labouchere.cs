@@ -3,10 +3,13 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using Gambler.Bot.Common.Games.Dice;
+using Gambler.Bot.Common.Games;
+using Gambler.Bot.Common.Games.Limbo;
+using System;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
-    public class Labouchere: BaseStrategy, iDiceStrategy
+    public class Labouchere: BaseStrategy
     {
         public override string StrategyName { get; protected set; } = "Labouchere";
         //public string LabList { get; set; }
@@ -26,7 +29,7 @@ namespace Gambler.Bot.Strategies.Strategies
             
         }
 
-        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        protected override PlaceBet NextBet(Bet PreviousBet, bool Win)
         {
             decimal Lastbet = PreviousBet.TotalAmount;
             if (Win)
@@ -51,7 +54,7 @@ namespace Gambler.Bot.Strategies.Strategies
                         }
                         else
                         {
-                            RunReset();
+                            RunReset(PreviousBet.Game);
                         }
                     }
 
@@ -136,10 +139,15 @@ namespace Gambler.Bot.Strategies.Strategies
                         Lastbet = LabList[0] + LabList[LabList.Count - 1];
                 }
             }
-            return new PlaceDiceBet(Lastbet, High, PreviousBet.Chance);
+            if (PreviousBet is DiceBet diceb && PreviousBet.Game == Games.Dice)
+                return new PlaceDiceBet(Lastbet, High, diceb.Chance);
+            if (PreviousBet is LimboBet limbob && PreviousBet.Game == Games.Limbo)
+                return new PlaceLimboBet(Lastbet, limbob.Payout);
+            else 
+                throw new NotImplementedException("Strategy does not support this game.");
         }
 
-        public override PlaceDiceBet RunReset()
+        public override PlaceBet RunReset(Games Game)
         {
             decimal Amount = 0;
             LabList = BetList.ToArray().ToList<decimal>();
@@ -148,7 +156,12 @@ namespace Gambler.Bot.Strategies.Strategies
             else if (LabList.Count > 1)
                 Amount= LabList[0] + LabList[LabList.Count - 1];
             High = starthigh;
-            return new PlaceDiceBet(Amount, High, (decimal)Chance);
+            if (Game == Games.Dice)
+                return new PlaceDiceBet(Amount, High, Chance);
+            if (Game == Games.Limbo)
+                return new PlaceLimboBet(Amount, 100/Chance);
+            else
+                throw new NotImplementedException("Strategy does not support this game.");
         }
 
         public bool rdbLabEnable { get; set; }

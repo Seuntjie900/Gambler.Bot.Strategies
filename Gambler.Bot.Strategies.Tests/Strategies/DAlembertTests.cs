@@ -67,10 +67,10 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             });
 
             // Act
-            var result = _strategy.CalculateNextDiceBet(previousBet, true);
+            var result = _strategy.CalculateNextBet(previousBet, true);
 
             // Assert
-            Assert.Equal(expectedAmount, result.Amount);
+            Assert.Equal(expectedAmount, result.TotalAmount);
         }
 
         [Theory]
@@ -87,10 +87,10 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             });
 
             // Act
-            var result = _strategy.CalculateNextDiceBet(previousBet, true);
+            var result = _strategy.CalculateNextBet(previousBet, true);
 
             // Assert
-            Assert.Equal(expectedAmount, result.Amount);
+            Assert.Equal(expectedAmount, result.TotalAmount);
         }
 
         [Theory]
@@ -106,10 +106,10 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             });
 
             // Act
-            var result = _strategy.CalculateNextDiceBet(previousBet, true);
+            var result = _strategy.CalculateNextBet(previousBet, true);
 
             // Assert
-            Assert.Equal(expectedAmount, result.Amount);
+            Assert.Equal(expectedAmount, result.TotalAmount);
         }
 
         [Theory]
@@ -131,10 +131,10 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             });
 
             // Act
-            var result = _strategy.CalculateNextDiceBet(previousBet, true);
+            var result = _strategy.CalculateNextBet(previousBet, true);
 
             // Assert
-            Assert.Equal(expectedAmount, result.Amount);
+            Assert.Equal(expectedAmount, result.TotalAmount);
         }
 
         [Fact]
@@ -149,10 +149,10 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             });
 
             // Act
-            var result = _strategy.CalculateNextDiceBet(previousBet, true);
+            var result = _strategy.CalculateNextBet(previousBet, true);
 
             // Assert
-            Assert.Equal(_strategy.MinBet, result.Amount);
+            Assert.Equal(_strategy.MinBet, result.TotalAmount);
         }
 
 
@@ -172,10 +172,10 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             });
 
             // Act
-            var result = _strategy.CalculateNextDiceBet(previousBet, false);
+            var result = _strategy.CalculateNextBet(previousBet, false);
 
             // Assert
-            Assert.Equal(expectedAmount, result.Amount);
+            Assert.Equal(expectedAmount, result.TotalAmount);
         }
 
         [Theory]
@@ -192,10 +192,10 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             });
 
             // Act
-            var result = _strategy.CalculateNextDiceBet(previousBet, false);
+            var result = _strategy.CalculateNextBet(previousBet, false);
 
             // Assert
-            Assert.Equal(expectedAmount, result.Amount);
+            Assert.Equal(expectedAmount, result.TotalAmount);
         }
 
         [Theory]
@@ -211,10 +211,10 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             });
 
             // Act
-            var result = _strategy.CalculateNextDiceBet(previousBet, false);
+            var result = _strategy.CalculateNextBet(previousBet, false);
 
             // Assert
-            Assert.Equal(expectedAmount, result.Amount);
+            Assert.Equal(expectedAmount, result.TotalAmount);
         }
 
         [Theory]
@@ -236,10 +236,10 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             });
 
             // Act
-            var result = _strategy.CalculateNextDiceBet(previousBet, false);
+            var result = _strategy.CalculateNextBet(previousBet, false);
 
             // Assert
-            Assert.Equal(expectedAmount, result.Amount);
+            Assert.Equal(expectedAmount, result.TotalAmount);
         }
 
         [Fact]
@@ -254,10 +254,10 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             });
 
             // Act
-            var result = _strategy.CalculateNextDiceBet(previousBet, false);
+            var result = _strategy.CalculateNextBet(previousBet, false);
 
             // Assert
-            Assert.Equal(_strategy.MinBet, result.Amount);
+            Assert.Equal(_strategy.MinBet, result.TotalAmount);
         }
 
         // You can mirror the above tests for the Lose scenarios by adjusting the conditions and using LossStreak instead of WinStreak.
@@ -271,11 +271,11 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             _strategy.High = true;  // Initial condition to check reset
 
             // Act
-            var result = _strategy.RunReset();
+            var result = _strategy.RunReset(Games.Dice);
 
             // Assert
-            Assert.Equal(_strategy.MinBet, result.Amount);
-            Assert.Equal(_strategy.Chance, result.Chance);
+            Assert.Equal(_strategy.MinBet, (result as PlaceDiceBet).Amount);
+            Assert.Equal(_strategy.Chance, (result as PlaceDiceBet).Chance);
         }
     }
 }

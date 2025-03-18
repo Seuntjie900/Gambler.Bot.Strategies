@@ -2,10 +2,13 @@
 using Gambler.Bot.Strategies.Strategies.Abstractions;
 using Microsoft.Extensions.Logging;
 using Gambler.Bot.Common.Games.Dice;
+using Gambler.Bot.Common.Games;
+using System;
+using Gambler.Bot.Common.Games.Limbo;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
-    public class DAlembert: BaseStrategy, iDiceStrategy
+    public class DAlembert: BaseStrategy
     {
         public override string StrategyName { get; protected set; } = "D'Alembert";
         public int AlembertStretchWin { get; set; } = 0;
@@ -32,7 +35,7 @@ namespace Gambler.Bot.Strategies.Strategies
             
         }
 
-        public PlaceDiceBet CalculateNextDiceBet(DiceBet PreviousBet, bool Win)
+        protected override PlaceBet NextBet(Bet PreviousBet, bool Win)
         {
             decimal Lastbet = PreviousBet.TotalAmount;
             SessionStats Stats = this.Stats;
@@ -54,14 +57,25 @@ namespace Gambler.Bot.Strategies.Strategies
             if (Lastbet < MinBet)
                 Lastbet = MinBet;
 
-            return new PlaceDiceBet(Lastbet, High, PreviousBet.Chance);
+            if (PreviousBet is DiceBet diceb && PreviousBet.Game== Games.Dice)
+                return new PlaceDiceBet(Lastbet, High, diceb.Chance);
+            if (PreviousBet is LimboBet limbob && PreviousBet.Game == Games.Limbo)
+                return new PlaceLimboBet(Lastbet, limbob.Payout);
+            else throw new NotImplementedException("Strategy does not support this game.");
         }
 
        
-        public override PlaceDiceBet RunReset()
+        public override PlaceBet RunReset(Games game)
         {
-            return new PlaceDiceBet((decimal)MinBet, High, (decimal)Chance);
-                
+            if (game == Games.Dice)
+            {
+                return new PlaceDiceBet((decimal)MinBet, High, (decimal)Chance);
+            }
+            if (game == Games.Limbo)
+            {
+                return new PlaceLimboBet((decimal)MinBet, 99/(decimal)Chance);
+            }
+            else throw new NotImplementedException("Strategy does not support this game");
         }
 
         
