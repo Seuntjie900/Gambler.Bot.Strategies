@@ -1,8 +1,8 @@
 ﻿using Gambler.Bot.Strategies.Strategies.Abstractions;
 using Gambler.Bot.Strategies.Strategies.PresetListModels;
-using Gambler.Bot.Common.Games;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
+using Gambler.Bot.Common.Games.Dice;
 
 namespace Gambler.Bot.Strategies.Strategies
 {

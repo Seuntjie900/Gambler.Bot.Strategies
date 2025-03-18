@@ -1,4 +1,4 @@
-﻿using Gambler.Bot.Common.Games;
+﻿using Gambler.Bot.Common.Games.Dice;
 
 namespace Gambler.Bot.Strategies.Strategies.Abstractions
 {

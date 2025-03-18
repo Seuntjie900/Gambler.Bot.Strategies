@@ -1,11 +1,11 @@
 ﻿using Gambler.Bot.Strategies.Helpers;
 using Gambler.Bot.Strategies.Strategies.Abstractions;
-using Gambler.Bot.Common.Games;
 using Gambler.Bot.Common.Helpers;
 using Jint;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
+using Gambler.Bot.Common.Games.Dice;
 
 namespace Gambler.Bot.Strategies.Strategies
 {

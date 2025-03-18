@@ -1,7 +1,7 @@
 ﻿using Gambler.Bot.Strategies.Helpers;
-using Gambler.Bot.Common.Games;
 using Gambler.Bot.Common.Helpers;
 using System;
+using Gambler.Bot.Common.Games.Dice;
 
 namespace Gambler.Bot.Strategies.Strategies.Abstractions
 {

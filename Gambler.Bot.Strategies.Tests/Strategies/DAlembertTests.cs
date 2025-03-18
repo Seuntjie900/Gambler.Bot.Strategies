@@ -3,6 +3,7 @@ using Gambler.Bot.Strategies.Strategies;
 using Gambler.Bot.Common.Games;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Gambler.Bot.Common.Games.Dice;
 
 
 namespace Gambler.Bot.Strategies.Tests.Strategies

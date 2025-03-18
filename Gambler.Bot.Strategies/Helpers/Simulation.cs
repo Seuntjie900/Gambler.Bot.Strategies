@@ -1,6 +1,5 @@
 ﻿using Gambler.Bot.Strategies.Strategies.Abstractions;
 using Gambler.Bot.Common.Events;
-using Gambler.Bot.Common.Games;
 using Gambler.Bot.Common.Helpers;
 using Gambler.Bot.Common.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -9,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using Gambler.Bot.Common.Games.Dice;
 
 namespace Gambler.Bot.Strategies.Helpers
 {
