@@ -40,7 +40,7 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
                 return WorkingSet.CalculateNextBet(PreviousBet, Win);
             else
             {
-                NextBet(PreviousBet, Win);
+                return NextBet(PreviousBet, Win);
             }
             return null;
         }

@@ -70,7 +70,7 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             var result = _strategy.CalculateNextBet(previousBet, true);
 
             // Assert
-            Assert.Equal(expectedAmount, result.TotalAmount);
+            Assert.Equal(expectedAmount, result.Amount);
         }
 
         [Theory]
@@ -90,7 +90,7 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             var result = _strategy.CalculateNextBet(previousBet, true);
 
             // Assert
-            Assert.Equal(expectedAmount, result.TotalAmount);
+            Assert.Equal(expectedAmount, result.Amount);
         }
 
         [Theory]
@@ -109,7 +109,7 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             var result = _strategy.CalculateNextBet(previousBet, true);
 
             // Assert
-            Assert.Equal(expectedAmount, result.TotalAmount);
+            Assert.Equal(expectedAmount, result.Amount);
         }
 
         [Theory]
@@ -134,7 +134,7 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             var result = _strategy.CalculateNextBet(previousBet, true);
 
             // Assert
-            Assert.Equal(expectedAmount, result.TotalAmount);
+            Assert.Equal(expectedAmount, result.Amount);
         }
 
         [Fact]
@@ -152,7 +152,7 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             var result = _strategy.CalculateNextBet(previousBet, true);
 
             // Assert
-            Assert.Equal(_strategy.MinBet, result.TotalAmount);
+            Assert.Equal(_strategy.MinBet, result.Amount);
         }
 
 
@@ -175,7 +175,7 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             var result = _strategy.CalculateNextBet(previousBet, false);
 
             // Assert
-            Assert.Equal(expectedAmount, result.TotalAmount);
+            Assert.Equal(expectedAmount, result.Amount);
         }
 
         [Theory]
@@ -195,7 +195,7 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             var result = _strategy.CalculateNextBet(previousBet, false);
 
             // Assert
-            Assert.Equal(expectedAmount, result.TotalAmount);
+            Assert.Equal(expectedAmount, result.Amount);
         }
 
         [Theory]
@@ -214,7 +214,7 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             var result = _strategy.CalculateNextBet(previousBet, false);
 
             // Assert
-            Assert.Equal(expectedAmount, result.TotalAmount);
+            Assert.Equal(expectedAmount, result.Amount);
         }
 
         [Theory]
@@ -239,7 +239,7 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             var result = _strategy.CalculateNextBet(previousBet, false);
 
             // Assert
-            Assert.Equal(expectedAmount, result.TotalAmount);
+            Assert.Equal(expectedAmount, result.Amount);
         }
 
         [Fact]
@@ -257,7 +257,7 @@ namespace Gambler.Bot.Strategies.Tests.Strategies
             var result = _strategy.CalculateNextBet(previousBet, false);
 
             // Assert
-            Assert.Equal(_strategy.MinBet, result.TotalAmount);
+            Assert.Equal(_strategy.MinBet, result.Amount);
         }
 
         // You can mirror the above tests for the Lose scenarios by adjusting the conditions and using LossStreak instead of WinStreak.
