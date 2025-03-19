@@ -44,6 +44,7 @@ namespace Gambler.Bot.Strategies.Strategies
         public event EventHandler<ExportSimEventArgs> OnExportSim;
         public event EventHandler<PrintEventArgs> OnScriptError;
         public event EventHandler<PrintEventArgs> OnSetCurrency;
+        public event EventHandler<InvestEventArgs> OnBank;
 
         public ProgrammerPython(ILogger logger) : base(logger)
         {
@@ -80,6 +81,7 @@ namespace Gambler.Bot.Strategies.Strategies
             //CurrentRuntime = Python.CreateRuntime();
             Engine = Python.CreateEngine();
             Scope = Engine.CreateScope();
+            (Scope as ScriptScope).SetVariable("Bank", (Action<decimal>)Bank);
             (Scope as ScriptScope).SetVariable("Withdraw", (Action<string,decimal>)Withdraw);
             (Scope as ScriptScope).SetVariable("Invest", (Action< decimal>)Invest);
             (Scope as ScriptScope).SetVariable("Tip", (Action<string, decimal>)Tip);
@@ -139,6 +141,10 @@ namespace Gambler.Bot.Strategies.Strategies
         public void SetSimulation(bool IsSimulation)
         {
             Scope.SetVariable("InSimulation",IsSimulation);
+        }
+        void Bank(decimal Amount)
+        {
+            OnBank?.Invoke(this, new InvestEventArgs { Amount = Amount });
         }
         void Withdraw(string Address, decimal Amount)
         {

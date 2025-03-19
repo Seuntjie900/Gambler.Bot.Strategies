@@ -15,6 +15,7 @@ namespace Gambler.Bot.Core
         public bool Win { get; set; }
         public decimal Balance { get; set; }
         public Action<string, decimal> Withdraw { get; set; }
+        public Action<decimal> Bank { get; set; }
         public Action<decimal> Invest{ get; set; }
         public Action<string, decimal> Tip{ get; set; }
         public Action ResetSeed{ get; set; }

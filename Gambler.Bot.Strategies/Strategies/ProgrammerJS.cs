@@ -37,6 +37,7 @@ namespace Gambler.Bot.Strategies.Strategies
         public event EventHandler<ExportSimEventArgs> OnExportSim;
         public event EventHandler<PrintEventArgs> OnScriptError;
         public event EventHandler<PrintEventArgs> OnSetCurrency;
+        public event EventHandler<InvestEventArgs> OnBank;
 
         public ProgrammerJS(ILogger logger):base(logger)
         {
@@ -85,6 +86,7 @@ namespace Gambler.Bot.Strategies.Strategies
             Runtime.SetValue("Balance", Balance);
             Runtime.SetValue("Withdraw", (Action<string,decimal>)Withdraw);
             Runtime.SetValue("Invest", (Action< decimal>)Invest);
+            Runtime.SetValue("Bank", (Action<decimal>)Bank);
             Runtime.SetValue("Tip", (Action<string, decimal>)Tip);
             Runtime.SetValue("ResetSeed", (Action)ResetSeed);
             Runtime.SetValue("Print", (Action<string>)Print);
@@ -140,6 +142,10 @@ namespace Gambler.Bot.Strategies.Strategies
         public void SetSimulation(bool IsSimulation)
         {
             Runtime.SetValue("InSimulation", IsSimulation);
+        }
+        void Bank(decimal Amount)
+        {
+            OnBank?.Invoke(this, new InvestEventArgs { Amount = Amount });
         }
         void Withdraw(string Address, decimal Amount)
         {

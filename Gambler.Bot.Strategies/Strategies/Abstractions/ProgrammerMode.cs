@@ -15,6 +15,7 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
         void LoadScript();
         void ExecuteCommand(string Command);
 
+        event EventHandler<InvestEventArgs> OnBank;
         event EventHandler<WithdrawEventArgs> OnWithdraw;
         event EventHandler<InvestEventArgs> OnInvest;
         event EventHandler<TipEventArgs> OnTip;

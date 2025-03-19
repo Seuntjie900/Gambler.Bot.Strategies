@@ -38,6 +38,7 @@ namespace Gambler.Bot.Strategies.Strategies
         public event EventHandler<ExportSimEventArgs> OnExportSim;
         public event EventHandler<PrintEventArgs> OnScriptError;
         public event EventHandler<PrintEventArgs> OnSetCurrency;
+        public event EventHandler<InvestEventArgs> OnBank;
 
         public ProgrammerLUA(ILogger logger) : base(logger)
         {
@@ -155,6 +156,7 @@ namespace Gambler.Bot.Strategies.Strategies
             UserData.RegisterType < PlaceRouletteBet>();
             UserData.RegisterType < RouletteBet>();
             CurrentRuntime.Globals["Withdraw"] = (Action<string,decimal>)Withdraw;
+            CurrentRuntime.Globals["Bank"] = (Action<decimal>)Bank;
             CurrentRuntime.Globals["Invest"] = (Action< decimal>)Invest;
             CurrentRuntime.Globals["Tip"] = (Action<string, decimal>)Tip;
             CurrentRuntime.Globals["ResetSeed"] = (Action)ResetSeed;
@@ -264,6 +266,11 @@ namespace Gambler.Bot.Strategies.Strategies
         void Withdraw(string Address, decimal Amount)
         {
             OnWithdraw?.Invoke(this, new WithdrawEventArgs { Address=Address, Amount=Amount });            
+        }
+
+        void Bank(decimal Amount)
+        {
+            OnBank?.Invoke(this, new InvestEventArgs { Amount = Amount });
         }
         void Invest(decimal Amount)
         {

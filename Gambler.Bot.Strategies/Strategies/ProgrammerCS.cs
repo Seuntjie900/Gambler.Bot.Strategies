@@ -38,6 +38,7 @@ namespace Gambler.Bot.Strategies.Strategies
         public event EventHandler<ExportSimEventArgs> OnExportSim;
         public event EventHandler<PrintEventArgs> OnScriptError;
         public event EventHandler<PrintEventArgs> OnSetCurrency;
+        public event EventHandler<InvestEventArgs> OnBank;
 
         ScriptState runtime;
         Globals globals;
@@ -103,6 +104,7 @@ namespace Gambler.Bot.Strategies.Strategies
             globals = new Globals() {
                 Stats = Stats,
                 Balance = Balance,
+                Bank= Bank,
                 Withdraw = Withdraw,
                 Invest = Invest,
                 Tip = Tip,
@@ -187,6 +189,10 @@ namespace Gambler.Bot.Strategies.Strategies
         public void SetSimulation(bool IsSimulation)
         {
             globals.InSimulation = IsSimulation;
+        }
+        void Bank(decimal Amount)
+        {
+            OnBank?.Invoke(this, new InvestEventArgs { Amount = Amount });
         }
         void Withdraw(string Address, decimal Amount)
         {
