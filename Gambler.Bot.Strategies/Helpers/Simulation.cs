@@ -195,7 +195,7 @@ namespace Gambler.Bot.Strategies.Helpers
                         (DiceStrategy as iDiceStrategy).High = NewHigh;
                     }
                     if (!Reset)
-                        NewBetObject = (DiceStrategy as iDiceStrategy).CalculateNextDiceBet(NewBet, win);
+                        NewBetObject = DiceStrategy.CalculateNextBet(NewBet, win) as PlaceDiceBet;
                     if (Running && !Stop && TotalBetsPlaced <= Bets)
                     {
                         if (this.Balance <(decimal)NewBetObject.Amount)
