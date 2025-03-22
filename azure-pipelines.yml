@@ -14,7 +14,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/Gambler.Bot.AutoBet.sln'
+  solution: '**/Gambler.Bot.Strategies.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
@@ -30,7 +30,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          $csprojPath = Get-ChildItem -Path "$(Build.SourcesDirectory)" -Filter "Gambler.Bot.AutoBet.csproj" -Recurse | Select-Object -First 1 -ExpandProperty FullName
+          $csprojPath = Get-ChildItem -Path "$(Build.SourcesDirectory)" -Filter "Gambler.Bot.Strategies.csproj" -Recurse | Select-Object -First 1 -ExpandProperty FullName
           [xml]$csproj = Get-Content -Path $csprojPath
           $versionNode = $csproj.SelectNodes("//Project/PropertyGroup/Version") | Select-Object -First 1
           if ($versionNode -eq $null) {
@@ -63,15 +63,15 @@ stages:
 
     - script: |
         dir
-        xcopy /I /E /Y "Gambler.Bot.AutoBet\Gambler.Bot.AutoBet\bin\Release\net8.0\*" "$(Build.ArtifactStagingDirectory)\Artifacts"
+        xcopy /I /E /Y "Gambler.Bot.Strategies\Gambler.Bot.Strategies\bin\Release\net8.0\*" "$(Build.ArtifactStagingDirectory)\Artifacts"
       displayName: 'Copy Artifacts to a Common Directory'
 
     - script: |        
-        xcopy /I /E /Y "Gambler.Bot.AutoBet\Gambler.Bot.AutoBet\bin\Release\*" "$(Build.ArtifactStagingDirectory)\Artifacts"
+        xcopy /I /E /Y "Gambler.Bot.Strategies\Gambler.Bot.Strategies\bin\Release\*" "$(Build.ArtifactStagingDirectory)\Artifacts"
       displayName: 'Copy Artifacts to a Common Directory'
     
     - script: |
-        xcopy /I /E /Y "Gambler.Bot.AutoBet\Gambler.Bot.AutoBet.Tests\bin\Release\net8.0\*" "$(Build.ArtifactStagingDirectory)\Artifacts"
+        xcopy /I /E /Y "Gambler.Bot.Strategies\Gambler.Bot.Strategies.Tests\bin\Release\net8.0\*" "$(Build.ArtifactStagingDirectory)\Artifacts"
       displayName: 'Copy Artifacts to a Common Directory'
 
     - task: PublishBuildArtifacts@1
@@ -95,7 +95,7 @@ stages:
 
     - task: VSTest@2
       inputs:
-        testAssemblyVer2: '$(System.ArtifactsDirectory)\**\Gambler.Bot.AutoBet.Tests.dll'
+        testAssemblyVer2: '$(System.ArtifactsDirectory)\**\Gambler.Bot.Strategies.Tests.dll'
         platform: '$(buildPlatform)'
         configuration: '$(buildConfiguration)'
 
@@ -114,7 +114,7 @@ stages:
     - task: DotNetCoreCLI@2
       inputs:
         command: 'push'
-        packagesToPush: '$(System.ArtifactsDirectory)\Gambler.Bot.AutoBet*.nupkg' # Update this to the path of your .nupkg file
+        packagesToPush: '$(System.ArtifactsDirectory)\Gambler.Bot.Strategies*.nupkg' # Update this to the path of your .nupkg file
         nuGetFeedType: 'external'
         publishVstsFeed: 'https://api.nuget.org/v3/index.json'
         apiKey: '$(NuGetApiKey)'
