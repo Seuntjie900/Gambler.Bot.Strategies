@@ -2,7 +2,7 @@ Build: [![Build Status](https://eugenebotma.visualstudio.com/seuntjie900/_apis/b
 
 Tests: [![Build Status](https://eugenebotma.visualstudio.com/seuntjie900/_apis/build/status%2FSeuntjie900.Gambler.Bot.AutoBet?repoName=Seuntjie900%2FGambler.Bot.AutoBet&branchName=master&stageName=Test)](https://eugenebotma.visualstudio.com/seuntjie900/_build/latest?definitionId=5&repoName=Seuntjie900%2FGambler.Bot.AutoBet&branchName=master)
 
-[![NuGet](https://img.shields.io/nuget/v/Gambler.Bot.AutoBet.svg)](https://www.nuget.org/packages/Gambler.Bot.AutoBet/)
+[![NuGet](https://img.shields.io/nuget/v/Gambler.Bot.Strategies.svg)](https://www.nuget.org/packages/Gambler.Bot.Strategies/)
 
 
 This project contains the code I've written so far for the automated betting and strategy library of what I envisioned to be DiceBot v4. 
@@ -13,7 +13,7 @@ coming soon.
 
 
 
-A summary of stuff that Gambler.Bot.AutoBet should be capable of when finished
+A summary of stuff that Gambler.Bot.Strategies should be capable of when finished
 
 - .net standard library to allow cross platform betting.
 - Multi game support. The strategy and site interfaces (and programmer modes) were designed to handle multiple games, not just dice anymore.

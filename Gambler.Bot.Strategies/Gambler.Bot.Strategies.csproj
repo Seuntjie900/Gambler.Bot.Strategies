@@ -1,0 +1,90 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <Version>0.0.0.1</Version>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	  <SignAssembly>False</SignAssembly>
+	  <AssemblyOriginatorKeyFile>BotmaSoftwaressc2019.pfx</AssemblyOriginatorKeyFile>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <Version>0.0.1-alpha</Version>
+	  <AssemblyVersion>0.0.0.1</AssemblyVersion>
+	  <FileVersion>0.0.0.1</FileVersion>
+	  <Authors>Seuntjie</Authors>
+	  <Company>Botma Software (Pty) ltd.</Company>
+	  <Description>Library for automated betting and different betting strategies using Gambler.Bot.Core</Description>
+	  <PackageProjectUrl>https://github.com/Seuntjie900/Gambler.Bot.Strategies</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/Seuntjie900/Gambler.Bot.Strategies</RepositoryUrl>
+	  <RepositoryType>Github</RepositoryType>
+	  <PackageTags>Seuntjie Gambling DiceBot Gambler.Bot.Strategies</PackageTags>
+	  <PackageReleaseNotes>Test Release for Nuget - Still in alpha.</PackageReleaseNotes>
+	  <NeutralLanguage>en-GB</NeutralLanguage>
+	  <DelaySign>false</DelaySign>
+	  <Title>Gambler.Bot.Strategies</Title>
+	  <Copyright>Copyright BotmaSoftware 2023</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="SAMPLECS.cs" />
+    <Compile Remove="Samples\CSTemplate.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Samples\JSTemplate.js" />
+    <None Remove="Samples\LUATemplate.lua" />
+    <None Remove="Samples\PYTemplate.py" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\Gambler.Bot.Core\LICENSE" Link="LICENSE">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="SAMPLECS.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IronPython" Version="3.4.2" />
+    <PackageReference Include="IronPython.StdLib" Version="3.4.2" />
+    <PackageReference Include="Jint" Version="4.2.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.13.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.13.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" />
+    <PackageReference Include="MoonSharp" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Samples\CSTemplate.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Samples\LUATemplate.lua">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Samples\JSTemplate.js">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Samples\PYTemplate.py" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Gambler.Bot.Core\Gambler.Bot.Core\Gambler.Bot.Common\Gambler.Bot.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="SAMPLEJS.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SAMPLELUA.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
