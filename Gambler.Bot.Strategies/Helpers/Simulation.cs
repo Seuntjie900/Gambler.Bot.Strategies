@@ -84,7 +84,8 @@ namespace Gambler.Bot.Strategies.Helpers
 
         public void Save(string NewFile)
         {
-           
+            if (!Directory.Exists(Path.GetDirectoryName(NewFile)))
+                Directory.CreateDirectory(Path.GetDirectoryName(NewFile));
             File.Move(TmpFileName, NewFile);
            
         }
