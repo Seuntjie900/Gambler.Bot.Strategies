@@ -50,7 +50,7 @@ namespace Gambler.Bot.Strategies.Helpers
             long bets, 
             IProvablyFair luckyGenerator, 
             SiteDetails site,
-            BaseStrategy DiceStrategy, 
+            BaseStrategy _DiceStrategy, 
             InternalBetSettings OtherSettings, 
             string TempStorage,
             bool Log)
@@ -61,7 +61,11 @@ namespace Gambler.Bot.Strategies.Helpers
             this.BetSettings = OtherSettings;
             this.LuckyGenerator = luckyGenerator;
             ///copy strategy
-            this.DiceStrategy = DiceStrategy;
+            this.DiceStrategy = CopyHelper.CreateCopy(_DiceStrategy.GetType(), _DiceStrategy) as BaseStrategy;
+            if (this.DiceStrategy is IProgrammerMode)
+            {
+                (this.DiceStrategy as IProgrammerMode).CreateRuntime();
+            }
             if (DiceStrategy != null)
             {
                 this.DiceStrategy.NeedBalance += DiceStrategy_NeedBalance;
@@ -161,7 +165,7 @@ namespace Gambler.Bot.Strategies.Helpers
                     {
                         (DiceStrategy as IProgrammerMode).UpdateSessionStats(CopyHelper.CreateCopy<SessionStats>(Stats));
                         (DiceStrategy as IProgrammerMode).UpdateSiteStats(CopyHelper.CreateCopy<SiteStats>(SiteStats));
-                        (DiceStrategy as IProgrammerMode).UpdateSite(CopyHelper.CreateCopy<SiteDetails>(Site));
+                        (DiceStrategy as IProgrammerMode).UpdateSite(Site);
                     }
                     if (BetSettings.CheckResetPostStats(NewBet, NewBet.GetWin(Site.maxroll), Stats, SiteStats))
                     {
@@ -222,6 +226,8 @@ namespace Gambler.Bot.Strategies.Helpers
             }
             catch (Exception e)
             {
+                Running = false;
+                OnSimulationComplete?.Invoke(this, new EventArgs());
                 _Logger?.LogError(e.ToString());
             }
         }

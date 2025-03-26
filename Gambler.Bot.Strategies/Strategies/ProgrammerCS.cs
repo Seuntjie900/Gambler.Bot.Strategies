@@ -39,7 +39,9 @@ namespace Gambler.Bot.Strategies.Strategies
         public event EventHandler<PrintEventArgs> OnScriptError;
         public event EventHandler<PrintEventArgs> OnSetCurrency;
         public event EventHandler<InvestEventArgs> OnBank;
-
+        public event EventHandler<EventArgs> OnResetProfit;
+        public event EventHandler<EventArgs> OnResetPartialProfit;
+        
         ScriptState runtime;
         Globals globals;
         Script DoDiceBet = null;
@@ -149,8 +151,6 @@ namespace Gambler.Bot.Strategies.Strategies
                 runtime = runtime.ContinueWithAsync("OnError(ErrorArgs)").Result;
                 ResetDice = runtime.Script;
             }
-
-            
         }
 
         public override PlaceBet RunReset(Games Game)

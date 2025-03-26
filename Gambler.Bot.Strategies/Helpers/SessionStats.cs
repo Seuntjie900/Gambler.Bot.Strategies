@@ -43,6 +43,8 @@ namespace Gambler.Bot.Strategies.Helpers
         public long LossStreak { get; set; }
         public long WinStreak { get; set; }
         public decimal Profit { get; set; }
+        public decimal TotalProfit { get; set; }
+        public decimal PartialProfit { get; set; }
         public decimal Wagered { get; set; }
         public long WorstStreak { get; set; }
         public long WorstStreak3 { get; set; }
@@ -84,6 +86,8 @@ namespace Gambler.Bot.Strategies.Helpers
             //RunningTime = (long)(DateTime.Now - StartTime).TotalMilliseconds;
             Bets++;
             Profit += (decimal)newBet.Profit;
+            PartialProfit += (decimal)newBet.Profit;
+            TotalProfit += (decimal)newBet.Profit;
             if (Profit > MaxProfit)
                 MaxProfit = Profit;
             if (Profit < MinProfit)
