@@ -74,11 +74,8 @@ namespace Gambler.Bot.Strategies.Strategies
                     {
                         CurrentRuntime.Globals["previousbet"] = PreviousBet.TotalAmount;
                         CurrentRuntime.Globals["nextbet"] = PreviousBet.TotalAmount;
-
                         CurrentRuntime.Globals["win"] = PreviousBet.IsWin;
                         CurrentRuntime.Globals["currentprofit"] = ((decimal)(PreviousBet.Profit * 100000000m)) / 100000000.0m;
-                        CurrentRuntime.Globals["chance"] = nxt.Chance;
-                        CurrentRuntime.Globals["bethigh"] = nxt.High;
                         CurrentRuntime.Globals["lastBet"] = PreviousBet;
                         DynValue Result = CurrentRuntime.Call(DoDiceBet);
                         nxt.Chance = (decimal)(double)CurrentRuntime.Globals["chance"];
