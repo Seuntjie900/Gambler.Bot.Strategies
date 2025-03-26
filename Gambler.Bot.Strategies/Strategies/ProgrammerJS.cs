@@ -39,6 +39,9 @@ namespace Gambler.Bot.Strategies.Strategies
         public event EventHandler<PrintEventArgs> OnSetCurrency;
         public event EventHandler<InvestEventArgs> OnBank;
 
+        public event EventHandler<EventArgs> OnResetProfit;
+        public event EventHandler<EventArgs> OnResetPartialProfit;
+
         public ProgrammerJS(ILogger logger):base(logger)
         {
             

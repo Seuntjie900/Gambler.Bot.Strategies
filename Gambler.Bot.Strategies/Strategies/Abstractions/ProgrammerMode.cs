@@ -30,7 +30,8 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
         event EventHandler<ExportSimEventArgs> OnExportSim;
         event EventHandler<PrintEventArgs> OnScriptError;
         event EventHandler<PrintEventArgs> OnSetCurrency;
-
+        event EventHandler<EventArgs> OnResetProfit;
+        event EventHandler<EventArgs> OnResetPartialProfit;
         public string FileName { get; set; }
     }
 
