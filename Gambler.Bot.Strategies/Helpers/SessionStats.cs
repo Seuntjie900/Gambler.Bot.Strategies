@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Gambler.Bot.Strategies.Helpers
 {
-    [MoonSharp.Interpreter.MoonSharpUserData]    
+     
     public class SessionStats
     {
         public bool Simulation { get; set; }
@@ -81,7 +81,7 @@ namespace Gambler.Bot.Strategies.Helpers
         public decimal MinProfit { get; set; } = 0;
         public decimal MaxProfitSinceReset { get; set; } = 0;
         public decimal MinProfitSinceReset { get; set; } = 0;
-        public Dictionary<long,long> Streaks { get; set; }
+        public Dictionary<long, long> Streaks { get; set; } = new Dictionary<long, long>();
 
         public void UpdateStats(Bet newBet, bool Win)
         {

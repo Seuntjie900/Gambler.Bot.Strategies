@@ -2,7 +2,7 @@
 using Gambler.Bot.Strategies.Strategies.Abstractions;
 using Gambler.Bot.Common.Helpers;
 using Microsoft.Extensions.Logging;
-using MoonSharp.Interpreter;
+using NLua;
 using System;
 using Gambler.Bot.Common.Games.Dice;
 using Gambler.Bot.Common.Games.Crash;
@@ -22,9 +22,9 @@ namespace Gambler.Bot.Strategies.Strategies
         public decimal Amount { get ; set ; }
         public decimal Chance { get ; set ; }
         public decimal StartChance { get ; set ; }
-        
 
-        Script CurrentRuntime = null;
+
+        Lua CurrentRuntime = null;
 
         public event EventHandler<WithdrawEventArgs> OnWithdraw;
         public event EventHandler<InvestEventArgs> OnInvest;
@@ -61,45 +61,45 @@ namespace Gambler.Bot.Strategies.Strategies
                 PlaceBet NextBet = PreviousBet.CreateRetry();
                 
                 
-                DynValue DoDiceBet = CurrentRuntime.Globals.Get("CalculateBet");
-                if (DoDiceBet != null && DoDiceBet.Function!=null)
+                LuaFunction DoDiceBet = CurrentRuntime.GetFunction("CalculateBet");
+                if (DoDiceBet != null )
                 {
-                    DynValue Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
+                    object[] Result = DoDiceBet.Call(PreviousBet, Win, NextBet);
                 }
                 else
                 {
                     
-                    DoDiceBet = CurrentRuntime.Globals.Get("dobet");
-                    if (DoDiceBet != null && DoDiceBet.Function!=null && NextBet is PlaceDiceBet nxt)
+                    DoDiceBet = CurrentRuntime.GetFunction("dobet");
+                    if (DoDiceBet != null && NextBet is PlaceDiceBet nxt)
                     {
-                        CurrentRuntime.Globals["previousbet"] = PreviousBet.TotalAmount;
-                        CurrentRuntime.Globals["nextbet"] = PreviousBet.TotalAmount;
-                        CurrentRuntime.Globals["win"] = PreviousBet.IsWin;
-                        CurrentRuntime.Globals["currentprofit"] = ((decimal)(PreviousBet.Profit * 100000000m)) / 100000000.0m;
-                        CurrentRuntime.Globals["lastBet"] = PreviousBet;
-                        DynValue Result = CurrentRuntime.Call(DoDiceBet);
-                        nxt.Chance = (decimal)(double)CurrentRuntime.Globals["chance"];
-                        nxt.Amount = (decimal)(double)CurrentRuntime.Globals["nextbet"];
-                        nxt.High = (bool)CurrentRuntime.Globals["bethigh"];
+                        CurrentRuntime["previousbet"] = PreviousBet.TotalAmount;
+                        CurrentRuntime["nextbet"] = PreviousBet.TotalAmount;
+                        CurrentRuntime["win"] = PreviousBet.IsWin;
+                        CurrentRuntime["currentprofit"] = ((decimal)(PreviousBet.Profit * 100000000m)) / 100000000.0m;
+                        CurrentRuntime["lastBet"] = PreviousBet;
+                        object[] Result = DoDiceBet.Call();
+                        nxt.Chance = (decimal)(double)CurrentRuntime["chance"];
+                        nxt.Amount = (decimal)(double)CurrentRuntime["nextbet"];
+                        nxt.High = (bool)CurrentRuntime["bethigh"];
                     }
                 }
                 return NextBet;
             }
-            catch (InternalErrorException e)
-            {
-                OnScriptError?.Invoke(this, new PrintEventArgs { Message=e.DecoratedMessage });
-                //throw e;
-            }
-            catch (SyntaxErrorException e)
-            {
-                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
-                //throw e;
-            }
-            catch (ScriptRuntimeException e)
-            {
-                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
-               // throw e;
-            }
+            //catch (InternalErrorException e)
+            //{
+            //    OnScriptError?.Invoke(this, new PrintEventArgs { Message=e.DecoratedMessage });
+            //    //throw e;
+            //}
+            //catch (SyntaxErrorException e)
+            //{
+            //    OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+            //    //throw e;
+            //}
+            //catch (ScriptRuntimeException e)
+            //{
+            //    OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+            //   // throw e;
+            //}
             catch (Exception e)
             {
                 OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
@@ -109,21 +109,21 @@ namespace Gambler.Bot.Strategies.Strategies
         }
 
         public override void OnError(BotErrorEventArgs ErrorDetails)
-        {            
-            DynValue CallError = CurrentRuntime.Globals.Get("OnError");
+        {
+            LuaFunction CallError = CurrentRuntime.GetFunction("OnError");
             if (CallError != null)
             {
-                DynValue Result = CurrentRuntime.Call(CallError, ErrorDetails);
+                object[] Result = CallError.Call( ErrorDetails);
             }            
         }
 
         //public override PlaceCrashBet CalculateNextCrashBet(CrashBet PreviousBet, bool Win)
         //{
         //    PlaceCrashBet NextBet = new PlaceCrashBet();
-        //    DynValue DoDiceBet = CurrentRuntime.Globals.Get("DoCrashBet");
+        //    object[] DoDiceBet = CurrentRuntime.GetFunction("DoCrashBet");
         //    if (DoDiceBet != null)
         //    {
-        //        DynValue Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
+        //        object[] Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
         //    }
         //    return NextBet;
         //}
@@ -131,10 +131,10 @@ namespace Gambler.Bot.Strategies.Strategies
         //public override PlacePlinkoBet CalculateNextPlinkoBet(PlinkoBet PreviousBet, bool Win)
         //{
         //    PlacePlinkoBet NextBet = new PlacePlinkoBet();
-        //    DynValue DoDiceBet = CurrentRuntime.Globals.Get("DoPlinkoBet");
+        //    object[] DoDiceBet = CurrentRuntime.GetFunction("DoPlinkoBet");
         //    if (DoDiceBet != null)
         //    {
-        //        DynValue Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
+        //        object[] Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
         //    }
         //    return NextBet;
         //}
@@ -142,10 +142,10 @@ namespace Gambler.Bot.Strategies.Strategies
         //public override PlaceRouletteBet CalculateNextRouletteBet(RouletteBet PreviousBet, bool Win)
         //{
         //    PlaceRouletteBet NextBet = new PlaceRouletteBet();
-        //    DynValue DoDiceBet = CurrentRuntime.Globals.Get("DoRouletteBet");
+        //    object[] DoDiceBet = CurrentRuntime.GetFunction("DoRouletteBet");
         //    if (DoDiceBet != null)
         //    {
-        //        DynValue Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
+        //        object[] Result = CurrentRuntime.Call(DoDiceBet, PreviousBet, Win, NextBet);
         //    }
         //    return NextBet;
         //}
@@ -153,9 +153,9 @@ namespace Gambler.Bot.Strategies.Strategies
 
         public void CreateRuntime()
         {
-            CurrentRuntime = new Script();
+            CurrentRuntime = new Lua();
             //UserData.RegisterAssembly();
-            UserData.RegisterType<SessionStats>();
+            /*UserData.RegisterType<SessionStats>();
             UserData.RegisterType < PlaceDiceBet>();
             UserData.RegisterType < DiceBet>();
             UserData.RegisterType < SiteDetails>();
@@ -165,58 +165,58 @@ namespace Gambler.Bot.Strategies.Strategies
             UserData.RegisterType < PlinkoBet>();
             UserData.RegisterType < PlacePlinkoBet>();
             UserData.RegisterType < PlaceRouletteBet>();
-            UserData.RegisterType < RouletteBet>();
-            CurrentRuntime.Globals["Withdraw"] = (Action<string,decimal>)Withdraw;
-            CurrentRuntime.Globals["Bank"] = (Action<decimal>)Bank;
-            CurrentRuntime.Globals["Invest"] = (Action< decimal>)Invest;
-            CurrentRuntime.Globals["Tip"] = (Action<string, decimal>)Tip;
-            CurrentRuntime.Globals["ResetSeed"] = (Action)ResetSeed;
-            CurrentRuntime.Globals["Print"] = (Action<string>)Print;
-            CurrentRuntime.Globals["RunSim"] = (Action < decimal, long, bool>)RunSim;
-            CurrentRuntime.Globals["ResetStats"] = (Action)ResetStats;
-            CurrentRuntime.Globals["Read"] = (Func<string, int, object>)Read;
-            CurrentRuntime.Globals["Readadv"] = (Func<string, int,string,string,string, object> )Readadv;
-            CurrentRuntime.Globals["Alarm"] = (Action)Alarm;
-            CurrentRuntime.Globals["Ching"] = (Action)Ching;
-            CurrentRuntime.Globals["ResetBuiltIn"] = (Action)ResetBuiltIn;
-            CurrentRuntime.Globals["ExportSim"] = (Action<string>)ExportSim;
-            CurrentRuntime.Globals["Stop"] = (Action)_Stop;
-            CurrentRuntime.Globals["SetCurrency"] = (Action<string>)SetCurrency;
+            UserData.RegisterType < RouletteBet>();*/
+            CurrentRuntime["Withdraw"] = (Action<string,decimal>)Withdraw;
+            CurrentRuntime["Bank"] = (Action<decimal>)Bank;
+            CurrentRuntime["Invest"] = (Action< decimal>)Invest;
+            CurrentRuntime["Tip"] = (Action<string, decimal>)Tip;
+            CurrentRuntime["ResetSeed"] = (Action)ResetSeed;
+            CurrentRuntime["Print"] = (Action<object>)Print;
+            CurrentRuntime["RunSim"] = (Action < decimal, long, bool>)RunSim;
+            CurrentRuntime["ResetStats"] = (Action)ResetStats;
+            CurrentRuntime["Read"] = (Func<string, int, object>)Read;
+            CurrentRuntime["Readadv"] = (Func<string, int,string,string,string, object> )Readadv;
+            CurrentRuntime["Alarm"] = (Action)Alarm;
+            CurrentRuntime["Ching"] = (Action)Ching;
+            CurrentRuntime["ResetBuiltIn"] = (Action)ResetBuiltIn;
+            CurrentRuntime["ExportSim"] = (Action<string>)ExportSim;
+            CurrentRuntime["Stop"] = (Action)_Stop;
+            CurrentRuntime["SetCurrency"] = (Action<string>)SetCurrency;
 
 
             //legacy support
-            CurrentRuntime.Globals["withdraw"] = (Action<string, decimal>)Withdraw; ;
-            CurrentRuntime.Globals["invest"] = (Action<decimal>)Invest; ;
-            CurrentRuntime.Globals["tip"] = (Action<string, decimal>)Tip; ;
-            CurrentRuntime.Globals["stop"] = (Action)_Stop; 
-            CurrentRuntime.Globals["resetseed"] = (Action)ResetSeed; ;
-            CurrentRuntime.Globals["print"] = (Action<string>)Print; ;
-            /*CurrentRuntime.Globals["getHistory"] = luagethistory;
-            CurrentRuntime.Globals["getHistoryByDate"] = luagethistory;
-            CurrentRuntime.Globals["getHistoryByQuery"] = QueryHistory;*/
-            /*CurrentRuntime.Globals["runsim"] = runsim;
-            CurrentRuntime.Globals["martingale"] = LuaMartingale;
-            CurrentRuntime.Globals["labouchere"] = LuaLabouchere;
-            CurrentRuntime.Globals["fibonacci"] = LuaFibonacci;
-            CurrentRuntime.Globals["dalembert"] = LuaDAlember;
-            CurrentRuntime.Globals["presetlist"] = LuaPreset;*/
-            CurrentRuntime.Globals["resetstats"] = (Action)ResetStats;
+            CurrentRuntime["withdraw"] = (Action<string, decimal>)Withdraw; ;
+            CurrentRuntime["invest"] = (Action<decimal>)Invest; ;
+            CurrentRuntime["tip"] = (Action<string, decimal>)Tip; ;
+            CurrentRuntime["stop"] = (Action)_Stop; 
+            CurrentRuntime["resetseed"] = (Action)ResetSeed; ;
+            CurrentRuntime["print"] = (Action<string>)Print; ;
+            /*CurrentRuntime["getHistory"] = luagethistory;
+            CurrentRuntime["getHistoryByDate"] = luagethistory;
+            CurrentRuntime["getHistoryByQuery"] = QueryHistory;*/
+            /*CurrentRuntime["runsim"] = runsim;
+            CurrentRuntime["martingale"] = LuaMartingale;
+            CurrentRuntime["labouchere"] = LuaLabouchere;
+            CurrentRuntime["fibonacci"] = LuaFibonacci;
+            CurrentRuntime["dalembert"] = LuaDAlember;
+            CurrentRuntime["presetlist"] = LuaPreset;*/
+            CurrentRuntime["resetstats"] = (Action)ResetStats;
 
-            CurrentRuntime.Globals["resetprofit"]  = (Action)ResetProfit;
-            CurrentRuntime.Globals["resetpartialprofit"] = (Action)ResetPartialProfit;
-            /*CurrentRuntime.Globals["setvalueint"] = LuaSetValue;
-            CurrentRuntime.Globals["setvaluestring"] = LuaSetValue;
-            CurrentRuntime.Globals["setvaluedecimal"] = LuaSetValue;
-            CurrentRuntime.Globals["setvaluebool"] = LuaSetValue;
-            CurrentRuntime.Globals["getvalue"] = LuaGetValue;
-            CurrentRuntime.Globals["loadstrategy"] = LuaLoadStrat;*/
-            CurrentRuntime.Globals["read"] = (Func<string, int, object>)Read; ;
-            CurrentRuntime.Globals["readadv"] = (Func<string, int, string, string, string, object>)Readadv; ;
-            CurrentRuntime.Globals["alarm"] = (Action)Alarm; ;
-            CurrentRuntime.Globals["ching"] = (Action)Ching; ;
-            CurrentRuntime.Globals["resetbuiltin"] =(Action)NoAction;
-            CurrentRuntime.Globals["exportsim"] = (Action<string>)ExportSim;
-            CurrentRuntime.Globals["vault"] = (Action<decimal>)Bank; 
+            CurrentRuntime["resetprofit"]  = (Action)ResetProfit;
+            CurrentRuntime["resetpartialprofit"] = (Action)ResetPartialProfit;
+            /*CurrentRuntime["setvalueint"] = LuaSetValue;
+            CurrentRuntime["setvaluestring"] = LuaSetValue;
+            CurrentRuntime["setvaluedecimal"] = LuaSetValue;
+            CurrentRuntime["setvaluebool"] = LuaSetValue;
+            CurrentRuntime["getvalue"] = LuaGetValue;
+            CurrentRuntime["loadstrategy"] = LuaLoadStrat;*/
+            CurrentRuntime["read"] = (Func<string, int, object>)Read; ;
+            CurrentRuntime["readadv"] = (Func<string, int, string, string, string, object>)Readadv; ;
+            CurrentRuntime["alarm"] = (Action)Alarm; ;
+            CurrentRuntime["ching"] = (Action)Ching; ;
+            CurrentRuntime["resetbuiltin"] =(Action)NoAction;
+            CurrentRuntime["exportsim"] = (Action<string>)ExportSim;
+            CurrentRuntime["vault"] = (Action<decimal>)Bank; 
 
         }
 
@@ -230,25 +230,25 @@ namespace Gambler.Bot.Strategies.Strategies
 
             try
             {
-                CurrentRuntime.Globals["Stats"] = Stats;
-                CurrentRuntime.Globals["Balance"] = this.Balance;
+                CurrentRuntime["Stats"] = Stats;
+                CurrentRuntime["Balance"] = this.Balance;
                 CurrentRuntime.DoFile(FileName);
             }
-            catch (InternalErrorException e)
-            {
-                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
-                //throw e;
-            }
-            catch (SyntaxErrorException e)
-            {
-                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
-                //throw e;
-            }
-            catch (ScriptRuntimeException e)
-            {
-                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
-                //throw e;
-            }
+            //catch (InternalErrorException e)
+            //{
+            //    OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+            //    //throw e;
+            //}
+            //catch (SyntaxErrorException e)
+            //{
+            //    OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+            //    //throw e;
+            //}
+            //catch (ScriptRuntimeException e)
+            //{
+            //    OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+            //    //throw e;
+            //}
             catch (Exception e)
             {
                 OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
@@ -260,20 +260,20 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             try
             {
-                DynValue DoDiceBet = CurrentRuntime.Globals.Get("Reset");
-                if (DoDiceBet != null && DoDiceBet.Function!=null)
+                LuaFunction DoDiceBet = CurrentRuntime.GetFunction("Reset");
+                if (DoDiceBet != null)
                 {
                     PlaceBet NextBet = CreateEmptyPlaceBet(Game);
-                    DynValue Result = CurrentRuntime.Call(DoDiceBet, NextBet, Game);
+                    object[] Result = DoDiceBet.Call(NextBet, Game);
                     return NextBet;
                 }
                 else if (Game == Games.Dice)
                 {
                     PlaceDiceBet NextBet = CreateEmptyPlaceBet(Game) as PlaceDiceBet;
-                    //(decimal)CurrentRuntime.Globals["chance"];
-                    NextBet.Amount = (decimal)(double)CurrentRuntime.Globals["nextbet"];
-                    NextBet.Chance = (decimal)(double)CurrentRuntime.Globals["chance"];
-                    NextBet.High = (bool)CurrentRuntime.Globals["bethigh"];
+                    //(decimal)CurrentRuntime["chance"];
+                    NextBet.Amount = (decimal)(double)CurrentRuntime["nextbet"];
+                    NextBet.Chance = (decimal)(double)CurrentRuntime["chance"];
+                    NextBet.High = (bool)CurrentRuntime["bethigh"];
                     return NextBet;
                     //if (CurrentSite.Currency != (string)Lua["currency"])
                     //    CurrentSite.Currency = (string)Lua["currency"];
@@ -281,21 +281,21 @@ namespace Gambler.Bot.Strategies.Strategies
                     //EnableProgZigZag = (bool)Lua["enablezz"];
                 }
             }
-            catch (InternalErrorException e)
-            {
-                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
-                //throw e;
-            }
-            catch (SyntaxErrorException e)
-            {
-                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
-                //throw e;
-            }
-            catch (ScriptRuntimeException e)
-            {
-                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
-                //throw e;
-            }
+            //catch (InternalErrorException e)
+            //{
+            //    OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+            //    //throw e;
+            //}
+            //catch (SyntaxErrorException e)
+            //{
+            //    OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+            //    //throw e;
+            //}
+            //catch (ScriptRuntimeException e)
+            //{
+            //    OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+            //    //throw e;
+            //}
             catch (Exception e)
             {
                 OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
@@ -306,26 +306,26 @@ namespace Gambler.Bot.Strategies.Strategies
 
         public void UpdateSessionStats(SessionStats Stats)
         {
-            CurrentRuntime.Globals["Stats"] = Stats;
-            CurrentRuntime.Globals["Balance"] = this.Balance;
+            CurrentRuntime["Stats"] = Stats;
+            CurrentRuntime["Balance"] = this.Balance;
             SetLegacyVars();
         }
 
         public void UpdateSite(SiteDetails Details)
         {
-            CurrentRuntime.Globals["SiteDetails"] = Details;
-            CurrentRuntime.Globals["site"] = Details;
-            CurrentRuntime.Globals["currencies"] = Details.Currencies;
+            CurrentRuntime["SiteDetails"] = Details;
+            CurrentRuntime["site"] = Details;
+            CurrentRuntime["currencies"] = Details.Currencies;
         }
 
         public void UpdateSiteStats(SiteStats Stats)
         {
-            CurrentRuntime.Globals["SiteStats"] = Stats;
+            CurrentRuntime["SiteStats"] = Stats;
         }
 
         public void SetSimulation(bool IsSimulation)
         {
-            CurrentRuntime.Globals["InSimulation"] = IsSimulation;
+            CurrentRuntime["InSimulation"] = IsSimulation;
         }
 
         void Withdraw(string Address, decimal Amount)
@@ -349,9 +349,9 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             OnResetSeed?.Invoke(this, new EventArgs());
         }
-        void Print(string PrintValue)
+        void Print(object PrintValue)
         {
-            OnPrint?.Invoke(this, new PrintEventArgs {  Message=PrintValue});
+            OnPrint?.Invoke(this, new PrintEventArgs { Message = PrintValue?.ToString() });
         }
         void RunSim(decimal Balance, long Bets, bool log)
         {
@@ -408,21 +408,21 @@ namespace Gambler.Bot.Strategies.Strategies
             {
                 CurrentRuntime.DoString(Command);
             }
-            catch (InternalErrorException e)
-            {
-                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
-                //throw e;
-            }
-            catch (SyntaxErrorException e)
-            {
-                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
-                //throw e;
-            }
-            catch (ScriptRuntimeException e)
-            {
-                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
-                //throw e;
-            }
+            //catch (InternalErrorException e)
+            //{
+            //    OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+            //    //throw e;
+            //}
+            //catch (SyntaxErrorException e)
+            //{
+            //    OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+            //    //throw e;
+            //}
+            //catch (ScriptRuntimeException e)
+            //{
+            //    OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.DecoratedMessage });
+            //    //throw e;
+            //}
             catch (Exception e)
             {
                 OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
@@ -440,18 +440,18 @@ namespace Gambler.Bot.Strategies.Strategies
             {
                 
                 //Lua.clear();
-                CurrentRuntime.Globals["balance"] = this.Balance;
-                CurrentRuntime.Globals["profit"] = this.Stats.Profit;
-                CurrentRuntime.Globals["currentstreak"] = (this.Stats.WinStreak > 0) ? this.Stats.WinStreak : -this.Stats.LossStreak;
-                CurrentRuntime.Globals["previousbet"] = Amount;
-                //CurrentRuntime.Globals["nextbet"] = Amount;
-                //CurrentRuntime.Globals["chance"] = Chance;
-                //CurrentRuntime.Globals["bethigh"] = High;
-                CurrentRuntime.Globals["bets"] = this.Stats.Wins + this.Stats.Losses;
-                CurrentRuntime.Globals["wins"] = this.Stats.Wins;
-                CurrentRuntime.Globals["losses"] = this.Stats.Losses;
-                CurrentRuntime.Globals["wagered"] = Stats.Wagered;
-                CurrentRuntime.Globals["partialprofit"] = this.Stats.PartialProfit;
+                CurrentRuntime["balance"] = this.Balance;
+                CurrentRuntime["profit"] = this.Stats.Profit;
+                CurrentRuntime["currentstreak"] = (this.Stats.WinStreak > 0) ? this.Stats.WinStreak : -this.Stats.LossStreak;
+                CurrentRuntime["previousbet"] = Amount;
+                //CurrentRuntime["nextbet"] = Amount;
+                //CurrentRuntime["chance"] = Chance;
+                //CurrentRuntime["bethigh"] = High;
+                CurrentRuntime["bets"] = this.Stats.Wins + this.Stats.Losses;
+                CurrentRuntime["wins"] = this.Stats.Wins;
+                CurrentRuntime["losses"] = this.Stats.Losses;
+                CurrentRuntime["wagered"] = Stats.Wagered;
+                CurrentRuntime["partialprofit"] = this.Stats.PartialProfit;
                 
 
             }
