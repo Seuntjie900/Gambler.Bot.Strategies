@@ -75,12 +75,15 @@ namespace Gambler.Bot.Strategies.Strategies
                         CurrentRuntime["previousbet"] = PreviousBet.TotalAmount;
                         CurrentRuntime["nextbet"] = PreviousBet.TotalAmount;
                         CurrentRuntime["win"] = PreviousBet.IsWin;
+                        CurrentRuntime["bethigh"] = nxt.High;
+                        CurrentRuntime["chance"] = nxt.Chance;
                         CurrentRuntime["currentprofit"] = ((decimal)(PreviousBet.Profit * 100000000m)) / 100000000.0m;
                         CurrentRuntime["lastBet"] = PreviousBet;
                         object[] Result = DoDiceBet.Call();
                         nxt.Chance = (decimal)(double)CurrentRuntime["chance"];
                         nxt.Amount = (decimal)(double)CurrentRuntime["nextbet"];
                         nxt.High = (bool)CurrentRuntime["bethigh"];
+                        
                     }
                 }
                 return NextBet;
@@ -444,9 +447,9 @@ namespace Gambler.Bot.Strategies.Strategies
                 CurrentRuntime["profit"] = this.Stats.Profit;
                 CurrentRuntime["currentstreak"] = (this.Stats.WinStreak > 0) ? this.Stats.WinStreak : -this.Stats.LossStreak;
                 CurrentRuntime["previousbet"] = Amount;
-                //CurrentRuntime["nextbet"] = Amount;
-                //CurrentRuntime["chance"] = Chance;
-                //CurrentRuntime["bethigh"] = High;
+                CurrentRuntime["nextbet"] = Amount;
+                CurrentRuntime["chance"] = Chance;
+                CurrentRuntime["bethigh"] = High;
                 CurrentRuntime["bets"] = this.Stats.Wins + this.Stats.Losses;
                 CurrentRuntime["wins"] = this.Stats.Wins;
                 CurrentRuntime["losses"] = this.Stats.Losses;
