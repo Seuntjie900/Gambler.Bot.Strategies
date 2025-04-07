@@ -1,5 +1,6 @@
 ﻿using Gambler.Bot.Common.Games;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -80,6 +81,7 @@ namespace Gambler.Bot.Strategies.Helpers
         public decimal MinProfit { get; set; } = 0;
         public decimal MaxProfitSinceReset { get; set; } = 0;
         public decimal MinProfitSinceReset { get; set; } = 0;
+        public Dictionary<long,long> Streaks { get; set; }
 
         public void UpdateStats(Bet newBet, bool Win)
         {
@@ -149,6 +151,15 @@ namespace Gambler.Bot.Strategies.Helpers
                             }
                         }
                     }
+                    if (Streaks.ContainsKey(-LossStreak))
+                    {
+                        Streaks[-LossStreak]++;
+                    }
+                    else
+                    {
+                        Streaks.Add(-LossStreak, 1);
+
+                    }
                 }
                 LossStreak = 0;
             }
@@ -191,6 +202,14 @@ namespace Gambler.Bot.Strategies.Helpers
                                 BestStreak = WinStreak;
                             }
                         }
+                    }
+                    if (Streaks.ContainsKey(WinStreak))
+                    {
+                        Streaks[WinStreak]++;
+                    }
+                    else
+                    {
+                        Streaks.Add(WinStreak, 1);
                     }
                 }
                 //reset win streak
