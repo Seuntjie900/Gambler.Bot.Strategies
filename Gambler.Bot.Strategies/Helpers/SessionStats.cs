@@ -81,6 +81,7 @@ namespace Gambler.Bot.Strategies.Helpers
         public decimal MinProfit { get; set; } = 0;
         public decimal MaxProfitSinceReset { get; set; } = 0;
         public decimal MinProfitSinceReset { get; set; } = 0;
+        [NotMapped]
         public Dictionary<long, long> Streaks { get; set; } = new Dictionary<long, long>();
 
         public void UpdateStats(Bet newBet, bool Win)
