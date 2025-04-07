@@ -2,6 +2,7 @@
 using Gambler.Bot.Common.Helpers;
 using System;
 using Gambler.Bot.Common.Games.Dice;
+using Gambler.Bot.Common.Games;
 
 namespace Gambler.Bot.Strategies.Strategies.Abstractions
 {
@@ -52,6 +53,10 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
     public class PrintEventArgs : EventArgs
     {
         public string Message { get; set; }
+    }
+    public class GameChangedArgs : EventArgs
+    {
+        public Games Game { get; set; }
     }
     public class RunSimEventArgs : EventArgs
     {

@@ -11,6 +11,7 @@ using System.Reflection;
 using Gambler.Bot.Common.Games.Dice;
 using Gambler.Bot.Common.Games;
 using Gambler.Bot.Common.Games.Limbo;
+using Gambler.Bot.Common.Games.Crash;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
@@ -66,8 +67,7 @@ namespace Gambler.Bot.Strategies.Strategies
                 globals.Win = Win;
                 //if (DoDiceBet == null)
                 {
-
-                    runtime = runtime.ContinueWithAsync("CalculateBet(PreviousBet, Win, NextBet)").Result;
+                    runtime = runtime.ContinueWithAsync("CalculateBet()").Result;
                     DoDiceBet = runtime.Script;
                 }
                 /*else
@@ -121,13 +121,21 @@ namespace Gambler.Bot.Strategies.Strategies
                 ResetBuiltIn = ResetBuiltIn,
                 ExportSim = ExportSim,
                 Stop = _Stop,
-                SetCurrency = SetCurrency
+                SetCurrency = SetCurrency,
+                ChangeGame = ChangeGame,    
                  
             };
             runtime = script.RunAsync(globals: globals).Result;
             
         }
-
+        public PlaceBet ChangeGame(string Game)
+        {
+            var tmp = CreateEmptyPlaceBet(Enum.Parse<Games>(Game));
+            var nextbet = globals.NextBet as PlaceBet;
+            tmp.Amount = nextbet?.Amount ?? 0;
+            globals.NextBet = tmp;            
+            return tmp;
+        }
         private void SetCurrency(string newCurrency)
         {
             OnSetCurrency?.Invoke(this, new PrintEventArgs { Message = newCurrency });
@@ -161,14 +169,15 @@ namespace Gambler.Bot.Strategies.Strategies
             
             //if (ResetDice == null)
             {
-                runtime = runtime.ContinueWithAsync("Reset(NextBet)").Result;
+                runtime = runtime.ContinueWithAsync("Reset()").Result;
                 ResetDice = runtime.Script;
             }
             
             //else
             //    runtime = ResetDice.RunFromAsync(runtime).Result;
-            return NextBet;
+            return globals.NextBet as PlaceBet;
         }
+        
 
         public void UpdateSessionStats(SessionStats Stats)
         {

@@ -1,5 +1,5 @@
 var base = 0.00000001;
-function CalculateBet(PreviousBet, Win, NextBet) {
+function CalculateBet() {
     if (Win) {
         NextBet.Amount = base;
         NextBet.High = !NextBet.High;
@@ -10,7 +10,7 @@ function CalculateBet(PreviousBet, Win, NextBet) {
         
 }
 
-function Reset(NextBet) {
+function Reset() {
     NextBet.Amount = base;
     NextBet.Chance = 49.5;
     NextBet.High = true;

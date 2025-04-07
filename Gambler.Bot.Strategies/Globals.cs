@@ -1,6 +1,7 @@
 ﻿using Gambler.Bot.Strategies.Helpers;
 using Gambler.Bot.Common.Helpers;
 using System;
+using Gambler.Bot.Common.Games;
 
 namespace Gambler.Bot.Core
 {
@@ -30,6 +31,7 @@ namespace Gambler.Bot.Core
         public Action<string> ExportSim { get; set; }
         public Action Stop { get; set; }
         public Action<string> SetCurrency { get; set; }
+        public Func<string, PlaceBet> ChangeGame { get; set; }
         public bool InSimulation { get; set; }
     }
 }

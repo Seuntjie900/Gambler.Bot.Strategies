@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using Gambler.Bot.Common.Games.Dice;
 using Gambler.Bot.Common.Games;
+using Gambler.Bot.Core;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
@@ -56,9 +57,12 @@ namespace Gambler.Bot.Strategies.Strategies
             try
             {
                 PlaceBet NextBet = PreviousBet.CreateRetry();
+                Runtime.SetValue("NextBet", NextBet);
+                Runtime.SetValue("Win", Win);
+                Runtime.SetValue("PreviousBet", PreviousBet);
                 //TypeReference.CreateTypeReference
-                Runtime.Invoke("CalculateBet", PreviousBet, Win, NextBet);
-                return NextBet;
+                Runtime.Invoke("CalculateBet");
+                return Runtime.GetValue("NextBet").AsInstance<PlaceBet>(); 
             }
             catch (Exception e)
             {
@@ -103,6 +107,7 @@ namespace Gambler.Bot.Strategies.Strategies
             Runtime.SetValue("ExportSim", (Action<string>)ExportSim);
             Runtime.SetValue("Stop", (Action)_Stop);
             Runtime.SetValue("SetCurrency", (Action<string>)SetCurrency);
+            Runtime.SetValue("ChangeGame", (Func<string,PlaceBet>)ChangeGame);
         }
 
         void withdraw(object sender, EventArgs e)
@@ -122,7 +127,8 @@ namespace Gambler.Bot.Strategies.Strategies
         public override PlaceBet RunReset(Games Game)
         {
             PlaceBet NextBet = CreateEmptyPlaceBet(Game);
-            Runtime.Invoke("ResetDice", NextBet);
+            Runtime.SetValue("NextBet", NextBet);
+            Runtime.Invoke("Reset");
             return NextBet;
         }
 
@@ -225,6 +231,14 @@ namespace Gambler.Bot.Strategies.Strategies
         private void SetCurrency(string newCurrency)
         {
             OnSetCurrency?.Invoke(this, new PrintEventArgs { Message = newCurrency });
+        }
+        public PlaceBet ChangeGame(string Game)
+        {
+            var tmp = CreateEmptyPlaceBet(Enum.Parse<Games>(Game));
+            var nextbet = Runtime.GetValue("NextBet").AsInstance<PlaceBet>();
+            tmp.Amount = nextbet?.Amount ?? 0;
+            Runtime.SetValue("NextBet",tmp);
+            return tmp;
         }
     }
 }
