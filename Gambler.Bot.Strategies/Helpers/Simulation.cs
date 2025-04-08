@@ -165,7 +165,7 @@ namespace Gambler.Bot.Strategies.Helpers
                     {
                         (DiceStrategy as IProgrammerMode).UpdateSessionStats(CopyHelper.CreateCopy<SessionStats>(Stats));
                         (DiceStrategy as IProgrammerMode).UpdateSiteStats(CopyHelper.CreateCopy<SiteStats>(SiteStats));
-                        (DiceStrategy as IProgrammerMode).UpdateSite(Site);
+                        (DiceStrategy as IProgrammerMode).UpdateSite(Site,"" );
                     }
                     if (BetSettings.CheckResetPostStats(NewBet, NewBet.GetWin(Site.maxroll), Stats, SiteStats))
                     {

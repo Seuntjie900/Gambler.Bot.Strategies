@@ -23,6 +23,8 @@ namespace Gambler.Bot.Strategies.Strategies
         public decimal Amount { get ; set ; }
         public decimal Chance { get ; set ; }
         public decimal StartChance { get ; set ; }
+        
+        
 
         public event EventHandler<WithdrawEventArgs> OnWithdraw;
         public event EventHandler<InvestEventArgs> OnInvest;
@@ -184,10 +186,11 @@ namespace Gambler.Bot.Strategies.Strategies
             globals.Stats = Stats;
         }
 
-        public void UpdateSite(SiteDetails Stats)
+        public void UpdateSite(SiteDetails Stats, string currency)
         {
             globals.Balance= Balance;
             globals.SiteDetails = Stats;
+            globals.Currency = currency;
         }
 
         public void UpdateSiteStats(SiteStats Stats)

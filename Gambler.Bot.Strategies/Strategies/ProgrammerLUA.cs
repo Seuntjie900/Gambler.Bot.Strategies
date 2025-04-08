@@ -24,7 +24,7 @@ namespace Gambler.Bot.Strategies.Strategies
         public decimal Chance { get ; set ; }
         public decimal StartChance { get ; set ; }
         SiteDetails currentSite = null;
-
+        string currentCurrency = default;
         Lua CurrentRuntime = null;
 
         public event EventHandler<WithdrawEventArgs> OnWithdraw;
@@ -63,7 +63,7 @@ namespace Gambler.Bot.Strategies.Strategies
 
                 SetVars(PreviousBet, NextBet, Win);
                 
-                LuaFunction DoDiceBet = CurrentRuntime.GetFunction("CalculateBet");
+                LuaFunction DoDiceBet = CurrentRuntime["CalculateBet"] as LuaFunction;
                 if (DoDiceBet != null )
                 {
                     object[] Result = DoDiceBet.Call();
@@ -74,7 +74,7 @@ namespace Gambler.Bot.Strategies.Strategies
                 else
                 {
                     
-                    DoDiceBet = CurrentRuntime.GetFunction("dobet");
+                    DoDiceBet = CurrentRuntime["dobet"] as LuaFunction;
                     if (DoDiceBet != null )
                     {
                        
@@ -83,6 +83,9 @@ namespace Gambler.Bot.Strategies.Strategies
                         string game = (string)CurrentRuntime["game"];
                         if (game != NextBet.Game.ToString())
                             NextBet = ChangeGame(game);
+                        string currency = (string)CurrentRuntime["currency"];
+                        if (currency != this.currentCurrency)
+                            SetCurrency(currency);
                         SetBetParams(NextBet);
 
                     }
@@ -125,7 +128,7 @@ namespace Gambler.Bot.Strategies.Strategies
             {
                 decimal chance = (decimal)(double)CurrentRuntime["chance"];
 
-                lmb.Payout = (100m - currentSite.GameSettings[Games.Limbo.ToString()].Edge) / chance;
+                lmb.Payout =  (chance <=0 ? 2: (100m - currentSite.GameSettings[Games.Limbo.ToString()].Edge) / (chance));
                 lmb.Amount = (decimal)(double)CurrentRuntime["nextbet"];
 
             }
@@ -140,9 +143,16 @@ namespace Gambler.Bot.Strategies.Strategies
 
         private void SetVars(Bet PreviousBet, PlaceBet nxt, bool win)
         {
-            CurrentRuntime["previousbet"] = PreviousBet.TotalAmount;
-            CurrentRuntime["nextbet"] = PreviousBet.TotalAmount;
-            CurrentRuntime["win"] = PreviousBet.IsWin;
+            if (PreviousBet != null)
+            {
+                CurrentRuntime["previousbet"] = PreviousBet.TotalAmount;
+                CurrentRuntime["nextbet"] = PreviousBet.TotalAmount;
+                CurrentRuntime["win"] = win;
+                CurrentRuntime["Win"] = win;
+                CurrentRuntime["currentprofit"] = ((decimal)(PreviousBet.Profit * 100000000m)) / 100000000.0m;
+                CurrentRuntime["lastBet"] = PreviousBet;
+                CurrentRuntime["PreviousBet"] = PreviousBet;
+            }
             if (nxt is PlaceDiceBet dce)
             {
                 CurrentRuntime["bethigh"] = dce.High;
@@ -153,21 +163,24 @@ namespace Gambler.Bot.Strategies.Strategies
                 CurrentRuntime["payout"] = crsh.Payout;
             }
             else if (nxt is PlaceLimboBet lmb)
-            {                
-                CurrentRuntime["chance"] = (100m- currentSite.GameSettings[Games.Limbo.ToString()].Edge)/ lmb.Payout;
+            {
+                CurrentRuntime["chance"] = (100m - currentSite.GameSettings[Games.Limbo.ToString()].Edge) / (lmb.Payout <= 0 ? 2:lmb.Payout) ;
             }
             else if (nxt is PlaceTwistBet tws)
             {
                 CurrentRuntime["bethigh"] = tws.High;
                 CurrentRuntime["chance"] = tws.Chance;
             }
-            CurrentRuntime["currentprofit"] = ((decimal)(PreviousBet.Profit * 100000000m)) / 100000000.0m;
-            CurrentRuntime["lastBet"] = PreviousBet;
+            
+            CurrentRuntime["Game"] = nxt.Game.ToString();
+            CurrentRuntime["game"] = nxt.Game.ToString();
+            CurrentRuntime["NextBet"] = nxt;
+
         }
 
         public override void OnError(BotErrorEventArgs ErrorDetails)
         {
-            LuaFunction CallError = CurrentRuntime.GetFunction("OnError");
+            LuaFunction CallError = CurrentRuntime["OnError"] as LuaFunction;
             if (CallError != null)
             {
                 object[] Result = CallError.Call( ErrorDetails);
@@ -319,8 +332,9 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             try
             {
-                LuaFunction reset = CurrentRuntime.GetFunction("Reset");
-                if (reset != null)
+               
+                LuaFunction reset = CurrentRuntime["Reset"] as LuaFunction;
+                if (reset != null )
                 {
                     PlaceBet NextBet = CreateEmptyPlaceBet(Game);
                     SetVars(null, NextBet, false);
@@ -330,7 +344,12 @@ namespace Gambler.Bot.Strategies.Strategies
                 else
                 {
                     PlaceBet nextbet = CreateEmptyPlaceBet(Game);
+                    if (currentCurrency != (string)CurrentRuntime["currency"])
+                    {
+                        SetCurrency((string)CurrentRuntime["currency"]);
+                    }
                     SetBetParams(nextbet);
+                    return nextbet;
                 }
             }
             //catch (InternalErrorException e)
@@ -363,12 +382,16 @@ namespace Gambler.Bot.Strategies.Strategies
             SetLegacyVars();
         }
 
-        public void UpdateSite(SiteDetails Details)
+        public void UpdateSite(SiteDetails Details, string currency)
         {
             currentSite = Details;
             CurrentRuntime["SiteDetails"] = Details;
             CurrentRuntime["site"] = Details;
             CurrentRuntime["currencies"] = Details.Currencies;
+            CurrentRuntime["Currency"] = currency;
+            CurrentRuntime["currency"] = currency;
+            currentCurrency = currency;
+
         }
 
         public void UpdateSiteStats(SiteStats Stats)
@@ -493,6 +516,7 @@ namespace Gambler.Bot.Strategies.Strategies
             tmp.Amount = nextbet?.Amount ?? 0;
             CurrentRuntime["NextBet"]=tmp;
             CurrentRuntime["game"] = Game;
+            CurrentRuntime["Game"] = Game;
             return tmp;
         }
 
@@ -515,6 +539,7 @@ namespace Gambler.Bot.Strategies.Strategies
                 CurrentRuntime["wagered"] = Stats.Wagered;
                 CurrentRuntime["partialprofit"] = this.Stats.PartialProfit;
                 
+
 
             }
             catch (Exception e)

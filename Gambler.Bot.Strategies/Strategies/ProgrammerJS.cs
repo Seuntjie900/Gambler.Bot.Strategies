@@ -139,9 +139,10 @@ namespace Gambler.Bot.Strategies.Strategies
 
         }
 
-        public void UpdateSite(SiteDetails Stats)
+        public void UpdateSite(SiteDetails Stats, string currency)
         {
             Runtime.SetValue("SiteDetails", Stats);
+            Runtime.SetValue("Currency", currency);
         }
 
         public void UpdateSiteStats(SiteStats Stats)

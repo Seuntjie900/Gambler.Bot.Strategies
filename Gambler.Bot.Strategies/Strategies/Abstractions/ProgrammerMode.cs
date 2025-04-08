@@ -11,7 +11,7 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
         void CreateRuntime();
         void UpdateSessionStats(SessionStats Stats);
         void UpdateSiteStats(SiteStats Stats);
-        void UpdateSite(SiteDetails Stats);
+        void UpdateSite(SiteDetails Stats, string currency);
         void SetSimulation(bool IsSimulation);
         void LoadScript();
         void ExecuteCommand(string Command);

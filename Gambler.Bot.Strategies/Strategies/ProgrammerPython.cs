@@ -134,9 +134,10 @@ namespace Gambler.Bot.Strategies.Strategies
             Scope.SetVariable("Stats", Stats);
         }
 
-        public void UpdateSite(SiteDetails Stats)
+        public void UpdateSite(SiteDetails Stats, string currency)
         {
             Scope.SetVariable("SiteDetails", Stats);
+            Scope.SetVariable("Currency", currency);
         }
 
         public void UpdateSiteStats(SiteStats Stats)
