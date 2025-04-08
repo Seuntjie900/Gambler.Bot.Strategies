@@ -8,7 +8,9 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-
+	<PropertyGroup Condition="'$(OS)' == 'Linux' Or '$(OS)' == 'OSX'">
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+	</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>

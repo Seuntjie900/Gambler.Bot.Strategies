@@ -1,11 +1,12 @@
 ﻿using Gambler.Bot.Common.Games;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Gambler.Bot.Strategies.Helpers
 {
-    [MoonSharp.Interpreter.MoonSharpUserData]    
+     
     public class SessionStats
     {
         public bool Simulation { get; set; }
@@ -80,7 +81,11 @@ namespace Gambler.Bot.Strategies.Helpers
         public decimal MinProfit { get; set; } = 0;
         public decimal MaxProfitSinceReset { get; set; } = 0;
         public decimal MinProfitSinceReset { get; set; } = 0;
+        public decimal BettingSpeed { get; set; } = 0;
 
+        [NotMapped]
+        public Dictionary<long, long> Streaks { get; set; } = new Dictionary<long, long>();
+        Queue<DateTime> dateTimes = new Queue<DateTime>();
         public void UpdateStats(Bet newBet, bool Win)
         {
             //RunningTime = (long)(DateTime.Now - StartTime).TotalMilliseconds;
@@ -149,6 +154,15 @@ namespace Gambler.Bot.Strategies.Helpers
                             }
                         }
                     }
+                    if (Streaks.ContainsKey(-LossStreak))
+                    {
+                        Streaks[-LossStreak]++;
+                    }
+                    else
+                    {
+                        Streaks.Add(-LossStreak, 1);
+
+                    }
                 }
                 LossStreak = 0;
             }
@@ -192,6 +206,14 @@ namespace Gambler.Bot.Strategies.Helpers
                             }
                         }
                     }
+                    if (Streaks.ContainsKey(WinStreak))
+                    {
+                        Streaks[WinStreak]++;
+                    }
+                    else
+                    {
+                        Streaks.Add(WinStreak, 1);
+                    }
                 }
                 //reset win streak
                 WinStreak = 0;                
@@ -199,6 +221,22 @@ namespace Gambler.Bot.Strategies.Helpers
             ProfitPerBet = Profit / Bets;
             ProfitPerHour = ProfitPerBet * (Bets / ((RunningTime+(long)(DateTime.Now-StartTime).TotalMilliseconds) / 1000m / 60m / 60m));
             ProfitPer24Hour = ProfitPerHour * 24m;
+
+            DateTime start = DateTime.Now;
+            DateTime end = start;
+            dateTimes.Enqueue(start);
+            if (dateTimes.Count > 100)
+            {
+                while (dateTimes.Count > 100)
+                {
+                    start = dateTimes.Dequeue();
+                }
+            }
+            if (dateTimes.Count>1)
+            {
+                start = dateTimes.Peek();
+            }
+            BettingSpeed = (decimal)((double)dateTimes.Count/(end-start).TotalSeconds);
         }
 
         private void CalculateLuck(bool Win, decimal Chance)

@@ -1,5 +1,5 @@
 ﻿decimal baseb = 0.00000001m;
-void CalculateBet(dynamic PreviousBet, dynamic Win, dynamic NextBet)
+void CalculateBet()
 {
     if (Win)
     {
@@ -17,7 +17,7 @@ void CalculateBet(dynamic PreviousBet, dynamic Win, dynamic NextBet)
 
 }
 
-void Reset(dynamic NextBet)
+void Reset()
 {
     NextBet.Amount = baseb;
     NextBet.Chance = 49.5m;

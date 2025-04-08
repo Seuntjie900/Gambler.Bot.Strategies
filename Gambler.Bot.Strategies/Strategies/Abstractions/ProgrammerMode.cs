@@ -2,6 +2,7 @@
 using Gambler.Bot.Common.Helpers;
 using System;
 using Gambler.Bot.Common.Games.Dice;
+using Gambler.Bot.Common.Games;
 
 namespace Gambler.Bot.Strategies.Strategies.Abstractions
 {
@@ -10,7 +11,7 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
         void CreateRuntime();
         void UpdateSessionStats(SessionStats Stats);
         void UpdateSiteStats(SiteStats Stats);
-        void UpdateSite(SiteDetails Stats);
+        void UpdateSite(SiteDetails Stats, string currency);
         void SetSimulation(bool IsSimulation);
         void LoadScript();
         void ExecuteCommand(string Command);
@@ -52,6 +53,10 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
     public class PrintEventArgs : EventArgs
     {
         public string Message { get; set; }
+    }
+    public class GameChangedArgs : EventArgs
+    {
+        public Games Game { get; set; }
     }
     public class RunSimEventArgs : EventArgs
     {

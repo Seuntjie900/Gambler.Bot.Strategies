@@ -64,10 +64,12 @@ namespace Gambler.Bot.Strategies.Strategies
             try
             {
                 PlaceBet NextBet = PreviousBet.CreateRetry();
-
+                Scope.SetVariable("NextBet", NextBet);
+                Scope.SetVariable("Win", Win);
+                Scope.SetVariable("PreviousBet", PreviousBet);
                 dynamic result = Scope.DoDiceBet(PreviousBet, Win, NextBet);
-
-                return NextBet;
+                
+                return Scope.GetVariable("NextBet") as PlaceBet; ;
             }
             catch (Exception e)
             {
@@ -100,6 +102,7 @@ namespace Gambler.Bot.Strategies.Strategies
             (Scope as ScriptScope).SetVariable("ExportSim", (Action<string>)ExportSim);
             (Scope as ScriptScope).SetVariable("Stop", (Action)_Stop);
             (Scope as ScriptScope).SetVariable("SetCurrency", (Action<string>)SetCurrency);
+            (Scope as ScriptScope).SetVariable("SetCurrency", (Func<string,PlaceBet>)ChangeGame);
         }                                      
 
         public void LoadScript()
@@ -131,9 +134,10 @@ namespace Gambler.Bot.Strategies.Strategies
             Scope.SetVariable("Stats", Stats);
         }
 
-        public void UpdateSite(SiteDetails Stats)
+        public void UpdateSite(SiteDetails Stats, string currency)
         {
             Scope.SetVariable("SiteDetails", Stats);
+            Scope.SetVariable("Currency", currency);
         }
 
         public void UpdateSiteStats(SiteStats Stats)
@@ -218,6 +222,14 @@ namespace Gambler.Bot.Strategies.Strategies
         private void SetCurrency(string newCurrency)
         {
             OnSetCurrency?.Invoke(this, new PrintEventArgs { Message = newCurrency });
+        }
+        public PlaceBet ChangeGame(string Game)
+        {
+            var tmp = CreateEmptyPlaceBet(Enum.Parse<Games>(Game));
+            var nextbet = Scope.GetVariable("NextBet") as PlaceBet;
+            tmp.Amount = nextbet?.Amount ?? 0;
+            Scope.SetVariable("NextBet", tmp);
+            return tmp;
         }
     }
 }
