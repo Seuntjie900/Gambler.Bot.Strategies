@@ -4,6 +4,7 @@ using System;
 using Gambler.Bot.Common.Games.Dice;
 using Gambler.Bot.Common.Games.Limbo;
 using Gambler.Bot.Common.Games;
+using Gambler.Bot.Common.Games.Crash;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
@@ -262,7 +263,9 @@ namespace Gambler.Bot.Strategies.Strategies
             if (PreviousBet is LimboBet limbob && PreviousBet.Game == Games.Limbo)
                 return new PlaceLimboBet(Lastbet, Chance);
             if (PreviousBet is TwistBet twistbet && PreviousBet.Game == Games.Twist)
-                return new PlaceTwistBet(Lastbet, High, Chance);
+                return new PlaceTwistBet(Lastbet, High, twistbet.Chance);           
+            if (PreviousBet is CrashBet crashb && PreviousBet.Game == Games.Crash)
+                return new PlaceCrashBet(Lastbet, crashb.Payout);
             else throw new NotImplementedException("Strategy does not support this game.");
         }
 
@@ -284,10 +287,10 @@ namespace Gambler.Bot.Strategies.Strategies
             if (Game == Games.Twist)
             {
                 return new PlaceTwistBet((decimal)MinBet, High, Chance);
-            }
-            if (Game == Games.Boom)
+            }            
+            if (Game == Games.Crash)
             {
-                return new PlaceLimboBet((decimal)MinBet, Chance);
+                return new PlaceCrashBet((decimal)MinBet, Chance);
             }
             else throw new NotImplementedException("Strategy does not support this game");
         }
