@@ -66,7 +66,6 @@ namespace Gambler.Bot.Strategies.Strategies
         public bool High { get ; set ; }
         public decimal Amount { get ; set ; }
         public decimal Chance { get ; set ; }
-        public decimal StartChance { get ; set ; }
         #endregion
 
         public Martingale(ILogger logger) : base(logger)
@@ -259,9 +258,11 @@ namespace Gambler.Bot.Strategies.Strategies
                 Lastbet = (Percentage / 100.0m) * Balance;
             }
             if (PreviousBet is DiceBet diceb && PreviousBet.Game == Games.Dice)
-                return new PlaceDiceBet(Lastbet, High, diceb.Chance);
+                return new PlaceDiceBet(Lastbet, High, Chance);
             if (PreviousBet is LimboBet limbob && PreviousBet.Game == Games.Limbo)
-                return new PlaceLimboBet(Lastbet, limbob.Payout);
+                return new PlaceLimboBet(Lastbet, Chance);
+            if (PreviousBet is TwistBet twistbet && PreviousBet.Game == Games.Twist)
+                return new PlaceTwistBet(Lastbet, High, Chance);
             else throw new NotImplementedException("Strategy does not support this game.");
         }
 
