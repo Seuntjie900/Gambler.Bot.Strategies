@@ -281,6 +281,14 @@ namespace Gambler.Bot.Strategies.Strategies
             {
                 return new PlaceLimboBet((decimal)MinBet, 99 / (decimal)Chance);
             }
+            if (Game == Games.Twist)
+            {
+                return new PlaceTwistBet((decimal)MinBet, High, Chance);
+            }
+            if (Game == Games.Boom)
+            {
+                return new PlaceLimboBet((decimal)MinBet, Chance);
+            }
             else throw new NotImplementedException("Strategy does not support this game");
         }
 

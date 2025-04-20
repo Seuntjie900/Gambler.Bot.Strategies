@@ -125,7 +125,7 @@ namespace Gambler.Bot.Strategies.Strategies
             {
                 decimal chance = (decimal)(double)CurrentRuntime["chance"];
 
-                lmb.Payout =  (chance <=0 ? 2: (100m - currentSite.GameSettings[Games.Limbo.ToString()].Edge) / (chance));
+                lmb.Chance =  (chance <=0 ? 49.5m: (chance));
                 lmb.Amount = (decimal)(double)CurrentRuntime["nextbet"];
 
             }
@@ -161,7 +161,7 @@ namespace Gambler.Bot.Strategies.Strategies
             }
             else if (nxt is PlaceLimboBet lmb)
             {
-                CurrentRuntime["chance"] = (100m - currentSite.GameSettings[Games.Limbo.ToString()].Edge) / (lmb.Payout <= 0 ? 2:lmb.Payout) ;
+                CurrentRuntime["chance"] = lmb.Chance ;
             }
             else if (nxt is PlaceTwistBet tws)
             {

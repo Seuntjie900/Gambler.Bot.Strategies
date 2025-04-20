@@ -78,7 +78,7 @@ namespace Gambler.Bot.Strategies.Strategies
             if (PreviousBet is DiceBet diceb && PreviousBet.Game == Games.Dice)
                 return new PlaceDiceBet(LastBet, High, diceb.Chance);
             if (PreviousBet is LimboBet limbob && PreviousBet.Game == Games.Limbo)
-                return new PlaceLimboBet(LastBet, limbob.Payout);
+                return new PlaceLimboBet(LastBet, limbob.Chance);
             else throw new NotImplementedException("Strategy does not support this game.");
         }
 
