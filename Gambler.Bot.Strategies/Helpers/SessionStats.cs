@@ -232,11 +232,15 @@ namespace Gambler.Bot.Strategies.Helpers
                     start = dateTimes.Dequeue();
                 }
             }
-            if (dateTimes.Count>1)
+            else if (dateTimes.Count>1)
             {
-                start = dateTimes.Peek();
+                start = dateTimes.Peek();               
             }
-            BettingSpeed = (decimal)((double)dateTimes.Count/(end-start).TotalSeconds);
+            decimal totalseconds = (decimal) (end - start).TotalSeconds;
+            if (totalseconds > 1)
+            {
+                BettingSpeed = (decimal)(dateTimes.Count / totalseconds);
+            }
         }
 
         private void CalculateLuck(bool Win, decimal Chance)
