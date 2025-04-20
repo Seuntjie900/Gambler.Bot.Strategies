@@ -4,6 +4,9 @@ using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 using Gambler.Bot.Common.Games.Dice;
 using Gambler.Bot.Common.Games;
+using Gambler.Bot.Common.Games.Crash;
+using Gambler.Bot.Common.Games.Limbo;
+using System;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
@@ -68,14 +71,39 @@ namespace Gambler.Bot.Strategies.Strategies
             {
                 CallStop("It Seems a problem has occurred with the preset list values");
             }
-            return new PlaceDiceBet(Lastbet, High, Chance);
+            if (PreviousBet is DiceBet diceb && PreviousBet.Game == Games.Dice)
+                return new PlaceDiceBet(Lastbet, High, Chance);
+            else if (PreviousBet is LimboBet limbob && PreviousBet.Game == Games.Limbo)
+                return new PlaceLimboBet(Lastbet, Chance);
+            else if (PreviousBet is TwistBet twistbet && PreviousBet.Game == Games.Twist)
+                return new PlaceTwistBet(Lastbet, High, twistbet.Chance);
+            else if (PreviousBet is CrashBet crashb && PreviousBet.Game == Games.Crash)
+                return new PlaceCrashBet(Lastbet, crashb.Payout);
+            else
+                throw new NotImplementedException();
         }
 
         public override PlaceBet RunReset(Games Game)
         {
             presetLevel = 0;
             decimal Lastbet = SetPresetValues(presetLevel);
-            return new PlaceDiceBet(Lastbet, High, Chance);
+            if (Game == Games.Dice)
+            {
+                return new PlaceDiceBet((decimal)Lastbet, High, (decimal)Chance);
+            }
+            if (Game == Games.Limbo)
+            {
+                return new PlaceLimboBet((decimal)Lastbet, 99 / (decimal)Chance);
+            }
+                if (Game == Games.Twist)
+            {
+                return new PlaceTwistBet((decimal)Lastbet, High, Chance);
+            }
+            if (Game == Games.Crash)
+            {
+                return new PlaceCrashBet((decimal)Lastbet, Chance);
+            }
+            throw new NotImplementedException("Game not implemented for this strategy");
         }
 
         decimal SetPresetValues(int Level)

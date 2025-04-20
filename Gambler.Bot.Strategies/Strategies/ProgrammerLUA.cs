@@ -1,17 +1,14 @@
-﻿using Gambler.Bot.Strategies.Helpers;
-using Gambler.Bot.Strategies.Strategies.Abstractions;
+﻿using Gambler.Bot.Common.Games;
+using Gambler.Bot.Common.Games.Crash;
+using Gambler.Bot.Common.Games.Dice;
+using Gambler.Bot.Common.Games.Limbo;
 using Gambler.Bot.Common.Helpers;
+using Gambler.Bot.Strategies.Helpers;
+using Gambler.Bot.Strategies.Strategies.Abstractions;
 using Microsoft.Extensions.Logging;
 using NLua;
 using System;
-using Gambler.Bot.Common.Games.Dice;
-using Gambler.Bot.Common.Games.Crash;
-using Gambler.Bot.Common.Games.Plinko;
-using Gambler.Bot.Common.Games.Roulette;
-using Gambler.Bot.Common.Games;
-using static IronPython.Modules._ast;
-using Mono.Unix.Native;
-using Gambler.Bot.Common.Games.Limbo;
+using System.Text;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
@@ -128,7 +125,7 @@ namespace Gambler.Bot.Strategies.Strategies
             {
                 decimal chance = (decimal)(double)CurrentRuntime["chance"];
 
-                lmb.Payout =  (chance <=0 ? 2: (100m - currentSite.GameSettings[Games.Limbo.ToString()].Edge) / (chance));
+                lmb.Chance =  (chance <=0 ? 49.5m: (chance));
                 lmb.Amount = (decimal)(double)CurrentRuntime["nextbet"];
 
             }
@@ -164,7 +161,7 @@ namespace Gambler.Bot.Strategies.Strategies
             }
             else if (nxt is PlaceLimboBet lmb)
             {
-                CurrentRuntime["chance"] = (100m - currentSite.GameSettings[Games.Limbo.ToString()].Edge) / (lmb.Payout <= 0 ? 2:lmb.Payout) ;
+                CurrentRuntime["chance"] = lmb.Chance ;
             }
             else if (nxt is PlaceTwistBet tws)
             {
@@ -224,6 +221,7 @@ namespace Gambler.Bot.Strategies.Strategies
         public void CreateRuntime()
         {
             CurrentRuntime = new Lua();
+            CurrentRuntime.State.Encoding = Encoding.UTF8;
             //UserData.RegisterAssembly();
             /*UserData.RegisterType<SessionStats>();
             UserData.RegisterType < PlaceDiceBet>();

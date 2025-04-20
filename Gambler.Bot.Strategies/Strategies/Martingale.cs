@@ -4,6 +4,7 @@ using System;
 using Gambler.Bot.Common.Games.Dice;
 using Gambler.Bot.Common.Games.Limbo;
 using Gambler.Bot.Common.Games;
+using Gambler.Bot.Common.Games.Crash;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
@@ -66,7 +67,6 @@ namespace Gambler.Bot.Strategies.Strategies
         public bool High { get ; set ; }
         public decimal Amount { get ; set ; }
         public decimal Chance { get ; set ; }
-        public decimal StartChance { get ; set ; }
         #endregion
 
         public Martingale(ILogger logger) : base(logger)
@@ -259,9 +259,13 @@ namespace Gambler.Bot.Strategies.Strategies
                 Lastbet = (Percentage / 100.0m) * Balance;
             }
             if (PreviousBet is DiceBet diceb && PreviousBet.Game == Games.Dice)
-                return new PlaceDiceBet(Lastbet, High, diceb.Chance);
+                return new PlaceDiceBet(Lastbet, High, Chance);
             if (PreviousBet is LimboBet limbob && PreviousBet.Game == Games.Limbo)
-                return new PlaceLimboBet(Lastbet, limbob.Payout);
+                return new PlaceLimboBet(Lastbet, Chance);
+            if (PreviousBet is TwistBet twistbet && PreviousBet.Game == Games.Twist)
+                return new PlaceTwistBet(Lastbet, High, twistbet.Chance);           
+            if (PreviousBet is CrashBet crashb && PreviousBet.Game == Games.Crash)
+                return new PlaceCrashBet(Lastbet, crashb.Payout);
             else throw new NotImplementedException("Strategy does not support this game.");
         }
 
@@ -279,6 +283,14 @@ namespace Gambler.Bot.Strategies.Strategies
             if (Game == Games.Limbo)
             {
                 return new PlaceLimboBet((decimal)MinBet, 99 / (decimal)Chance);
+            }
+            if (Game == Games.Twist)
+            {
+                return new PlaceTwistBet((decimal)MinBet, High, Chance);
+            }            
+            if (Game == Games.Crash)
+            {
+                return new PlaceCrashBet((decimal)MinBet, Chance);
             }
             else throw new NotImplementedException("Strategy does not support this game");
         }

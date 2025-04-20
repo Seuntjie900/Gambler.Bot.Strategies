@@ -4,6 +4,7 @@ using System;
 using Gambler.Bot.Common.Games.Dice;
 using Gambler.Bot.Common.Games;
 using Gambler.Bot.Common.Games.Limbo;
+using Gambler.Bot.Common.Games.Crash;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
@@ -78,7 +79,11 @@ namespace Gambler.Bot.Strategies.Strategies
             if (PreviousBet is DiceBet diceb && PreviousBet.Game == Games.Dice)
                 return new PlaceDiceBet(LastBet, High, diceb.Chance);
             if (PreviousBet is LimboBet limbob && PreviousBet.Game == Games.Limbo)
-                return new PlaceLimboBet(LastBet, limbob.Payout);
+                return new PlaceLimboBet(LastBet, limbob.Chance);
+            if (PreviousBet is TwistBet twistbet && PreviousBet.Game == Games.Twist)
+                return new PlaceTwistBet(LastBet, High, twistbet.Chance);
+            if (PreviousBet is CrashBet crashb && PreviousBet.Game == Games.Crash)
+                return new PlaceCrashBet(LastBet, crashb.Payout);
             else throw new NotImplementedException("Strategy does not support this game.");
         }
 
@@ -89,7 +94,15 @@ namespace Gambler.Bot.Strategies.Strategies
             if (game == Games.Dice)
                 return new PlaceDiceBet(CalculateFibonacci(FibonacciLevel), High, Chance);
             if (game == Games.Limbo)
-                return new PlaceLimboBet(CalculateFibonacci(FibonacciLevel), 100/ Chance);
+                return new PlaceLimboBet(CalculateFibonacci(FibonacciLevel), 100/ Chance);            
+            if (game == Games.Twist)
+            {
+                return new PlaceTwistBet(CalculateFibonacci(FibonacciLevel), High, Chance);
+            }
+            if (game == Games.Boom)
+            {
+                return new PlaceLimboBet(CalculateFibonacci(FibonacciLevel),  Chance);
+            }
             else throw new NotImplementedException("Strategy does not support this game.");
         }
         int Fib(int n)
