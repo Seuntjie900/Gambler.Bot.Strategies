@@ -255,7 +255,7 @@ namespace Gambler.Bot.Strategies.Helpers
         private DiceBet SimulatedBet(PlaceDiceBet NewBet)
         {
             //get RNG result from site
-            decimal Lucky = 0;
+            IGameResult Lucky = null;
             if (!Site.NonceBased)
             {
                 GenerateSeeds();
@@ -266,7 +266,7 @@ namespace Gambler.Bot.Strategies.Helpers
             }
                 
             
-            Lucky=LuckyGenerator.GetLucky(serverseed, clientseed, (int)BetsWithSeed);
+            Lucky=LuckyGenerator.GetLucky(serverseed, clientseed, (int)BetsWithSeed, Games.Dice);
             
             DiceBet betresult = new DiceBet {
                 TotalAmount = NewBet.Amount,
@@ -277,7 +277,7 @@ namespace Gambler.Bot.Strategies.Helpers
                 Guid = null,
                 High = NewBet.High,
                 Nonce = BetsWithSeed,
-                Roll = Lucky,
+                Roll = 0, // to do fix this but the whole simulation thing needs fixing
                 ServerHash = serverseedhash,
                 ServerSeed = serverseed
             };
