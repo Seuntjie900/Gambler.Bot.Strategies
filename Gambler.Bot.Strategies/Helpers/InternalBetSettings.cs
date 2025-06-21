@@ -421,33 +421,40 @@ namespace Gambler.Bot.Strategies.Helpers
             return false;
         }
 
-        public bool CheckHighLow(DiceBet NewBet, bool win, SessionStats Stats, out bool NewHigh, SiteStats siteStats)
+        public bool CheckHighLow(Bet NewBet, bool win, SessionStats Stats, out bool NewHigh, SiteStats siteStats)
         {
             NewHigh = false;
-            
-             if (EnableSwitchWins && Stats.Wins% SwitchWins==0)
+            bool High = false;
+            if (NewBet is DiceBet db)
+                High = db.High;
+            else if (NewBet is TwistBet twistBet)
+                High = twistBet.High;
+            else
+                return false; //not supported bet type
+
+            if (EnableSwitchWins && Stats.Wins % SwitchWins == 0)
             {
-                NewHigh = !NewBet.High;
+                NewHigh = !High;
                 return true;
             }
             if (EnableSwitchWinStreak && Stats.WinStreak % SwitchWinStreak == 0 && win)
             {
-                NewHigh = !NewBet.High;
+                NewHigh = !High;
                 return true;
             }
             if (EnableSwitchLosses && Stats.Losses % SwitchLosses == 0)
             {
-                NewHigh = !NewBet.High;
+                NewHigh = !High;
                 return true;
             }
             if (EnableSwitchLossStreak && Stats.LossStreak % SwitchLossStreak == 0 && !win)
             {
-                NewHigh = !NewBet.High;
+                NewHigh = !High;
                 return true;
             }
             if (EnableSwitchBets && Stats.Bets % SwitchBets == 0)
             {
-                NewHigh = !NewBet.High;
+                NewHigh = !High;
                 return true;
             }
             return false;

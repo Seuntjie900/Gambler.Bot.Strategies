@@ -10,6 +10,7 @@ using System.IO;
 using System.Threading;
 using Gambler.Bot.Common.Games.Dice;
 using Gambler.Bot.Common.Games;
+using Gambler.Bot.Common.Games.Limbo;
 
 namespace Gambler.Bot.Strategies.Helpers
 {
@@ -40,6 +41,7 @@ namespace Gambler.Bot.Strategies.Helpers
         string TmpFileName = "";
         public decimal Profit { get; set; } = 0;
         bool log = true;
+        public Games CurrentGame { get; set; } = Games.Dice;
 
         public Simulation(ILogger logger)
         {
@@ -62,15 +64,17 @@ namespace Gambler.Bot.Strategies.Helpers
             this.LuckyGenerator = luckyGenerator;
             ///copy strategy
             this.DiceStrategy = CopyHelper.CreateCopy(_DiceStrategy.GetType(), _DiceStrategy) as BaseStrategy;
-            if (this.DiceStrategy is IProgrammerMode)
+            if (this.DiceStrategy is IProgrammerMode progmode)
             {
                 (this.DiceStrategy as IProgrammerMode).CreateRuntime();
+                
             }
             if (DiceStrategy != null)
             {
                 this.DiceStrategy.NeedBalance += DiceStrategy_NeedBalance;
                 this.DiceStrategy.OnNeedStats += DiceStrategy_OnNeedStats;
                 this.DiceStrategy.Stop += DiceStrategy_Stop;
+                
             }
             this.log = Log;
             if (log)
@@ -94,8 +98,9 @@ namespace Gambler.Bot.Strategies.Helpers
            
         }
 
-        public void Start()
+        public void Start(Games startingGame)
         {
+            this.CurrentGame = startingGame;
             this.Stats = new SessionStats(true);
             this.SiteStats = new SiteStats();
             SiteStats.Balance = Balance;
@@ -118,15 +123,14 @@ namespace Gambler.Bot.Strategies.Helpers
         {
             try
             {
-                DiceBet NewBet = SimulatedBet(DiceStrategy.RunReset(Games.Dice) as PlaceDiceBet);
+                Bet NewBet = SimulatedBet(DiceStrategy.RunReset(CurrentGame));
                 this.Balance += (decimal)NewBet.Profit;
                 Profit += (decimal)NewBet.Profit;
                 while (TotalBetsPlaced < Bets && !Stop && Running)
                 {
                     if (log)
                     {
-                        bets.Add(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}"
-                        , TotalBetsPlaced, NewBet.Roll, NewBet.Chance, (NewBet.High ? ">" : "<"), NewBet.GetWin(Site.maxroll) ? "win" : "lose", NewBet.TotalAmount, NewBet.Profit, this.Balance, Profit));
+                        bets.Add(NewBet.ToCSV(Site.GameSettings[NewBet.Game.ToString()], TotalBetsPlaced, Balance));
                     }
 
                     if (TotalBetsPlaced % 10000 == 0)
@@ -148,15 +152,15 @@ namespace Gambler.Bot.Strategies.Helpers
                     TotalBetsPlaced++;
                     BetsWithSeed++;
                     bool Reset = false;
-                    PlaceDiceBet NewBetObject = null;
-                    bool win = NewBet.GetWin(Site.maxroll);
+                    PlaceBet NewBetObject = null;
+                    bool win = NewBet.IsWin;
                     string Response = "";
-                    if (BetSettings.CheckResetPreStats(NewBet, NewBet.GetWin(Site.maxroll), Stats, SiteStats)) 
+                    if (BetSettings.CheckResetPreStats(NewBet, win, Stats, SiteStats)) 
                     {
                         Reset = true;
-                        NewBetObject = DiceStrategy.RunReset(Games.Dice) as PlaceDiceBet;
+                        NewBetObject = DiceStrategy.RunReset(CurrentGame) as PlaceDiceBet;
                     }
-                    if (BetSettings.CheckStopPreStats(NewBet, NewBet.GetWin(Site.maxroll), Stats, out Response, SiteStats))
+                    if (BetSettings.CheckStopPreStats(NewBet, win, Stats, out Response, SiteStats))
                     {
                         this.Stop = (true);
                     }
@@ -167,40 +171,40 @@ namespace Gambler.Bot.Strategies.Helpers
                         (DiceStrategy as IProgrammerMode).UpdateSiteStats(CopyHelper.CreateCopy<SiteStats>(SiteStats));
                         (DiceStrategy as IProgrammerMode).UpdateSite(Site,"" );
                     }
-                    if (BetSettings.CheckResetPostStats(NewBet, NewBet.GetWin(Site.maxroll), Stats, SiteStats))
+                    if (BetSettings.CheckResetPostStats(NewBet, win, Stats, SiteStats))
                     {
                         Reset = true;
-                        NewBetObject = DiceStrategy.RunReset(Games.Dice) as PlaceDiceBet;
+                        NewBetObject = DiceStrategy.RunReset(CurrentGame) as PlaceDiceBet;
                     }
-                    if (BetSettings.CheckStopPOstStats(NewBet, NewBet.GetWin(Site.maxroll), Stats, out Response, SiteStats))
+                    if (BetSettings.CheckStopPOstStats(NewBet, win, Stats, out Response, SiteStats))
                     {
                         Stop = true;
                     }
                     decimal withdrawamount = 0;
                     string address = "";
-                    if (BetSettings.CheckWithdraw(NewBet, NewBet.GetWin(Site.maxroll), Stats, out withdrawamount, SiteStats, out address))
+                    if (BetSettings.CheckWithdraw(NewBet, win, Stats, out withdrawamount, SiteStats, out address))
                     {
                         this.Balance -= withdrawamount;
                     }
-                    if (BetSettings.CheckBank(NewBet, NewBet.GetWin(Site.maxroll), Stats, out withdrawamount, SiteStats))
+                    if (BetSettings.CheckBank(NewBet, win, Stats, out withdrawamount, SiteStats))
                     {
                         this.Balance -= withdrawamount;
                     }
-                    if (BetSettings.CheckTips(NewBet, NewBet.GetWin(Site.maxroll), Stats, out withdrawamount, SiteStats, out address))
+                    if (BetSettings.CheckTips(NewBet, win, Stats, out withdrawamount, SiteStats, out address))
                     {
                         this.Balance -= withdrawamount;
                     }
                     bool NewHigh = false;
-                    if (BetSettings.CheckResetSeed(NewBet, NewBet.GetWin(Site.maxroll), Stats, SiteStats))
+                    if (BetSettings.CheckResetSeed(NewBet, win, Stats, SiteStats))
                     {
                         GenerateSeeds();
                     }
-                    if (BetSettings.CheckHighLow(NewBet, NewBet.GetWin(Site.maxroll), Stats, out NewHigh, SiteStats))
+                    if (BetSettings.CheckHighLow(NewBet, win, Stats, out NewHigh, SiteStats))
                     {
                         (DiceStrategy as iDiceStrategy).High = NewHigh;
                     }
                     if (!Reset)
-                        NewBetObject = DiceStrategy.CalculateNextBet(NewBet, win) as PlaceDiceBet;
+                        NewBetObject = DiceStrategy.CalculateNextBet(NewBet, win) as PlaceBet;
                     if (Running && !Stop && TotalBetsPlaced <= Bets)
                     {
                         if (this.Balance <(decimal)NewBetObject.Amount)
@@ -252,10 +256,10 @@ namespace Gambler.Bot.Strategies.Helpers
         }
 
 
-        private DiceBet SimulatedBet(PlaceDiceBet NewBet)
+        private Bet SimulatedBet(PlaceBet NewBet)
         {
             //get RNG result from site
-            decimal Lucky = 0;
+            IGameResult Lucky = null;
             if (!Site.NonceBased)
             {
                 GenerateSeeds();
@@ -266,22 +270,65 @@ namespace Gambler.Bot.Strategies.Helpers
             }
                 
             
-            Lucky=LuckyGenerator.GetLucky(serverseed, clientseed, (int)BetsWithSeed);
-            
-            DiceBet betresult = new DiceBet {
-                TotalAmount = NewBet.Amount,
-                Chance = NewBet.Chance,
-                ClientSeed = clientseed,
-                Currency = "simulation",
-                DateValue = DateTime.Now,
-                Guid = null,
-                High = NewBet.High,
-                Nonce = BetsWithSeed,
-                Roll = Lucky,
-                ServerHash = serverseedhash,
-                ServerSeed = serverseed
-            };
-            betresult.Profit = betresult.GetWin(Site.maxroll) ?  ((((100.0m - Site.edge) / NewBet.Chance) * NewBet.Amount)-NewBet.Amount): -NewBet.Amount;
+            Lucky=LuckyGenerator.GetLucky(serverseed, clientseed, (int)BetsWithSeed, NewBet.Game);
+            Bet betresult = null;
+            if (NewBet is PlaceDiceBet pd && Lucky is DiceResult diceResult)
+            { 
+                betresult = new DiceBet
+                {
+                    TotalAmount = pd.Amount,
+                    Chance = pd.Chance,
+                    ClientSeed = clientseed,
+                    Currency = "simulation",
+                    DateValue = DateTime.Now,
+                    Guid = null,
+                    High = pd.High,
+                    Nonce = BetsWithSeed,
+                    Roll = diceResult.Roll, // to do fix this but the whole simulation thing needs fixing
+                    ServerHash = serverseedhash,
+                    ServerSeed = serverseed
+                };
+                betresult.IsWin = betresult.GetWin(Site.GameSettings[NewBet.Game.ToString()]);
+                betresult.Profit = betresult.IsWin ? ((((100.0m - (Site.GameSettings[NewBet.Game.ToString()] as DiceConfig).Edge) / pd.Chance) * NewBet.Amount) - NewBet.Amount) : -NewBet.Amount;
+            }
+            else if (NewBet is PlaceTwistBet tb && Lucky is TwistResult tr)
+            {
+                betresult = new TwistBet
+                {
+                    TotalAmount = tb.Amount,
+                    Chance = tb.Chance,
+                    ClientSeed = clientseed,
+                    Currency = "simulation",
+                    DateValue = DateTime.Now,
+                    Guid = null,
+                    High = tb.High,
+                    Nonce = BetsWithSeed,
+                    Roll = tr.Roll, // to do fix this but the whole simulation thing needs fixing
+                    ServerHash = serverseedhash,
+                    ServerSeed = serverseed
+                };
+                betresult.IsWin = betresult.GetWin(Site.GameSettings[NewBet.Game.ToString()]);
+                betresult.Profit = betresult.IsWin ? ((((100.0m - (Site.GameSettings[NewBet.Game.ToString()] as TwistConfig).Edge) / tb.Chance) * NewBet.Amount) - NewBet.Amount) : -NewBet.Amount;
+            }
+            else if (NewBet is PlaceLimboBet lb && Lucky is LimboResult lr)
+            {
+                betresult = new LimboBet
+                {
+                    TotalAmount = lb.Amount,
+                    Chance = lb.Chance,
+                    ClientSeed = clientseed,
+                    Currency = "simulation",
+                    DateValue = DateTime.Now,
+                    Guid = null,
+                    Nonce = BetsWithSeed,
+                    Result = lr.Result, // to do fix this but the whole simulation thing needs fixing
+                    ServerHash = serverseedhash,
+                    ServerSeed = serverseed
+                };
+                betresult.IsWin = betresult.GetWin(Site.GameSettings[NewBet.Game.ToString()]);
+                betresult.Profit = betresult.IsWin ? (((((Site.GameSettings[NewBet.Game.ToString()] as LimboConfig).Edge) / lb.Chance) * NewBet.Amount) - NewBet.Amount) : -NewBet.Amount;
+            }
+
             OnBetSimulated?.Invoke(this, new BetFinisedEventArgs(betresult));
             return betresult;
         }
