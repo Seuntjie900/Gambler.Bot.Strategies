@@ -99,23 +99,3 @@ stages:
         platform: '$(buildPlatform)'
         configuration: '$(buildConfiguration)'
 
-- stage: Publish
-  dependsOn: Test
-  condition: and(succeeded(), eq(dependencies.Test.result, 'Succeeded'))
-  jobs:
-  - job: PublishJob
-    steps:
-    - task: DownloadBuildArtifacts@0
-      inputs:
-        buildType: 'current'
-        downloadType: 'single'
-        artifactName: 'BuildArtifacts'
-        downloadPath: '$(System.ArtifactsDirectory)'
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: 'push'
-        packagesToPush: '$(System.ArtifactsDirectory)\Gambler.Bot.Strategies*.nupkg' # Update this to the path of your .nupkg file
-        nuGetFeedType: 'external'
-        publishVstsFeed: 'https://api.nuget.org/v3/index.json'
-        apiKey: '$(NuGetApiKey)'
-    
