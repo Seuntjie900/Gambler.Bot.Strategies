@@ -90,7 +90,7 @@ namespace Gambler.Bot.Strategies.Strategies
 
                     }
                 }
-                BetDelay = (int)CurrentRuntime["BetDelay"];
+                BetDelay = (int)(double)CurrentRuntime["BetDelay"];
                 MaintainBetDelay = (bool)CurrentRuntime["MaintainBetDelay"];
                 return NextBet;
             }
@@ -345,7 +345,7 @@ namespace Gambler.Bot.Strategies.Strategies
                     PlaceBet NextBet = CreateEmptyPlaceBet(Game);
                     SetVars(null, NextBet, false);
                     object[] Result = reset.Call();
-                    BetDelay = (int)CurrentRuntime["BetDelay"];
+                    BetDelay = (int)(double)CurrentRuntime["BetDelay"];
                     MaintainBetDelay = (bool)CurrentRuntime["MaintainBetDelay"];
                     return NextBet;
                 }
@@ -357,7 +357,7 @@ namespace Gambler.Bot.Strategies.Strategies
                         SetCurrency((string)CurrentRuntime["currency"]);
                     }
                     SetBetParams(nextbet);
-                    BetDelay = (int)CurrentRuntime["BetDelay"];
+                    BetDelay = (int)(double)CurrentRuntime["BetDelay"];
                     MaintainBetDelay = (bool)CurrentRuntime["MaintainBetDelay"];
                     return nextbet;
                 }

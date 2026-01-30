@@ -10,9 +10,9 @@ namespace Gambler.Bot.Core
         public SiteStats SiteStats { get; set; }
         public SiteDetails SiteDetails { get; set; }
         public SessionStats Stats { get; set; }
-        public object NextBet { get; set; }
-        public object ErrorArgs { get; set; }
-        public object PreviousBet { get; set; }
+        public dynamic NextBet { get; set; }
+        public dynamic ErrorArgs { get; set; }
+        public dynamic PreviousBet { get; set; }
         public bool Win { get; set; }
         public decimal Balance { get; set; }
         public string Currency { get; set; }

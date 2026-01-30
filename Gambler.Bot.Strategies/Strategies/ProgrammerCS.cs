@@ -173,21 +173,31 @@ namespace Gambler.Bot.Strategies.Strategies
 
         public override PlaceBet RunReset(Games Game)
         {
-            PlaceBet NextBet = CreateEmptyPlaceBet(Game);
-            
-            globals.NextBet = NextBet;
-            
-            //if (ResetDice == null)
+            try
             {
-                runtime = runtime.ContinueWithAsync("Reset()").Result;
-                ResetDice = runtime.Script;
+                PlaceBet NextBet = CreateEmptyPlaceBet(Game);
+                
+                globals.NextBet = NextBet;
+                
+                //if (ResetDice == null)
+                {
+                    runtime = runtime.ContinueWithAsync("Reset()").Result;
+                    ResetDice = runtime.Script;
+                }
+                
+                //else
+                //    runtime = ResetDice.RunFromAsync(runtime).Result;
+                BetDelay = globals.BetDelay;
+                MaintainBetDelay = globals.MaintainBetDelay;
+                return globals.NextBet as PlaceBet;
             }
-            
-            //else
-            //    runtime = ResetDice.RunFromAsync(runtime).Result;
-            BetDelay = globals.BetDelay;
-            MaintainBetDelay = globals.MaintainBetDelay;
-            return globals.NextBet as PlaceBet;
+            catch (Exception e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
+                //throw e;
+            }
+
+            return null;
         }
         
 

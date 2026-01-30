@@ -65,10 +65,11 @@ namespace Gambler.Bot.Strategies.Strategies
                 Runtime.SetValue("Win", Win);
                 Runtime.SetValue("PreviousBet", PreviousBet);
                 //TypeReference.CreateTypeReference
+                //CalculateBet(PreviousBet, Win, NextBet)
                 Runtime.Invoke("CalculateBet");
                 this.BetDelay =(int) Runtime.GetValue("BetDelay").AsNumber();
                 this.MaintainBetDelay = Runtime.GetValue("MaintainBetDelay").AsBoolean();
-                return Runtime.GetValue("NextBet").AsInstance<PlaceBet>(); 
+                return NextBet;
             }
             catch (Exception e)
             {
@@ -136,13 +137,23 @@ namespace Gambler.Bot.Strategies.Strategies
         }
 
         public override PlaceBet RunReset(Games Game)
-        { 
-             PlaceBet NextBet = CreateEmptyPlaceBet(Game);
-            Runtime.SetValue("NextBet", NextBet);
-            Runtime.Invoke("Reset");
-            this.BetDelay =(int) Runtime.GetValue("BetDelay").AsNumber();
-            this.MaintainBetDelay = Runtime.GetValue("MaintainBetDelay").AsBoolean();
-            return NextBet;
+        {
+            try
+            {
+                 PlaceBet NextBet = CreateEmptyPlaceBet(Game);
+                Runtime.SetValue("NextBet", NextBet);
+                Runtime.Invoke("Reset" );
+                this.BetDelay =(int) Runtime.GetValue("BetDelay").AsNumber();
+                this.MaintainBetDelay = Runtime.GetValue("MaintainBetDelay").AsBoolean();
+                return NextBet;
+            }
+            catch (Exception e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
+                //throw e;
+            }
+
+            return null;
         }
 
         public void UpdateSessionStats(SessionStats Stats)
