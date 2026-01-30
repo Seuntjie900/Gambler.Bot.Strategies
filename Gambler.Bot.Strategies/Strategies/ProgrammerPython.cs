@@ -48,6 +48,7 @@ namespace Gambler.Bot.Strategies.Strategies
 
         public event EventHandler<EventArgs> OnResetProfit;
         public event EventHandler<EventArgs> OnResetPartialProfit;
+        public event EventHandler<SetBotSpeedEventArgs> OnSetBotSpeed;
 
         public ProgrammerPython(ILogger logger) : base(logger)
         {
@@ -109,6 +110,7 @@ namespace Gambler.Bot.Strategies.Strategies
             (Scope as ScriptScope).SetVariable("Sleep", (Action<int>)Sleep);
             (Scope as ScriptScope).SetVariable("BetDelay", BetDelay);
             (Scope as ScriptScope).SetVariable("MaintainBetDelay",MaintainBetDelay);
+            (Scope as ScriptScope).SetVariable("SetBotSpeed", (Action<bool, decimal>)SetBotSpeed);
         }                                      
 
         public void LoadScript()
@@ -237,6 +239,10 @@ namespace Gambler.Bot.Strategies.Strategies
             tmp.Amount = nextbet?.Amount ?? 0;
             Scope.SetVariable("NextBet", tmp);
             return tmp;
+        }
+        public void SetBotSpeed(bool Enabled, decimal BetsPerSecond)
+        {
+            this.OnSetBotSpeed?.Invoke(this, new SetBotSpeedEventArgs(Enabled, BetsPerSecond));
         }
     }
 }

@@ -37,6 +37,6 @@ namespace Gambler.Bot.Core
         public Action<int> Sleep { get; set; }
         public bool MaintainBetDelay { get; set; }
         public int BetDelay { get; set; }
-        
+        public Action<bool,decimal> SetBotSpeed { get; set; }
     }
 }

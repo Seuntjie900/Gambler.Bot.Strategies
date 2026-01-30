@@ -42,6 +42,7 @@ namespace Gambler.Bot.Strategies.Strategies
         public event EventHandler<PrintEventArgs> OnScriptError;
         public event EventHandler<PrintEventArgs> OnSetCurrency;
         public event EventHandler<InvestEventArgs> OnBank;
+        public event EventHandler<SetBotSpeedEventArgs> OnSetBotSpeed;
 
         public ProgrammerLUA(ILogger logger) : base(logger)
         {
@@ -258,7 +259,7 @@ namespace Gambler.Bot.Strategies.Strategies
             CurrentRuntime["ChangeGame"] = (Func< string, PlaceBet>)ChangeGame;
             
             CurrentRuntime["Sleep"] = (Action< int>)Sleep;
-
+            CurrentRuntime["SetBotSpeed"] = (Action<bool, decimal>)SetBotSpeed;
 
             //legacy support
             CurrentRuntime["withdraw"] = (Action<string, decimal>)Withdraw; ;
@@ -561,6 +562,9 @@ namespace Gambler.Bot.Strategies.Strategies
             }
         }
 
-        
+        public void SetBotSpeed(bool Enabled, decimal BetsPerSecond)
+        {
+            this.OnSetBotSpeed?.Invoke(this, new SetBotSpeedEventArgs(Enabled, BetsPerSecond));
+        }
     }
 }

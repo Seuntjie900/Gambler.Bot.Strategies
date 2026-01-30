@@ -34,6 +34,8 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
         event EventHandler<EventArgs> OnResetProfit;
         event EventHandler<EventArgs> OnResetPartialProfit;
         
+        event EventHandler<SetBotSpeedEventArgs> OnSetBotSpeed;
+        
         public string FileName { get; set; }
     }
 
@@ -82,5 +84,15 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
     {
         public PlaceDiceBet NewBet { get; set; }
     }
-
+    public class SetBotSpeedEventArgs : EventArgs
+    {
+        public SetBotSpeedEventArgs(bool Enabled, decimal BetsPerSecond)
+        {
+            this.Enabled = Enabled;
+            this.BetsPerSecond = BetsPerSecond;
+        }
+        public decimal BetsPerSecond { get; set; }
+        public bool Enabled { get; set; }
+        
+    }
 }

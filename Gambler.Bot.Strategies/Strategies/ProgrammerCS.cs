@@ -44,7 +44,7 @@ namespace Gambler.Bot.Strategies.Strategies
         public event EventHandler<InvestEventArgs> OnBank;
         public event EventHandler<EventArgs> OnResetProfit;
         public event EventHandler<EventArgs> OnResetPartialProfit;
-        
+        public event EventHandler<SetBotSpeedEventArgs> OnSetBotSpeed;
         
         ScriptState runtime;
         Globals globals;
@@ -132,7 +132,8 @@ namespace Gambler.Bot.Strategies.Strategies
                 ChangeGame = ChangeGame,    
                  Sleep = Sleep,
                  BetDelay = BetDelay,
-                 MaintainBetDelay = MaintainBetDelay
+                 MaintainBetDelay = MaintainBetDelay,
+                 SetBotSpeed = SetBotSpeed
             };
             runtime = script.RunAsync(globals: globals).Result;
             
@@ -281,6 +282,10 @@ namespace Gambler.Bot.Strategies.Strategies
             CallStop("Stop() function called from Programmer Mode");
         }
 
+        public void SetBotSpeed(bool Enabled, decimal BetsPerSecond)
+        {
+            this.OnSetBotSpeed?.Invoke(this, new SetBotSpeedEventArgs(Enabled, BetsPerSecond));
+        }
         
     }
    

@@ -42,6 +42,7 @@ namespace Gambler.Bot.Strategies.Strategies
 
         public event EventHandler<EventArgs> OnResetProfit;
         public event EventHandler<EventArgs> OnResetPartialProfit;
+        public event EventHandler<SetBotSpeedEventArgs> OnSetBotSpeed;
 
         public ProgrammerJS(ILogger logger):base(logger)
         {
@@ -117,6 +118,7 @@ namespace Gambler.Bot.Strategies.Strategies
             Runtime.SetValue("SetCurrency", (Action<string>)SetCurrency);
             Runtime.SetValue("ChangeGame", (Func<string,PlaceBet>)ChangeGame);
             Runtime.SetValue("Sleep", (Action<int>)Sleep);
+            Runtime.SetValue("SetBotSpeed",(Action<bool,decimal>) SetBotSpeed);
         }
 
         void withdraw(object sender, EventArgs e)
@@ -251,6 +253,10 @@ namespace Gambler.Bot.Strategies.Strategies
             tmp.Amount = nextbet?.Amount ?? 0;
             Runtime.SetValue("NextBet",tmp);
             return tmp;
+        }
+        public void SetBotSpeed(bool Enabled, decimal BetsPerSecond)
+        {
+            this.OnSetBotSpeed?.Invoke(this, new SetBotSpeedEventArgs(Enabled, BetsPerSecond));
         }
     }
 }
