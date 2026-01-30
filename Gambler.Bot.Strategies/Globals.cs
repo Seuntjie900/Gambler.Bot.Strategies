@@ -34,5 +34,9 @@ namespace Gambler.Bot.Core
         public Action<string> SetCurrency { get; set; }
         public Func<string, PlaceBet> ChangeGame { get; set; }
         public bool InSimulation { get; set; }
+        public Action<int> Sleep { get; set; }
+        public bool MaintainBetDelay { get; set; }
+        public int BetDelay { get; set; }
+        
     }
 }

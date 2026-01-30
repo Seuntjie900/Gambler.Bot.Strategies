@@ -45,6 +45,7 @@ namespace Gambler.Bot.Strategies.Strategies
         public event EventHandler<EventArgs> OnResetProfit;
         public event EventHandler<EventArgs> OnResetPartialProfit;
         
+        
         ScriptState runtime;
         Globals globals;
         Script DoDiceBet = null;
@@ -62,6 +63,8 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             try
             {
+                globals.BetDelay = BetDelay;
+                globals.MaintainBetDelay = MaintainBetDelay;
                 PlaceBet NextBet = PreviousBet.CreateRetry();
 
                 globals.NextBet = NextBet;
@@ -71,6 +74,8 @@ namespace Gambler.Bot.Strategies.Strategies
                 {
                     runtime = runtime.ContinueWithAsync("CalculateBet()").Result;
                     DoDiceBet = runtime.Script;
+                    this.BetDelay = globals.BetDelay;
+                    this.MaintainBetDelay = globals.MaintainBetDelay;
                 }
                 /*else
                 runtime = runtime.ContinueWithAsync("DoDiceBet(PreviousDiceBet, DiceWin, NextDiceBet)", ScriptOptions.Default.WithReferences(
@@ -125,7 +130,9 @@ namespace Gambler.Bot.Strategies.Strategies
                 Stop = _Stop,
                 SetCurrency = SetCurrency,
                 ChangeGame = ChangeGame,    
-                 
+                 Sleep = Sleep,
+                 BetDelay = BetDelay,
+                 MaintainBetDelay = MaintainBetDelay
             };
             runtime = script.RunAsync(globals: globals).Result;
             
@@ -177,6 +184,8 @@ namespace Gambler.Bot.Strategies.Strategies
             
             //else
             //    runtime = ResetDice.RunFromAsync(runtime).Result;
+            BetDelay = globals.BetDelay;
+            MaintainBetDelay = globals.MaintainBetDelay;
             return globals.NextBet as PlaceBet;
         }
         
@@ -271,6 +280,8 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             CallStop("Stop() function called from Programmer Mode");
         }
+
+        
     }
    
 }

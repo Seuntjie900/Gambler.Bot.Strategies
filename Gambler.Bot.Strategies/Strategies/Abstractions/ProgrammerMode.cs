@@ -33,6 +33,7 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
         event EventHandler<PrintEventArgs> OnSetCurrency;
         event EventHandler<EventArgs> OnResetProfit;
         event EventHandler<EventArgs> OnResetPartialProfit;
+        
         public string FileName { get; set; }
     }
 
@@ -81,4 +82,5 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
     {
         public PlaceDiceBet NewBet { get; set; }
     }
+
 }

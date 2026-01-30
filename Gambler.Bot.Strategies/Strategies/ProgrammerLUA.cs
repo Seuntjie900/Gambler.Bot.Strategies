@@ -56,6 +56,8 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             try
             {
+                CurrentRuntime["BetDelay"] = BetDelay;
+                CurrentRuntime["MaintainBetDelay"] =MaintainBetDelay;
                 PlaceBet NextBet = PreviousBet.CreateRetry();
 
                 SetVars(PreviousBet, NextBet, Win);
@@ -87,6 +89,8 @@ namespace Gambler.Bot.Strategies.Strategies
 
                     }
                 }
+                BetDelay = (int)CurrentRuntime["BetDelay"];
+                MaintainBetDelay = (bool)CurrentRuntime["MaintainBetDelay"];
                 return NextBet;
             }
             //catch (InternalErrorException e)
@@ -172,7 +176,8 @@ namespace Gambler.Bot.Strategies.Strategies
             CurrentRuntime["Game"] = nxt.Game.ToString();
             CurrentRuntime["game"] = nxt.Game.ToString();
             CurrentRuntime["NextBet"] = nxt;
-
+            CurrentRuntime["BetDelay"] = BetDelay;
+            CurrentRuntime["MaintainBetDelay"] =MaintainBetDelay;
         }
 
         public override void OnError(BotErrorEventArgs ErrorDetails)
@@ -251,6 +256,8 @@ namespace Gambler.Bot.Strategies.Strategies
             CurrentRuntime["Stop"] = (Action)_Stop;
             CurrentRuntime["SetCurrency"] = (Action<string>)SetCurrency;
             CurrentRuntime["ChangeGame"] = (Func< string, PlaceBet>)ChangeGame;
+            
+            CurrentRuntime["Sleep"] = (Action< int>)Sleep;
 
 
             //legacy support
@@ -286,7 +293,8 @@ namespace Gambler.Bot.Strategies.Strategies
             CurrentRuntime["resetbuiltin"] =(Action)NoAction;
             CurrentRuntime["exportsim"] = (Action<string>)ExportSim;
             CurrentRuntime["vault"] = (Action<decimal>)Bank;
-           
+            CurrentRuntime["BetDelay"] = BetDelay;
+            CurrentRuntime["MaintainBetDelay"] =MaintainBetDelay;
 
         }
 
@@ -330,13 +338,14 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             try
             {
-               
                 LuaFunction reset = CurrentRuntime["Reset"] as LuaFunction;
                 if (reset != null )
                 {
                     PlaceBet NextBet = CreateEmptyPlaceBet(Game);
                     SetVars(null, NextBet, false);
                     object[] Result = reset.Call();
+                    BetDelay = (int)CurrentRuntime["BetDelay"];
+                    MaintainBetDelay = (bool)CurrentRuntime["MaintainBetDelay"];
                     return NextBet;
                 }
                 else
@@ -347,6 +356,8 @@ namespace Gambler.Bot.Strategies.Strategies
                         SetCurrency((string)CurrentRuntime["currency"]);
                     }
                     SetBetParams(nextbet);
+                    BetDelay = (int)CurrentRuntime["BetDelay"];
+                    MaintainBetDelay = (bool)CurrentRuntime["MaintainBetDelay"];
                     return nextbet;
                 }
             }

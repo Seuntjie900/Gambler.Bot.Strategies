@@ -62,13 +62,15 @@ namespace Gambler.Bot.Strategies.Strategies
         protected override PlaceBet NextBet(Bet PreviousBet, bool Win)
         {
             try
-            {
+            {(Scope as ScriptScope).SetVariable("BetDelay", BetDelay);
+                (Scope as ScriptScope).SetVariable("MaintainBetDelay",MaintainBetDelay);
                 PlaceBet NextBet = PreviousBet.CreateRetry();
                 Scope.SetVariable("NextBet", NextBet);
                 Scope.SetVariable("Win", Win);
                 Scope.SetVariable("PreviousBet", PreviousBet);
                 dynamic result = Scope.DoDiceBet(PreviousBet, Win, NextBet);
-                
+                BetDelay = (int)Scope.GetVariable("BetDelay");
+                MaintainBetDelay = (bool)Scope.GetVariable("MaintainBetDelay");
                 return Scope.GetVariable("NextBet") as PlaceBet; ;
             }
             catch (Exception e)
@@ -103,6 +105,10 @@ namespace Gambler.Bot.Strategies.Strategies
             (Scope as ScriptScope).SetVariable("Stop", (Action)_Stop);
             (Scope as ScriptScope).SetVariable("SetCurrency", (Action<string>)SetCurrency);
             (Scope as ScriptScope).SetVariable("SetCurrency", (Func<string,PlaceBet>)ChangeGame);
+            
+            (Scope as ScriptScope).SetVariable("Sleep", (Action<int>)Sleep);
+            (Scope as ScriptScope).SetVariable("BetDelay", BetDelay);
+            (Scope as ScriptScope).SetVariable("MaintainBetDelay",MaintainBetDelay);
         }                                      
 
         public void LoadScript()
@@ -120,7 +126,8 @@ namespace Gambler.Bot.Strategies.Strategies
             PlaceBet NextBet = CreateEmptyPlaceBet(Game);
 
             dynamic result = Scope.ResetDice(NextBet);
-
+            BetDelay = (int)Scope.GetVariable("BetDelay");
+            MaintainBetDelay = (bool)Scope.GetVariable("MaintainBetDelay");
             return NextBet;
         }
 

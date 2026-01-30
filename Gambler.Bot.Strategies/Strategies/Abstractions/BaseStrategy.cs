@@ -2,6 +2,8 @@
 using Gambler.Bot.Common.Games;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Gambler.Bot.Common.Games.Dice;
 using Gambler.Bot.Common.Games.Crash;
 using Gambler.Bot.Common.Games.Plinko;
@@ -130,6 +132,30 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
         {
             ErrorDetails.Handled = false;
 
+        }
+
+        protected void  Sleep(int ms)
+        {
+            Thread.Sleep(ms);
+        }
+
+        /// <summary>
+        /// Delays the next bet by BetDelay in milliseconds
+        /// </summary>
+        public int BetDelay { get; set; }
+        
+        /// <summary>
+        /// When set to true, the bet delay value is persisted after each bet, when set to false, the first bet is delayed by BetDelay then BetDelay is set to 0.
+        /// </summary>
+        public bool MaintainBetDelay { get; set; }
+
+        public int GetBetDelay()
+        {
+            int tmp = BetDelay;
+            if (MaintainBetDelay)
+                return tmp;
+            BetDelay = 0;
+            return tmp;
         }
     }
 }
