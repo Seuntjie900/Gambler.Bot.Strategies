@@ -69,7 +69,7 @@ namespace Gambler.Bot.Strategies.Strategies
                 Scope.SetVariable("NextBet", NextBet);
                 Scope.SetVariable("Win", Win);
                 Scope.SetVariable("PreviousBet", PreviousBet);
-                dynamic result = Scope.CaluclateBet();
+                dynamic result = Scope.CalculateBet();
                 BetDelay = (int)Scope.GetVariable("BetDelay");
                 MaintainBetDelay = (bool)Scope.GetVariable("MaintainBetDelay");
                 return NextBet;
