@@ -4,12 +4,20 @@ using Gambler.Bot.Common.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Gambler.Bot.Strategies.Helpers
 {
-    public class InternalBetSettings
+    public class InternalBetSettings: INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
 
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+
+        }
         /*
          * reset seed settings
          * reset settings
@@ -81,9 +89,19 @@ namespace Gambler.Bot.Strategies.Helpers
         public bool EnableMinBet { get; set; } = false;
         public decimal MaxBet { get; set; }
         public decimal MinBet { get; set; }
+        private bool _enableBotSpeed = false;
+        public bool EnableBotSpeed
+        {
+            get { return _enableBotSpeed;}
+            set { _enableBotSpeed = value; this.RaisePropertyChanged(nameof(EnableBotSpeed)); }
+        }
 
-        public bool EnableBotSpeed { get; set; } = false;
-        public decimal BotSpeed { get; set; }
+        private decimal _botSpeed;
+        public decimal BotSpeed
+        {
+            get { return _botSpeed;}
+            set { _botSpeed = value; this.RaisePropertyChanged(nameof(BotSpeed)); }
+        }
 
         public bool EnableResetSeedBets { get; set; } = false;
         public int ResetSeedBets { get; set; }

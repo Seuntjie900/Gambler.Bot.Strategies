@@ -44,6 +44,7 @@ namespace Gambler.Bot.Strategies.Strategies
         public event EventHandler<InvestEventArgs> OnBank;
         public event EventHandler<EventArgs> OnResetProfit;
         public event EventHandler<EventArgs> OnResetPartialProfit;
+        public event EventHandler<SetBotSpeedEventArgs> OnSetBotSpeed;
         
         ScriptState runtime;
         Globals globals;
@@ -62,6 +63,8 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             try
             {
+                globals.BetDelay = BetDelay;
+                globals.MaintainBetDelay = MaintainBetDelay;
                 PlaceBet NextBet = PreviousBet.CreateRetry();
 
                 globals.NextBet = NextBet;
@@ -71,6 +74,8 @@ namespace Gambler.Bot.Strategies.Strategies
                 {
                     runtime = runtime.ContinueWithAsync("CalculateBet()").Result;
                     DoDiceBet = runtime.Script;
+                    this.BetDelay = globals.BetDelay;
+                    this.MaintainBetDelay = globals.MaintainBetDelay;
                 }
                 /*else
                 runtime = runtime.ContinueWithAsync("DoDiceBet(PreviousDiceBet, DiceWin, NextDiceBet)", ScriptOptions.Default.WithReferences(
@@ -125,7 +130,10 @@ namespace Gambler.Bot.Strategies.Strategies
                 Stop = _Stop,
                 SetCurrency = SetCurrency,
                 ChangeGame = ChangeGame,    
-                 
+                 Sleep = Sleep,
+                 BetDelay = BetDelay,
+                 MaintainBetDelay = MaintainBetDelay,
+                 SetBotSpeed = SetBotSpeed
             };
             runtime = script.RunAsync(globals: globals).Result;
             
@@ -165,19 +173,31 @@ namespace Gambler.Bot.Strategies.Strategies
 
         public override PlaceBet RunReset(Games Game)
         {
-            PlaceBet NextBet = CreateEmptyPlaceBet(Game);
-            
-            globals.NextBet = NextBet;
-            
-            //if (ResetDice == null)
+            try
             {
-                runtime = runtime.ContinueWithAsync("Reset()").Result;
-                ResetDice = runtime.Script;
+                PlaceBet NextBet = CreateEmptyPlaceBet(Game);
+                
+                globals.NextBet = NextBet;
+                
+                //if (ResetDice == null)
+                {
+                    runtime = runtime.ContinueWithAsync("Reset()").Result;
+                    ResetDice = runtime.Script;
+                }
+                
+                //else
+                //    runtime = ResetDice.RunFromAsync(runtime).Result;
+                BetDelay = globals.BetDelay;
+                MaintainBetDelay = globals.MaintainBetDelay;
+                return globals.NextBet as PlaceBet;
             }
-            
-            //else
-            //    runtime = ResetDice.RunFromAsync(runtime).Result;
-            return globals.NextBet as PlaceBet;
+            catch (Exception e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
+                //throw e;
+            }
+
+            return null;
         }
         
 
@@ -271,6 +291,12 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             CallStop("Stop() function called from Programmer Mode");
         }
+
+        public void SetBotSpeed(bool Enabled, decimal BetsPerSecond)
+        {
+            this.OnSetBotSpeed?.Invoke(this, new SetBotSpeedEventArgs(Enabled, BetsPerSecond));
+        }
+        
     }
    
 }

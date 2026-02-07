@@ -42,6 +42,7 @@ namespace Gambler.Bot.Strategies.Strategies
 
         public event EventHandler<EventArgs> OnResetProfit;
         public event EventHandler<EventArgs> OnResetPartialProfit;
+        public event EventHandler<SetBotSpeedEventArgs> OnSetBotSpeed;
 
         public ProgrammerJS(ILogger logger):base(logger)
         {
@@ -56,13 +57,19 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             try
             {
+                Runtime.SetValue("BetDelay", BetDelay);
+            
+                Runtime.SetValue("MaintainBetDelay", MaintainBetDelay);
                 PlaceBet NextBet = PreviousBet.CreateRetry();
                 Runtime.SetValue("NextBet", NextBet);
                 Runtime.SetValue("Win", Win);
                 Runtime.SetValue("PreviousBet", PreviousBet);
                 //TypeReference.CreateTypeReference
+                //CalculateBet(PreviousBet, Win, NextBet)
                 Runtime.Invoke("CalculateBet");
-                return Runtime.GetValue("NextBet").AsInstance<PlaceBet>(); 
+                this.BetDelay =(int) Runtime.GetValue("BetDelay").AsNumber();
+                this.MaintainBetDelay = Runtime.GetValue("MaintainBetDelay").AsBoolean();
+                return NextBet;
             }
             catch (Exception e)
             {
@@ -91,6 +98,9 @@ namespace Gambler.Bot.Strategies.Strategies
             
             Runtime.SetValue("Stats", Stats);
             Runtime.SetValue("Balance", Balance);
+            Runtime.SetValue("BetDelay", BetDelay);
+            
+            Runtime.SetValue("MaintainBetDelay", MaintainBetDelay);
             Runtime.SetValue("Withdraw", (Action<string,decimal>)Withdraw);
             Runtime.SetValue("Invest", (Action< decimal>)Invest);
             Runtime.SetValue("Bank", (Action<decimal>)Bank);
@@ -108,6 +118,8 @@ namespace Gambler.Bot.Strategies.Strategies
             Runtime.SetValue("Stop", (Action)_Stop);
             Runtime.SetValue("SetCurrency", (Action<string>)SetCurrency);
             Runtime.SetValue("ChangeGame", (Func<string,PlaceBet>)ChangeGame);
+            Runtime.SetValue("Sleep", (Action<int>)Sleep);
+            Runtime.SetValue("SetBotSpeed",(Action<bool,decimal>) SetBotSpeed);
         }
 
         void withdraw(object sender, EventArgs e)
@@ -126,10 +138,22 @@ namespace Gambler.Bot.Strategies.Strategies
 
         public override PlaceBet RunReset(Games Game)
         {
-            PlaceBet NextBet = CreateEmptyPlaceBet(Game);
-            Runtime.SetValue("NextBet", NextBet);
-            Runtime.Invoke("Reset");
-            return NextBet;
+            try
+            {
+                 PlaceBet NextBet = CreateEmptyPlaceBet(Game);
+                Runtime.SetValue("NextBet", NextBet);
+                Runtime.Invoke("Reset" );
+                this.BetDelay =(int) Runtime.GetValue("BetDelay").AsNumber();
+                this.MaintainBetDelay = Runtime.GetValue("MaintainBetDelay").AsBoolean();
+                return NextBet;
+            }
+            catch (Exception e)
+            {
+                OnScriptError?.Invoke(this, new PrintEventArgs { Message = e.ToString() });
+                //throw e;
+            }
+
+            return null;
         }
 
         public void UpdateSessionStats(SessionStats Stats)
@@ -240,6 +264,10 @@ namespace Gambler.Bot.Strategies.Strategies
             tmp.Amount = nextbet?.Amount ?? 0;
             Runtime.SetValue("NextBet",tmp);
             return tmp;
+        }
+        public void SetBotSpeed(bool Enabled, decimal BetsPerSecond)
+        {
+            this.OnSetBotSpeed?.Invoke(this, new SetBotSpeedEventArgs(Enabled, BetsPerSecond));
         }
     }
 }

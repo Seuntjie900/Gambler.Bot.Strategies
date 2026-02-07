@@ -42,6 +42,7 @@ namespace Gambler.Bot.Strategies.Strategies
         public event EventHandler<PrintEventArgs> OnScriptError;
         public event EventHandler<PrintEventArgs> OnSetCurrency;
         public event EventHandler<InvestEventArgs> OnBank;
+        public event EventHandler<SetBotSpeedEventArgs> OnSetBotSpeed;
 
         public ProgrammerLUA(ILogger logger) : base(logger)
         {
@@ -56,6 +57,8 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             try
             {
+                CurrentRuntime["BetDelay"] = BetDelay;
+                CurrentRuntime["MaintainBetDelay"] =MaintainBetDelay;
                 PlaceBet NextBet = PreviousBet.CreateRetry();
 
                 SetVars(PreviousBet, NextBet, Win);
@@ -87,6 +90,8 @@ namespace Gambler.Bot.Strategies.Strategies
 
                     }
                 }
+                BetDelay = (int)(double)CurrentRuntime["BetDelay"];
+                MaintainBetDelay = (bool)CurrentRuntime["MaintainBetDelay"];
                 return NextBet;
             }
             //catch (InternalErrorException e)
@@ -172,7 +177,8 @@ namespace Gambler.Bot.Strategies.Strategies
             CurrentRuntime["Game"] = nxt.Game.ToString();
             CurrentRuntime["game"] = nxt.Game.ToString();
             CurrentRuntime["NextBet"] = nxt;
-
+            CurrentRuntime["BetDelay"] = BetDelay;
+            CurrentRuntime["MaintainBetDelay"] =MaintainBetDelay;
         }
 
         public override void OnError(BotErrorEventArgs ErrorDetails)
@@ -251,7 +257,9 @@ namespace Gambler.Bot.Strategies.Strategies
             CurrentRuntime["Stop"] = (Action)_Stop;
             CurrentRuntime["SetCurrency"] = (Action<string>)SetCurrency;
             CurrentRuntime["ChangeGame"] = (Func< string, PlaceBet>)ChangeGame;
-
+            
+            CurrentRuntime["Sleep"] = (Action< int>)Sleep;
+            CurrentRuntime["SetBotSpeed"] = (Action<bool, decimal>)SetBotSpeed;
 
             //legacy support
             CurrentRuntime["withdraw"] = (Action<string, decimal>)Withdraw; ;
@@ -286,7 +294,8 @@ namespace Gambler.Bot.Strategies.Strategies
             CurrentRuntime["resetbuiltin"] =(Action)NoAction;
             CurrentRuntime["exportsim"] = (Action<string>)ExportSim;
             CurrentRuntime["vault"] = (Action<decimal>)Bank;
-           
+            CurrentRuntime["BetDelay"] = BetDelay;
+            CurrentRuntime["MaintainBetDelay"] =MaintainBetDelay;
 
         }
 
@@ -330,13 +339,14 @@ namespace Gambler.Bot.Strategies.Strategies
         {
             try
             {
-               
                 LuaFunction reset = CurrentRuntime["Reset"] as LuaFunction;
                 if (reset != null )
                 {
                     PlaceBet NextBet = CreateEmptyPlaceBet(Game);
                     SetVars(null, NextBet, false);
                     object[] Result = reset.Call();
+                    BetDelay = (int)(double)CurrentRuntime["BetDelay"];
+                    MaintainBetDelay = (bool)CurrentRuntime["MaintainBetDelay"];
                     return NextBet;
                 }
                 else
@@ -347,6 +357,8 @@ namespace Gambler.Bot.Strategies.Strategies
                         SetCurrency((string)CurrentRuntime["currency"]);
                     }
                     SetBetParams(nextbet);
+                    BetDelay = (int)(double)CurrentRuntime["BetDelay"];
+                    MaintainBetDelay = (bool)CurrentRuntime["MaintainBetDelay"];
                     return nextbet;
                 }
             }
@@ -550,6 +562,9 @@ namespace Gambler.Bot.Strategies.Strategies
             }
         }
 
-        
+        public void SetBotSpeed(bool Enabled, decimal BetsPerSecond)
+        {
+            this.OnSetBotSpeed?.Invoke(this, new SetBotSpeedEventArgs(Enabled, BetsPerSecond));
+        }
     }
 }
