@@ -69,6 +69,8 @@ namespace Gambler.Bot.Strategies.Strategies
         public decimal Chance { get ; set ; }
         #endregion
 
+       
+
         public Martingale(ILogger logger) : base(logger)
         {
 
@@ -84,6 +86,7 @@ namespace Gambler.Bot.Strategies.Strategies
             var Stats = this.Stats;
             if (Win)
             {
+              
                 if (WinMultiplierMode== MartingaleMultiplierMode.Variable && Stats.WinStreak >= WinMaxMultiplies)
                 {
                     WinMultiplier = 1;
@@ -92,10 +95,9 @@ namespace Gambler.Bot.Strategies.Strategies
                 {
                     WinMultiplier *= WinDevider;
                 }
-                else if (WinMultiplierMode ==  MartingaleMultiplierMode.Max && Stats.WinStreak == WinDevidecounter && Stats.WinStreak > 0)
-
+                else if (WinMultiplierMode ==  MartingaleMultiplierMode.Max && Stats.WinStreak == WinMaxMultiplies && Stats.WinStreak > 0)
                 {
-                    WinMultiplier *= WinDevider;
+                    WinMultiplier =1;
                 }
                 if (Stats.WinStreak % StretchWin == 0)
                     Lastbet *= WinMultiplier;
@@ -189,9 +191,9 @@ namespace Gambler.Bot.Strategies.Strategies
                 }
                 //adjust multiplier according to devider
 
-                else if (MultiplierMode == MartingaleMultiplierMode.Max && Stats.LossStreak == Devidecounter && Stats.LossStreak > 0)
+                else if (MultiplierMode == MartingaleMultiplierMode.Max && Stats.LossStreak == MaxMultiplies && Stats.LossStreak > 0)
                 {
-                    Multiplier *= Devider;
+                    Multiplier =1;
                 }
                 if (EnableTrazel && trazelmultiply)
                 {
