@@ -6,6 +6,7 @@ using Gambler.Bot.Common.Games;
 using System;
 using Gambler.Bot.Common.Games.Limbo;
 using Gambler.Bot.Common.Games.Crash;
+using Gambler.Bot.Common.Games.Twist;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
@@ -61,7 +62,7 @@ namespace Gambler.Bot.Strategies.Strategies
             if (PreviousBet is DiceBet diceb && PreviousBet.Game== Games.Dice)
                 return new PlaceDiceBet(Lastbet, High, diceb.Chance);
             if (PreviousBet is LimboBet limbob && PreviousBet.Game == Games.Limbo)
-                return new PlaceLimboBet(Lastbet, limbob.Chance);
+                return new PlaceLimboBet(Lastbet, limbob.Payout);
             if (PreviousBet is TwistBet twistbet && PreviousBet.Game == Games.Twist)
                 return new PlaceTwistBet(Lastbet, High, twistbet.Chance);
             if (PreviousBet is CrashBet crashb && PreviousBet.Game == Games.Crash)
@@ -78,7 +79,7 @@ namespace Gambler.Bot.Strategies.Strategies
             }
             if (game == Games.Limbo)
             {
-                return new PlaceLimboBet((decimal)MinBet, 99 / (decimal)Chance);
+                return new PlaceLimboBet((decimal)MinBet, (100 - Config.Edge) / Chance);
             }
             if (game == Games.Twist)
             {

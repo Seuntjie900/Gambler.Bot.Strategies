@@ -5,11 +5,13 @@ using Gambler.Bot.Common.Games.Dice;
 using Gambler.Bot.Common.Games.Limbo;
 using Gambler.Bot.Common.Games;
 using Gambler.Bot.Common.Games.Crash;
+using Gambler.Bot.Common.Games.Twist;
 
 namespace Gambler.Bot.Strategies.Strategies
 {
     public class Martingale: BaseStrategy
     {
+
         public override string StrategyName { get; protected set; } = "Martingale";
         #region Settings
         public MartingaleMultiplierMode WinMultiplierMode { get; set; }
@@ -263,7 +265,7 @@ namespace Gambler.Bot.Strategies.Strategies
             if (PreviousBet is DiceBet diceb && PreviousBet.Game == Games.Dice)
                 return new PlaceDiceBet(Lastbet, High, Chance);
             if (PreviousBet is LimboBet limbob && PreviousBet.Game == Games.Limbo)
-                return new PlaceLimboBet(Lastbet, Chance);
+                return new PlaceLimboBet(Lastbet, (100 - Config.Edge) / Chance);
             if (PreviousBet is TwistBet twistbet && PreviousBet.Game == Games.Twist)
                 return new PlaceTwistBet(Lastbet, High, twistbet.Chance);           
             if (PreviousBet is CrashBet crashb && PreviousBet.Game == Games.Crash)
@@ -284,7 +286,7 @@ namespace Gambler.Bot.Strategies.Strategies
             }
             if (Game == Games.Limbo)
             {
-                return new PlaceLimboBet((decimal)MinBet, 99 / (decimal)Chance);
+                return new PlaceLimboBet((decimal)MinBet, (100-Config.Edge) / (decimal)Chance);
             }
             if (Game == Games.Twist)
             {
