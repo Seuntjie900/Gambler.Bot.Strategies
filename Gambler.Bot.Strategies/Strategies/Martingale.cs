@@ -84,193 +84,189 @@ namespace Gambler.Bot.Strategies.Strategies
 
         protected override PlaceBet NextBet(Bet PreviousBet, bool Win)
         {
-            decimal Lastbet = PreviousBet.TotalAmount;
-            var Stats = this.Stats;
-            if (Win)
+            decimal lastBet = PreviousBet.TotalAmount;
+            var stats = Stats;
+
+            lastBet = Win
+                ? CalculateWinBet(lastBet, stats)
+                : CalculateLossBet(lastBet, stats);
+
+            if (EnablePercentage)
             {
-              
-                if (WinMultiplierMode== MartingaleMultiplierMode.Variable && Stats.WinStreak >= WinMaxMultiplies)
-                {
-                    WinMultiplier = 1;
-                }
-                else if (WinMultiplierMode== MartingaleMultiplierMode.ChangeOnce && Stats.WinStreak % WinDevideCounter == 1 && Stats.WinStreak > 0)
-                {
-                    WinMultiplier *= WinDevider;
-                }
-                else if (WinMultiplierMode ==  MartingaleMultiplierMode.Max && Stats.WinStreak == WinMaxMultiplies && Stats.WinStreak > 0)
-                {
-                    WinMultiplier =1;
-                }
-                if (Stats.WinStreak % StretchWin == 0)
-                    Lastbet *= WinMultiplier;
-                if (Stats.WinStreak == 1)
-                {
-                    if (EnableFirstResetWin && !EnableMK)
-                    {
-                        Lastbet = MinBet;
-                    }
-                    try
-                    {
-                        Chance=((decimal)BaseChance);
-                    }
-                    catch (Exception e)
-                    {
-                        _Logger?.LogError(e.ToString());                        
-                    }
-                }
-                if (EnableTrazel)
-                {
+                lastBet = (Percentage / 100.0m) * Balance;
+            }
 
-                    High = starthigh;
-                }
-                if (EnableMK)
+            return CreatePlaceBet(PreviousBet, lastBet);
+        }
+
+        protected virtual decimal CalculateWinBet(decimal lastBet, Helpers.SessionStats stats)
+        {
+            if (WinMultiplierMode == MartingaleMultiplierMode.Variable && stats.WinStreak % WinDevidecounter == 0 && stats.WinStreak > 0)
+            {
+                WinMultiplier *= WinDevider;
+            }
+            else if (WinMultiplierMode == MartingaleMultiplierMode.ChangeOnce && stats.WinStreak % WinDevideCounter == 1 && stats.WinStreak > 0)
+            {
+                WinMultiplier *= WinDevider;
+            }
+            else if (WinMultiplierMode == MartingaleMultiplierMode.Max && stats.WinStreak == WinMaxMultiplies && stats.WinStreak > 0)
+            {
+                WinMultiplier = 1;
+            }
+
+            if (stats.WinStreak % StretchWin == 0)
+                lastBet *= WinMultiplier;
+
+            if (stats.WinStreak == 1)
+            {
+                if (EnableFirstResetWin && !EnableMK)
                 {
-                    if (decimal.Parse((Lastbet - MKDecrement).ToString("0.00000000"), System.Globalization.CultureInfo.InvariantCulture) > 0)
-                    {
-                        Lastbet -= MKDecrement;
-                    }
-                }
-                if (EnableTrazel && trazelwin % TrazelWin == 0 && trazelwin != 0)
-                {
-                    Lastbet = trazelwinto;
-                    trazelwin = -1;
-                    trazelmultiply = true;
-                    High = !starthigh;
-                }
-                else
-                {
-                    if (EnableTrazel)
-                    {
-                        Lastbet = MinBet;
-                        trazelmultiply = false;
-                    }
+                    lastBet = MinBet;
                 }
 
+                Chance = BaseChance;
+            }
 
-                if (EnableChangeWinStreak && (Stats.WinStreak == ChangeWinStreak))
+            if (EnableTrazel)
+            {
+                High = starthigh;
+            }
+
+            if (EnableMK)
+            {
+                if (decimal.Parse((lastBet - MKDecrement).ToString("0.00000000"), System.Globalization.CultureInfo.InvariantCulture) > 0)
                 {
-                    Lastbet = ChangeWinStreakTo;
+                    lastBet -= MKDecrement;
                 }
-                if (checkBox1)
+            }
+
+            if (EnableTrazel && trazelwin % TrazelWin == 0 && trazelwin != 0)
+            {
+                lastBet = trazelwinto;
+                trazelwin = -1;
+                trazelmultiply = true;
+                High = !starthigh;
+            }
+            else if (EnableTrazel)
+            {
+                lastBet = MinBet;
+                trazelmultiply = false;
+            }
+
+            if (EnableChangeWinStreak && stats.WinStreak == ChangeWinStreak)
+            {
+                lastBet = ChangeWinStreakTo;
+            }
+
+            if (checkBox1)
+            {
+                if (stats.WinStreak == MutawaWins)
+                    lastBet = mutawaprev *= MutawaMultiplier;
+
+                if (stats.WinStreak == MutawaWins + 1)
                 {
-                    if (Stats.WinStreak == MutawaWins)
-                        Lastbet = mutawaprev *= MutawaMultiplier;
-                    if (Stats.WinStreak == MutawaWins + 1)
-                    {
-                        Lastbet = MinBet;
-                        mutawaprev = ChangeWinStreakTo / MutawaMultiplier;
-                    }
-
+                    lastBet = MinBet;
+                    mutawaprev = ChangeWinStreakTo / MutawaMultiplier;
                 }
-                if (EnableChangeChanceWin && (Stats.WinStreak == ChangeChanceWinStreak))
-                {
-                    try
-                    {
-                        Chance = ((decimal)ChangeChanceWinTo);
-                        
-                    }
-                    catch (Exception e)
-                    {
-                        _Logger?.LogError(e.ToString());
-                    }
-                }
+            }
 
+            if (EnableChangeChanceWin && stats.WinStreak == ChangeChanceWinStreak)
+            {
+                Chance = ChangeChanceWinTo;
+            }
 
+            return lastBet;
+        }
+
+        protected virtual decimal CalculateLossBet(decimal lastBet, Helpers.SessionStats stats)
+        {
+            if (MultiplierMode == MartingaleMultiplierMode.Variable && stats.LossStreak % Devidecounter == 0 && stats.LossStreak > 0)
+            {
+                Multiplier *= Devider;
+            }
+            else if (MultiplierMode == MartingaleMultiplierMode.ChangeOnce && stats.LossStreak % Devidecounter == 0 && stats.LossStreak > 0)
+            {
+                Multiplier *= Devider;
+                if (Multiplier < 1)
+                    Multiplier = 1;
+            }
+            else if (MultiplierMode == MartingaleMultiplierMode.Max && stats.LossStreak == MaxMultiplies && stats.LossStreak > 0)
+            {
+                Multiplier = 1;
+            }
+
+            if (EnableTrazel && trazelmultiply)
+            {
+                Multiplier = TrazelMultiplier;
+            }
+
+            if (EnableTrazel)
+            {
+                High = starthigh;
+            }
+
+            if (EnableTrazel && stats.LossStreak + 1 >= TrazelLose && !trazelmultiply)
+            {
+                lastBet = trazelloseto;
+                trazelmultiply = true;
+                High = !starthigh;
+            }
+
+            if (trazelmultiply)
+            {
+                trazelwin = -1;
             }
             else
             {
-                //stop multiplying if at max or if it goes below 1
-
-                if (MultiplierMode== MartingaleMultiplierMode.Variable && Stats.LossStreak >= MaxMultiplies)
-                {
-                    Multiplier = 1;
-                }
-                else if (MultiplierMode== MartingaleMultiplierMode.ChangeOnce && Stats.LossStreak % Devidecounter == 0 && Stats.LossStreak > 0)
-                {
-                    Multiplier *= Devider;
-                    if (Multiplier < 1)
-                        Multiplier = 1;
-                }
-                //adjust multiplier according to devider
-
-                else if (MultiplierMode == MartingaleMultiplierMode.Max && Stats.LossStreak == MaxMultiplies && Stats.LossStreak > 0)
-                {
-                    Multiplier =1;
-                }
-                if (EnableTrazel && trazelmultiply)
-                {
-                    Multiplier = TrazelMultiplier;
-                }
-                if (EnableTrazel)
-                {
-                    High = starthigh;
-                }
-                if (EnableTrazel && Stats.LossStreak + 1 >= TrazelLose && !trazelmultiply)
-                {
-                    Lastbet = trazelloseto;
-                    trazelmultiply = true;
-                    High = !starthigh;
-                }
-                if (trazelmultiply)
-                {
-                    trazelwin = -1;
-
-                }
-                else
-                {
-                    trazelwin = 0;
-                }
-                //set new bet size
-                if (Stats.LossStreak % StretchLoss == 0)
-                    Lastbet *= Multiplier;
-                if (Stats.LossStreak == 1)
-                {
-                    if (EnableFirstResetLoss)
-                    {
-                        Lastbet = MinBet;
-                    }
-                }
-                if (EnableMK)
-                {
-                    Lastbet += MKIncrement;
-                }
-                if (checkBox1)
-                {
-                    Lastbet = MinBet;
-                }
-
-
-                //change bet after a certain losing streak
-                if (EnableChangeLoseStreak && (Stats.LossStreak == ChangeLoseStreak))
-                {
-                    Lastbet = ChangeLoseStreakTo;
-                }
-                if (EnableChangeChanceLose && (Stats.WinStreak == ChangeChanceLoseStreak))
-                {
-                    try
-                    {
-                        Chance = ((decimal)ChangeChanceLoseTo);
-
-                    }
-                    catch (Exception e)
-                    {
-                        _Logger?.LogError(e.ToString());
-                    }
-                }
+                trazelwin = 0;
             }
-            if (EnablePercentage)
+
+            if (stats.LossStreak % StretchLoss == 0)
+                lastBet *= Multiplier;
+
+            if (stats.LossStreak == 1 && EnableFirstResetLoss)
             {
-                Lastbet = (Percentage / 100.0m) * Balance;
+                lastBet = MinBet;
             }
-            if (PreviousBet is DiceBet diceb && PreviousBet.Game == Games.Dice)
-                return new PlaceDiceBet(Lastbet, High, Chance);
-            if (PreviousBet is LimboBet limbob && PreviousBet.Game == Games.Limbo)
-                return new PlaceLimboBet(Lastbet, (100 - Config.Edge) / Chance);
-            if (PreviousBet is TwistBet twistbet && PreviousBet.Game == Games.Twist)
-                return new PlaceTwistBet(Lastbet, High, twistbet.Chance);           
-            if (PreviousBet is CrashBet crashb && PreviousBet.Game == Games.Crash)
-                return new PlaceCrashBet(Lastbet, crashb.Payout);
-            else throw new NotImplementedException("Strategy does not support this game.");
+
+            if (EnableMK)
+            {
+                lastBet += MKIncrement;
+            }
+
+            if (checkBox1)
+            {
+                lastBet = MinBet;
+            }
+
+            if (EnableChangeLoseStreak && stats.LossStreak == ChangeLoseStreak)
+            {
+                lastBet = ChangeLoseStreakTo;
+            }
+
+            if (EnableChangeChanceLose && stats.WinStreak == ChangeChanceLoseStreak)
+            {
+                Chance = ChangeChanceLoseTo;
+            }
+
+            return lastBet;
+        }
+
+        protected virtual PlaceBet CreatePlaceBet(Bet previousBet, decimal amount)
+        {
+            if (previousBet is DiceBet && previousBet.Game == Games.Dice)
+                return new PlaceDiceBet(amount, High, Chance);
+
+            if (previousBet is LimboBet && previousBet.Game == Games.Limbo)
+                return new PlaceLimboBet(amount, (100 - Config.Edge) / Chance);
+
+            if (previousBet is TwistBet twistBet && previousBet.Game == Games.Twist)
+                return new PlaceTwistBet(amount, High, twistBet.Chance);
+
+            if (previousBet is CrashBet crashBet && previousBet.Game == Games.Crash)
+                return new PlaceCrashBet(amount, crashBet.Payout);
+
+            throw new NotImplementedException("Strategy does not support this game.");
         }
 
         public override PlaceBet RunReset(Games Game)
