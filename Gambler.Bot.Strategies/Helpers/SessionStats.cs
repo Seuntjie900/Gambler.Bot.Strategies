@@ -82,6 +82,7 @@ namespace Gambler.Bot.Strategies.Helpers
         public decimal MaxProfitSinceReset { get; set; } = 0;
         public decimal MinProfitSinceReset { get; set; } = 0;
         public decimal BettingSpeed { get; set; } = 0;
+        public decimal AvgBettingSpeed { get; set; } = 0;
 
         [NotMapped]
         public Dictionary<long, long> Streaks { get; set; } = new Dictionary<long, long>();
@@ -218,8 +219,9 @@ namespace Gambler.Bot.Strategies.Helpers
                 //reset win streak
                 WinStreak = 0;                
             }
+            AvgBettingSpeed = Bets / ((RunningTime + (long)(DateTime.Now - StartTime).TotalMilliseconds) / 1000m);
             ProfitPerBet = Profit / Bets;
-            ProfitPerHour = ProfitPerBet * (Bets / ((RunningTime+(long)(DateTime.Now-StartTime).TotalMilliseconds) / 1000m / 60m / 60m));
+            ProfitPerHour = ProfitPerBet * (AvgBettingSpeed / 60m / 60m);
             ProfitPer24Hour = ProfitPerHour * 24m;
 
             DateTime start = DateTime.Now;
