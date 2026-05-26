@@ -451,7 +451,7 @@ namespace Gambler.Bot.Strategies.Helpers
             else
                 return false; //not supported bet type
 
-            if (EnableSwitchWins && Stats.Wins % SwitchWins == 0)
+            if (EnableSwitchWins && Stats.Wins % SwitchWins == 0 && win)
             {
                 NewHigh = !High;
                 return true;
@@ -461,7 +461,7 @@ namespace Gambler.Bot.Strategies.Helpers
                 NewHigh = !High;
                 return true;
             }
-            if (EnableSwitchLosses && Stats.Losses % SwitchLosses == 0)
+            if (EnableSwitchLosses && Stats.Losses % SwitchLosses == 0&& !win)
             {
                 NewHigh = !High;
                 return true;
@@ -478,6 +478,8 @@ namespace Gambler.Bot.Strategies.Helpers
             }
             return false;
         }
+
+
 
         public bool CheckBank(Bet NewBet, bool win, SessionStats Stats, out decimal Amount, SiteStats siteStats)
         {
