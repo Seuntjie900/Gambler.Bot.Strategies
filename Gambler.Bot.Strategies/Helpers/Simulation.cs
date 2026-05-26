@@ -11,6 +11,7 @@ using System.Threading;
 using Gambler.Bot.Common.Games.Dice;
 using Gambler.Bot.Common.Games;
 using Gambler.Bot.Common.Games.Limbo;
+using Gambler.Bot.Common.Games.Twist;
 
 namespace Gambler.Bot.Strategies.Helpers
 {
@@ -315,7 +316,7 @@ namespace Gambler.Bot.Strategies.Helpers
                 betresult = new LimboBet
                 {
                     TotalAmount = lb.Amount,
-                    Chance = lb.Chance,
+                    Payout = lb.Payout,
                     ClientSeed = clientseed,
                     Currency = "simulation",
                     DateValue = DateTime.Now,
@@ -326,7 +327,7 @@ namespace Gambler.Bot.Strategies.Helpers
                     ServerSeed = serverseed
                 };
                 betresult.IsWin = betresult.GetWin(Site.GameSettings[NewBet.Game.ToString()]);
-                betresult.Profit = betresult.IsWin ? (((((Site.GameSettings[NewBet.Game.ToString()] as LimboConfig).Edge) / lb.Chance) * NewBet.Amount) - NewBet.Amount) : -NewBet.Amount;
+                betresult.Profit = betresult.IsWin ? ((lb.Payout * NewBet.Amount) - NewBet.Amount) : -NewBet.Amount;
             }
 
             OnBetSimulated?.Invoke(this, new BetFinisedEventArgs(betresult));

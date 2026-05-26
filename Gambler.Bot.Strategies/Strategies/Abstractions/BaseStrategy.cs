@@ -9,6 +9,8 @@ using Gambler.Bot.Common.Games.Crash;
 using Gambler.Bot.Common.Games.Plinko;
 using Gambler.Bot.Common.Games.Roulette;
 using Gambler.Bot.Common.Games.Limbo;
+using Gambler.Bot.Common.Games.Twist;
+using System.Text.Json.Serialization;
 
 namespace Gambler.Bot.Strategies.Strategies.Abstractions
 {
@@ -52,11 +54,12 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
             switch (game)
             {
                 case Games.Dice:
-                    return new PlaceDiceBet(0, false, 0);
-                    break;
+                    return new PlaceDiceBet(0, false, 0);                    
                 case Games.Limbo:
                     return new PlaceLimboBet(0, 0);
-                    break;
+                case Games.Twist:
+                    return new PlaceTwistBet(0, false, 0);
+              
             };
             return null;
         }
@@ -108,8 +111,8 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
 
         public delegate SessionStats dNeedStats(object sender, EventArgs e);
         public event dNeedStats OnNeedStats;
-
-
+        [JsonIgnore]
+        public IGameConfig Config { get; set; }
 
         public SessionStats Stats
         {

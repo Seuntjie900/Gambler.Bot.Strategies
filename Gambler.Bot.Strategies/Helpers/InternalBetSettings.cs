@@ -1,5 +1,6 @@
 ﻿using Gambler.Bot.Common.Games;
 using Gambler.Bot.Common.Games.Dice;
+using Gambler.Bot.Common.Games.Twist;
 using Gambler.Bot.Common.Helpers;
 using System;
 using System.Collections.Generic;

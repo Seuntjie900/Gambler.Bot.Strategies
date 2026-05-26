@@ -2,6 +2,7 @@
 using Gambler.Bot.Common.Games.Crash;
 using Gambler.Bot.Common.Games.Dice;
 using Gambler.Bot.Common.Games.Limbo;
+using Gambler.Bot.Common.Games.Twist;
 using Gambler.Bot.Common.Helpers;
 using Gambler.Bot.Strategies.Helpers;
 using Gambler.Bot.Strategies.Strategies.Abstractions;
@@ -130,7 +131,7 @@ namespace Gambler.Bot.Strategies.Strategies
             {
                 decimal chance = (decimal)(double)CurrentRuntime["chance"];
 
-                lmb.Chance =  (chance <=0 ? 49.5m: (chance));
+                lmb.Payout = (100-(this.currentSite as iLimbo).LimboSettings.Edge)/ (chance <=0 ? 49.5m: (chance));
                 lmb.Amount = (decimal)(double)CurrentRuntime["nextbet"];
 
             }
@@ -166,7 +167,7 @@ namespace Gambler.Bot.Strategies.Strategies
             }
             else if (nxt is PlaceLimboBet lmb)
             {
-                CurrentRuntime["chance"] = lmb.Chance ;
+                CurrentRuntime["chance"] = (100 - (this.currentSite as iLimbo).LimboSettings.Edge) / lmb.Payout ;
             }
             else if (nxt is PlaceTwistBet tws)
             {
