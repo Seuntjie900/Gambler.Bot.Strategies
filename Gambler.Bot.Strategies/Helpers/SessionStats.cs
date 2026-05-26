@@ -221,7 +221,7 @@ namespace Gambler.Bot.Strategies.Helpers
             }
             AvgBettingSpeed = Bets / ((RunningTime + (long)(DateTime.Now - StartTime).TotalMilliseconds) / 1000m);
             ProfitPerBet = Profit / Bets;
-            ProfitPerHour = ProfitPerBet * (AvgBettingSpeed / 60m / 60m);
+            ProfitPerHour = ProfitPerBet * (AvgBettingSpeed * 60m * 60m);
             ProfitPer24Hour = ProfitPerHour * 24m;
 
             DateTime start = DateTime.Now;
