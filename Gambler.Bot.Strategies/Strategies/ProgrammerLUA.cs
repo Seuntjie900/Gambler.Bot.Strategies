@@ -2,6 +2,7 @@
 using Gambler.Bot.Common.Games.Crash;
 using Gambler.Bot.Common.Games.Dice;
 using Gambler.Bot.Common.Games.Limbo;
+using Gambler.Bot.Common.Games.RangeDice;
 using Gambler.Bot.Common.Games.Twist;
 using Gambler.Bot.Common.Helpers;
 using Gambler.Bot.Strategies.Helpers;
@@ -142,6 +143,15 @@ namespace Gambler.Bot.Strategies.Strategies
                 twst.High = (bool)CurrentRuntime["bethigh"];
 
             }
+            else if (NextBet is PlaceRangeDiceBet range)
+            {
+                range.Amount = (decimal)(double)CurrentRuntime["nextbet"];
+                range.Type = Enum.Parse<RangeDiceType>( (string)CurrentRuntime["rangeType"]);
+                range.Min = (decimal)(double)CurrentRuntime["min"];
+                range.Max = (decimal)(double)CurrentRuntime["max"];
+                range.Min2 = (decimal)(double)CurrentRuntime["min2"];
+                range.Max2 = (decimal)(double)CurrentRuntime["max2"];
+            }
         }
 
         private void SetVars(Bet PreviousBet, PlaceBet nxt, bool win)
@@ -173,6 +183,14 @@ namespace Gambler.Bot.Strategies.Strategies
             {
                 CurrentRuntime["bethigh"] = tws.High;
                 CurrentRuntime["chance"] = tws.Chance;
+            }
+            else if (nxt is PlaceRangeDiceBet range)
+            {
+                CurrentRuntime["rangeType"] = range.Type;
+                CurrentRuntime["min"] = range.Min;
+                CurrentRuntime["max"] = range.Max;
+                CurrentRuntime["min2"] = range.Min2;
+                CurrentRuntime["max2"] = range.Max2;
             }
             
             CurrentRuntime["Game"] = nxt.Game.ToString();
