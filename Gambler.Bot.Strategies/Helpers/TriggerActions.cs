@@ -1,4 +1,5 @@
 ﻿using Gambler.Bot.Common.Helpers;
+using Mono.Unix.Native;
 using System;
 using System.ComponentModel;
 using System.Reflection;
@@ -235,6 +236,74 @@ namespace Gambler.Bot.Strategies.Helpers
                 case TriggerAction.Tip: sb.Append("send a tip of " + valuestring + " to " + Destination); break;
                 case TriggerAction.Withdraw: sb.Append("withdraw "+ valuestring +" to "+Destination); break;
             }
+        }
+
+        public string PrintResults(SiteStats siteStats, SessionStats sessionStats)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            decimal Source = 0;
+            decimal TargetValue = 0;
+            try
+            {
+                
+                Source = getValue(TriggerProperty, triggerPropertyInfo, sessionStats, siteStats);
+                
+            }
+            catch
+            {
+                throw new Exception("Invalid Trigger Field");
+            }
+            if (TargetType == CompareAgainst.Value)
+            {
+                TargetValue = 0;
+                if (!decimal.TryParse(Target, out TargetValue))
+                {
+                    throw new Exception("Invalid Target Value");
+                }
+                //return DoComparison(Comparison, Source, TargetValue);
+
+            }
+            else if (TargetType == CompareAgainst.Percentage)
+            {
+                TargetValue = 0;
+                try
+                {
+                    TargetValue = getValue(Target, targetPropertyInfo, sessionStats, siteStats);
+
+                }
+                catch
+                {
+                    throw new Exception("Invalid Target Property");
+                }
+                //return DoComparison(Comparison, (Source / TargetValue) * 100m, Percentage);
+
+            }
+            else if (TargetType == CompareAgainst.Property)
+            {
+                TargetValue = 0;
+                try
+                {
+
+                    TargetValue = getValue(Target, targetPropertyInfo, sessionStats, siteStats);
+                }
+                catch
+                {
+                    throw new Exception("Invalid Target Property");
+                }
+                //return DoComparison(Comparison, (Source), TargetValue);
+
+            }
+            sb.Append(TriggerProperty);
+            sb.Append(": ");
+            sb.AppendLine(Source.ToString("n8"));
+
+            sb.Append(Target);
+            sb.Append(": ");
+            sb.AppendLine(TargetValue.ToString("n8"));
+
+            return sb.ToString();
+            
         }
     }
     public class NotificationEventArgs:EventArgs
