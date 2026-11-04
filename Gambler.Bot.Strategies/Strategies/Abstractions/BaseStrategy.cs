@@ -67,6 +67,12 @@ namespace Gambler.Bot.Strategies.Strategies.Abstractions
         protected abstract PlaceBet NextBet(Bet PreviousBet, bool Win);
 
         /// <summary>
+        /// Sets the strategy's current high/low direction. Called when a "switch after" (zig zag) setting triggers,
+        /// so subsequent bets keep the new direction instead of reverting to the strategy's own state.
+        /// </summary>
+        public virtual void SetHigh(bool high) { }
+
+        /// <summary>
         /// Indicates to the strategy that automated betting is starting.
         /// </summary>
         /// <returns></returns>

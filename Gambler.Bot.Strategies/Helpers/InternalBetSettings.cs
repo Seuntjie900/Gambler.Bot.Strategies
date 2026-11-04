@@ -451,27 +451,27 @@ namespace Gambler.Bot.Strategies.Helpers
             else
                 return false; //not supported bet type
 
-            if (EnableSwitchWins && Stats.Wins % SwitchWins == 0 && win)
+            if (EnableSwitchWins && SwitchWins > 0 && Stats.Wins % SwitchWins == 0 && win)
             {
                 NewHigh = !High;
                 return true;
             }
-            if (EnableSwitchWinStreak && Stats.WinStreak % SwitchWinStreak == 0 && win)
+            if (EnableSwitchWinStreak && SwitchWinStreak > 0 && Stats.WinStreak % SwitchWinStreak == 0 && win)
             {
                 NewHigh = !High;
                 return true;
             }
-            if (EnableSwitchLosses && Stats.Losses % SwitchLosses == 0&& !win)
+            if (EnableSwitchLosses && SwitchLosses > 0 && Stats.Losses % SwitchLosses == 0 && !win)
             {
                 NewHigh = !High;
                 return true;
             }
-            if (EnableSwitchLossStreak && Stats.LossStreak % SwitchLossStreak == 0 && !win)
+            if (EnableSwitchLossStreak && SwitchLossStreak > 0 && Stats.LossStreak % SwitchLossStreak == 0 && !win)
             {
                 NewHigh = !High;
                 return true;
             }
-            if (EnableSwitchBets && Stats.Bets % SwitchBets == 0)
+            if (EnableSwitchBets && SwitchBets > 0 && Stats.Bets % SwitchBets == 0)
             {
                 NewHigh = !High;
                 return true;
