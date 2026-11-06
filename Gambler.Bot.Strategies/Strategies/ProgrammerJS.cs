@@ -53,6 +53,11 @@ namespace Gambler.Bot.Strategies.Strategies
             
         }
 
+        public override void SetHigh(bool high)
+        {
+            High = high;
+        }
+
         protected override PlaceBet NextBet(Bet PreviousBet, bool Win)
         {
             try

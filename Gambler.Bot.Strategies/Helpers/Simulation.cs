@@ -1,17 +1,18 @@
-﻿using Gambler.Bot.Strategies.Strategies.Abstractions;
-using Gambler.Bot.Common.Events;
+﻿using Gambler.Bot.Common.Events;
+using Gambler.Bot.Common.Games;
+using Gambler.Bot.Common.Games.Dice;
+using Gambler.Bot.Common.Games.Limbo;
+using Gambler.Bot.Common.Games.RangeDice;
+using Gambler.Bot.Common.Games.Twist;
 using Gambler.Bot.Common.Helpers;
 using Gambler.Bot.Common.Interfaces;
+using Gambler.Bot.Strategies.Strategies.Abstractions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using Gambler.Bot.Common.Games.Dice;
-using Gambler.Bot.Common.Games;
-using Gambler.Bot.Common.Games.Limbo;
-using Gambler.Bot.Common.Games.Twist;
 
 namespace Gambler.Bot.Strategies.Helpers
 {
@@ -200,12 +201,38 @@ namespace Gambler.Bot.Strategies.Helpers
                     {
                         GenerateSeeds();
                     }
-                    if (BetSettings.CheckHighLow(NewBet, win, Stats, out NewHigh, SiteStats))
-                    {
-                        (DiceStrategy as iDiceStrategy).High = NewHigh;
-                    }
+                   
+                    
                     if (!Reset)
                         NewBetObject = DiceStrategy.CalculateNextBet(NewBet, win) as PlaceBet;
+                    if (BetSettings.CheckHighLow(NewBet, win, Stats, out NewHigh, SiteStats))
+                    {
+                        DiceStrategy.SetHigh(NewHigh);
+                        if (NewBetObject is PlaceDiceBet dice)
+                        {
+                            dice.High = NewHigh;
+                        }
+                        else if (NewBetObject is PlaceTwistBet twist)
+                        {
+                            twist.High = NewHigh;
+                        }
+                        else if (NewBetObject is PlaceRangeDiceBet range)
+                        {
+                            if (range.Type == RangeDiceType.Out)
+                                range.Type = RangeDiceType.In;
+                            else if (range.Type == RangeDiceType.In)
+                                range.Type = RangeDiceType.Out;
+                        }
+                    }
+                    if (BetSettings.EnableMaxBet && NewBetObject.Amount > BetSettings.MaxBet)
+                    {
+                        NewBetObject.Amount = BetSettings.MaxBet;
+                    }
+
+                    if (BetSettings.EnableMinBet && NewBetObject.Amount < BetSettings.MinBet)
+                    {
+                        NewBetObject.Amount = BetSettings.MinBet;
+                    }
                     if (Running && !Stop && TotalBetsPlaced <= Bets)
                     {
                         if (this.Balance <(decimal)NewBetObject.Amount)
